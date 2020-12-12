@@ -1,0 +1,117 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta charset="UTF-8" />
+	<title>Send It Over!</title>
+	<script src="js/phaser.min.js"></script>
+	<!-- Boot.js must come first since it creates the BasicGame object
+	that stores all the states. -->
+	<script src="js/Boot.js"></script>
+	<script src="js/Preloader.js"></script>
+	<script src="js/MainMenu.js"></script>
+	<script src="js/Game.js"></script>
+	<script src="js/WinScreen.js"></script>
+	<script src="js/LoseScreen.js"></script>
+	<!-- main.js must come last since it references the other ones. -->
+	<script src="js/main.js"></script>
+
+<style>
+body
+{
+    color: #777;
+    font-family: "Avenir", Verdana, sans-serif;
+}
+#readme
+{
+    margin-top: 10px;
+}
+</style>
+
+</head>
+<body>
+<div id="game"></div>
+<div id="readme">
+<h2>Send It Over! (v 1.2)</h2>
+
+<p><b>1.1 Updates</b>: Player death glitch fixed, enemy spawn time delayed by 5 seconds to allow players to have more time to prepare, enemy movement speed decreased</p>
+
+<ul>
+<li><strong>Originality:</strong>
+My game is original because of its use of color-based gameplay. Weapons and items can be sent over to the other player’s side only if they are passed through same-colored gates. Enemies can be defeated only by same-colored weapons, and because there is only one weapon of each color, players must pass weapons back and forth—-communication is key.
+</li>
+
+<li><strong>Technical Merit:</strong>
+The game uses an algorithm that allows for color-based gameplay (color of items and enemies matter), as well as randomization of item placement and enemy spawn placement. The launching mechanics for the items is also a significant aspect of technicality.
+</li>
+
+<li><strong>Prototype Postmortem:</strong>
+What did you learn from this prototype?
+What was the easiest or hardest part of making it?
+</li>
+
+<li><strong>Prototype Assets:</strong>
+Did you make your prototype assets from scratch? Did you borrow them? Cite your sources here.
+<ul>
+<li>Colored pieces: self-made</li>
+<li>Wall & colored gates: self-made</li>
+<li>Loading screen: self-made</li>
+<li>Puppy image: self-made</li>
+<li>Button: Phaser example <a href="https://phaser.io/examples/v2/buttons/action-on-click">Action On Click</a></li>
+<li>Bouncing Phaser image: <a href="https://phaser.io/download/logo">Phaser logo</a></li>
+<li>Music: "Poppers and Prosecco" Kevin MacLeod (<a href="incompetech.com">incompetech.com</a>). Licensed under <a href="http://creativecommons.org/licenses/by/3.0/">Creative Commons: By Attribution 3.0 License</a></li>
+</ul>
+</li>
+
+<li><strong>Prototype Closest Other Game:</strong>
+Which other game most closely resembles your game? If you are borrowing code from a Phaser Example, you must say so here. If you borrow code from elsewhere, you must say so here.
+<ul>
+<li>The code for this example is adapted from the <a href="https://github.com/photonstorm/phaser/tree/v2.6.2/resources/Project%20Templates/Basic">Phaser Basic Project Template</a></li>
+<li>The code for the blinking tween animation is from the following: <a href=https://phaser.io/examples/v2/tweens/yoyo>https://phaser.io/examples/v2/tweens/yoyo</a> and <a href=https://phaser.io/docs/2.4.4/Phaser.Tween.html>https://phaser.io/docs/2.4.4/Phaser.Tween.html</a></li>
+<li>Title text source: https://fontmeme.com/pixel-fonts/</li>
+</ul>
+</li>
+
+<li><strong>High Concept:</strong>
+Two players must defend against oncoming enemies while building their respective structures, all done by sending color-coded parts and weapons to each other through color-coded gates.
+</li>
+
+<li><strong>Theme:</strong>
+None
+</li>
+
+<li><strong>Mandated Variety:</strong>
+State which input, randomness, genre, and play style you used in this prototype.
+</li>
+
+<li><strong>Prototype Goal:</strong>
+The prototype is evaluating the movement of the characters, movement of enemies, movement of the items, and handling item interactions with the gates.
+</li>
+
+<li><strong>Player Experience Goals:</strong>
+Because of the game’s two-player nature, collaboration and communication is key. Sending the right parts and weapons is contingent upon knowing what your partner needs, and quickly giving them the right resources. I hope that players enjoy the concept of the game and find not only an appreciation of playing with a friend, but also an appreciation of color.
+</li>
+
+<li><strong>Gameplay:</strong>
+The two players can move using their respective arrow keys, fire if holding a weapon, and throw whatever the player’s character is holding--which is either a weapon or a piece of the thing to build. The core mechanic is sending pieces and weapons through the color gates to the other player, and building one’s own structure. While this is happening, various colored enemies are closing in on the players, so the players must defend themselves using the right colored weapons. Players lose lives if touched by enemies. Enemies will continuously spawn until the game is over, which is when players die (from losing all lives), or the players win (both structures are fully built).
+</li>
+
+<li><strong>Strategies:</strong>
+Talking and communicating with each other is essential. Sending the right colored parts over closer to the start of the game is better--more enemies spawn as the game progresses.
+</li>
+
+<li><strong>Story/Setting/Premise:</strong>
+Two astronauts are stranded, and must rebuild their ships to escape a planet of hostile aliens. However, they are inconveniently divided by a wall with colored gates, through which only parts and weapons may move.
+</li>
+
+<li><strong>Target Audience:</strong>
+The game is playable by anyone.
+</li>
+
+<li><strong>Play Time:</strong>
+Maybe 1 to 5 minutes, depending on how fast and skilled the players are.
+</li>
+
+</ul>
+</div>
+</body>
+</html>
