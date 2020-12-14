@@ -30,7 +30,7 @@ BasicGame.Preloader.prototype = {
 		//	As this is just a Project Template I've not provided these assets, swap them for your own.
 		this.load.image('titlePage', 'assets/title.jpg');
 		this.load.atlas('playButton', 'assets/play_button.png', 'assets/play_button.json');
-		this.load.audio('titleMusic', ['assets/Poppers and Prosecco.mp3']);
+		// this.load.audio('titleMusic', ['assets/Poppers and Prosecco.mp3']);
 		this.load.image('titleText', 'assets/SendItOver!Title3.png'); // Source: https://fontmeme.com/pixel-fonts/
 
 		//	+ lots of other required assets here

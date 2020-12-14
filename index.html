@@ -3,12 +3,31 @@
 <head>
 	<meta charset="UTF-8" />
 	<title>Send It Over!</title>
+	<!-- <style>
+	.centerbox {
+		/* flexbox, por favor */
+		display: -webkit-box;
+		-webkit-box-orient: horizontal;
+		-webkit-box-pack: center;
+		-webkit-box-align: center;
+
+		display: -moz-box;
+		-moz-box-orient: horizontal;
+		-moz-box-pack: center;
+		-moz-box-align: center;
+
+		width: 100%;
+		height: 100%;
+		margin: 0; padding: 0;
+	}
+	</style> -->
 	<script src="js/phaser.min.js"></script>
 	<!-- Boot.js must come first since it creates the BasicGame object
 	that stores all the states. -->
 	<script src="js/Boot.js"></script>
 	<script src="js/Preloader.js"></script>
 	<script src="js/MainMenu.js"></script>
+	<script src="js/noisejs/perlin.js"></script>
 	<script src="js/Game.js"></script>
 	<script src="js/WinScreen.js"></script>
 	<script src="js/LoseScreen.js"></script>
@@ -16,24 +35,31 @@
 	<script src="js/main.js"></script>
 
 <style>
-body
-{
-    color: #777;
-    font-family: "Avenir", Verdana, sans-serif;
+body, html { width: 100%; height: 100%; padding: 0; margin: 0; }
+/*canvas {*/
+  /* border-radius: 30px;  Border radiuses don't seem to work with putImageData */
+  /*box-shadow: 0 0 10px #777;
+  width: 1200px;
+  height: 600px;
+}*/
+body {
+  background-color: #eee;
+  color: #777;
+  font-family: "Avenir", Verdana, sans-serif;
 }
 #readme
 {
     margin-top: 10px;
 }
 </style>
+<div class='centerbox'><canvas></canvas></div>
+
 
 </head>
 <body>
 <div id="game"></div>
 <div id="readme">
-<h2>Send It Over! (v 1.2)</h2>
-
-<p><b>1.1 Updates</b>: Player death glitch fixed, enemy spawn time delayed by 5 seconds to allow players to have more time to prepare, enemy movement speed decreased</p>
+<h2>Send It Over!</h2>
 
 <ul>
 <li><strong>Originality:</strong>
