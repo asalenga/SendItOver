@@ -71,6 +71,9 @@ BasicGame.Preloader.prototype = {
         this.load.image( 'GreenBullet', 'assets/GreenBullet.png' );
         this.load.image( 'BlueBullet', 'assets/BlueBullet.png' );
 
+        this.load.image( 'moonSurface', 'assets/moon_surface.jpg');
+        this.load.image( 'slimeSurface', 'assets/slime.jpg');
+
 	},
 
 	create: function () {
