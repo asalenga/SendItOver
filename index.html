@@ -49,10 +49,12 @@ body {
 }
 #readme
 {
-    margin-top: 10px;
+    margin-top: 30px;
 }
 </style>
-<div class='centerbox'><canvas></canvas></div>
+<!-- <div class='centerbox'><canvas></canvas></div> -->
+
+<div id="readme">
 
 
 </head>
@@ -62,79 +64,37 @@ body {
 <h2>Send It Over!</h2>
 
 <ul>
-<li><strong>Originality:</strong>
-My game is original because of its use of color-based gameplay. Weapons and items can be sent over to the other player’s side only if they are passed through same-colored gates. Enemies can be defeated only by same-colored weapons, and because there is only one weapon of each color, players must pass weapons back and forth—-communication is key.
+
+<li><strong>Team members:</strong>
+Aaron Salenga
 </li>
 
-<li><strong>Technical Merit:</strong>
-The game uses an algorithm that allows for color-based gameplay (color of items and enemies matter), as well as randomization of item placement and enemy spawn placement. The launching mechanics for the items is also a significant aspect of technicality.
+<li><strong>Provide an overview of your game (give a short description about the game, i.e., core mechanics, game plot, objective, etc.):</strong>
+The game follows two player-controlled astronauts who have crash-landed on an alien planet and find themselves stranded. With both of their spaceships crashed, pieces of the ships are scattered throughout the map. They must gather these pieces and bring them back to their respective ships to reassemble them and escape the planet with their lives.
+
+However, the two astronauts have been (conveniently) separated by a central barrier that runs along the entire length of the map, preventing them from directly reaching each other and all of the scattered ship parts. Each ship piece is designated to go to either astronaut 1’s or astronaut 2’s ship, so both players must find a way to get these pieces to each other and back to their ships, despite the fact that the barrier prevents them from crossing over to each other’s side of the map.
+
+Each ship piece is of a different color, and the central barrier happens to have a series of different colored gates. These gates only allow the passage of same-colored ship pieces, so players must communicate and coordinate their efforts to throw ship pieces across to each other through the gates.
+
+While gathering ship parts, the astronauts must also defend themselves, as the hostile aliens of the planet—which are also color-coded—are closing in on them. The astronauts die if an alien manages to come in contact with them. The astronauts are not defenseless, however, as there happen to be ray guns of different colors among the scattered ship parts. Each alien is vulnerable only to ray gun blasts of the same color, so the players must use the ray guns to shoot at the aliens. The ray guns may also be thrown through the central gates, in the event that the player on the other side needs a specific-colored ray gun to defend themselves.
+
+As such, the game’s core mechanic is the act of picking up and throwing objects (whether it be ship parts or ray guns) across the central barrier.  The objective of the game is to get all ship pieces (which are indicated as belonging to player 1’s ship or player 2’s ship) to their respective ships, before they are killed by the oncoming alien enemies.
 </li>
 
-<li><strong>Prototype Postmortem:</strong>
-What did you learn from this prototype?
-What was the easiest or hardest part of making it?
+<li><strong>What will be the main technical components (game AI, motion planning, physics, procedural content generation) that your game will focus on?</strong>
+The primary technical components of the game will include motion planning, physics, and procedural content generation. Motion planning will be implemented for the enemies to find a path to the players; physics will be necessary to determine velocity and acceleration of moving agents and thrown objects; and procedural content generation in the form of perlin noise will be used to generate terrain that will affect the movement of the agents.
 </li>
 
-<li><strong>Prototype Assets:</strong>
-Did you make your prototype assets from scratch? Did you borrow them? Cite your sources here.
-<ul>
-<li>Colored pieces: self-made</li>
-<li>Wall & colored gates: self-made</li>
-<li>Loading screen: self-made</li>
-<li>Puppy image: self-made</li>
-<li>Button: Phaser example <a href="https://phaser.io/examples/v2/buttons/action-on-click">Action On Click</a></li>
-<li>Bouncing Phaser image: <a href="https://phaser.io/download/logo">Phaser logo</a></li>
-<li>Music: "Poppers and Prosecco" Kevin MacLeod (<a href="incompetech.com">incompetech.com</a>). Licensed under <a href="http://creativecommons.org/licenses/by/3.0/">Creative Commons: By Attribution 3.0 License</a></li>
-</ul>
+<li><strong>What game engine/tools/libraries will your game use?</strong>
+The game I’m creating will be using Phaser as the physics engine. Consequently, I will code the game using JavaScript.
 </li>
 
-<li><strong>Prototype Closest Other Game:</strong>
-Which other game most closely resembles your game? If you are borrowing code from a Phaser Example, you must say so here. If you borrow code from elsewhere, you must say so here.
-<ul>
-<li>The code for this example is adapted from the <a href="https://github.com/photonstorm/phaser/tree/v2.6.2/resources/Project%20Templates/Basic">Phaser Basic Project Template</a></li>
-<li>The code for the blinking tween animation is from the following: <a href=https://phaser.io/examples/v2/tweens/yoyo>https://phaser.io/examples/v2/tweens/yoyo</a> and <a href=https://phaser.io/docs/2.4.4/Phaser.Tween.html>https://phaser.io/docs/2.4.4/Phaser.Tween.html</a></li>
-<li>Title text source: https://fontmeme.com/pixel-fonts/</li>
-</ul>
+<li><strong>Why do you think your game is interesting/exciting?</strong>
+I think my game is interesting because it revolves around color-based gameplay; nearly everything in the game—the spaceship pieces, the ray guns, the enemies, the central gates—takes into consideration the color of objects that are interacting. Additionally, my game will require players to cooperate effectively in order to succeed, so the amount of chemistry (or lack thereof) that players have with each other adds to the unpredictability of the gameplay.
 </li>
 
-<li><strong>High Concept:</strong>
-Two players must defend against oncoming enemies while building their respective structures, all done by sending color-coded parts and weapons to each other through color-coded gates.
-</li>
-
-<li><strong>Theme:</strong>
-None
-</li>
-
-<li><strong>Mandated Variety:</strong>
-State which input, randomness, genre, and play style you used in this prototype.
-</li>
-
-<li><strong>Prototype Goal:</strong>
-The prototype is evaluating the movement of the characters, movement of enemies, movement of the items, and handling item interactions with the gates.
-</li>
-
-<li><strong>Player Experience Goals:</strong>
-Because of the game’s two-player nature, collaboration and communication is key. Sending the right parts and weapons is contingent upon knowing what your partner needs, and quickly giving them the right resources. I hope that players enjoy the concept of the game and find not only an appreciation of playing with a friend, but also an appreciation of color.
-</li>
-
-<li><strong>Gameplay:</strong>
-The two players can move using their respective arrow keys, fire if holding a weapon, and throw whatever the player’s character is holding--which is either a weapon or a piece of the thing to build. The core mechanic is sending pieces and weapons through the color gates to the other player, and building one’s own structure. While this is happening, various colored enemies are closing in on the players, so the players must defend themselves using the right colored weapons. Players lose lives if touched by enemies. Enemies will continuously spawn until the game is over, which is when players die (from losing all lives), or the players win (both structures are fully built).
-</li>
-
-<li><strong>Strategies:</strong>
-Talking and communicating with each other is essential. Sending the right colored parts over closer to the start of the game is better--more enemies spawn as the game progresses.
-</li>
-
-<li><strong>Story/Setting/Premise:</strong>
-Two astronauts are stranded, and must rebuild their ships to escape a planet of hostile aliens. However, they are inconveniently divided by a wall with colored gates, through which only parts and weapons may move.
-</li>
-
-<li><strong>Target Audience:</strong>
-The game is playable by anyone.
-</li>
-
-<li><strong>Play Time:</strong>
-Maybe 1 to 5 minutes, depending on how fast and skilled the players are.
+<li><strong>How would you divide the tasks among your team members (if more than one)?</strong>
+I am working on this game by myself, so I will be handling all tasks to finish this game.
 </li>
 
 </ul>
