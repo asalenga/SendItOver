@@ -106,12 +106,12 @@ BasicGame.Game.prototype = {
 
         var color1 = slimeBitmap.getPixelRGB(100, 70);
         var color2 = moonBitmap.getPixelRGB(100, 70);
-
+*/
         var canvas = document.createElement('canvas');
         canvas.width = this.game.world.width;
         canvas.height = this.game.world.height;
         var bitmap;
-*/
+
         var ctx = canvas.getContext('2d');
 
         var image = ctx.createImageData(canvas.width, canvas.height);
