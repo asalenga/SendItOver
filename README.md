@@ -24,5 +24,5 @@ I think my game is interesting because it revolves around color-based gameplay; 
 I am working on this game by myself, so I will be handling all tasks to finish this game.
 
 # Final Product
-The game itself, as well as a gameplay demo video, can be found [here](https://asalenga.github.io/SendItOver/index.html), courtesy of GitHub Pages.
+The game itself, as well as a gameplay demo video, can be found [here](https://asalenga.github.io/SendItOver/), courtesy of GitHub Pages.
 Thank you!
