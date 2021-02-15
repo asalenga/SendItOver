@@ -13,6 +13,7 @@ window.onload = function() {
 	game.state.add('Boot', BasicGame.Boot);
 	game.state.add('Preloader', BasicGame.Preloader);
 	game.state.add('MainMenu', BasicGame.MainMenu);
+	game.state.add('Tutorial', BasicGame.Tutorial);
 	game.state.add('Game', BasicGame.Game);
 
 	game.state.add('WinScreen', BasicGame.WinScreen);
