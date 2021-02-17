@@ -58,7 +58,12 @@ BasicGame.Tutorial = function (game) {
     // this.yellowBulletTime = null;
     // this.greenBulletTime = null;
     this.blueBulletTime = null;
-    this.gameClock = null;
+    // this.gameClock = null;
+    this.tutorialModeTitle = null;
+    this.TutorialInstructions = null;
+    this.TutorialInstructions2 = null;
+    this.hintsText = null;
+    this.hintsText2 = null;
     this.playersWin = null; // Check if the players have won or lost
 };
 
@@ -542,11 +547,40 @@ BasicGame.Tutorial.prototype = {
         // Add some text using a CSS style.
         // Center it in X, and position its top 15 pixels from the top of the world.
         var style = { font: "25px Verdana", fill: "#FFFFFF", align: "center" };
+        var hintsTextStyle = { font: "15px Verdana", fill: "#FFFFFF", align: "center" };
+        var subtitleTextStyle = { font: "18px Verdana", fill: "#FFFFFF", align: "center" };
         // var text = this.game.add.text( this.game.world.centerX, 15, "Get your ship up and running!", style );
         // text.anchor.setTo( 0.5, 0.0 );
 
         // this.gameClock = this.game.add.text( 50, 15, 'Elapsed seconds: '+this.game.time.totalElapsedSeconds(), style );
         // this.gameClock.anchor.setTo( 0.0, 0.0 );
+
+        // The Tutorial Mode Title
+        this.tutorialModeTitle = this.game.add.text( this.game.world.centerX, 30, 'Tutorial Mode', style );
+        this.tutorialModeTitle.anchor.setTo( 0.5, 0.5 );
+
+        // Instructions right below the title
+        this.TutorialInstructions = this.game.add.text( this.game.world.centerX, this.tutorialModeTitle.y + 30, 'Use the WASD keys to move. If you pick up any item, press 1 to throw. If that item is a ray gun, press 2 to fire.', hintsTextStyle );
+        this.TutorialInstructions.anchor.setTo( 0.5, 0.5 );
+
+        // Instructions at the bottom of the screen
+        this.TutorialInstructions2 = this.game.add.text( this.game.world.centerX, this.game.world.height - 50, 'GOAL:\nBring P1 ship pieces back to P1\'s ship (left side of map), and bring P2 ship pieces back to P2\'s ship (right side of map)!', subtitleTextStyle );
+        this.TutorialInstructions2.anchor.setTo( 0.5, 0.5 );
+
+        // Text above the player
+        this.hintsText = this.game.add.text( this.player1.x, this.player1.y - this.player1.body.height/2 - 50, 'Hints will go here!' , hintsTextStyle);
+        this.hintsText.anchor.setTo( 0.5, 0.5 );
+        this.hintsText.alpha = 0;
+
+        // Text below the player
+        this.hintsText2 = this.game.add.text( this.player1.x, this.player1.y + this.player1.body.height/2 + 30, 'More hints will go here!' , hintsTextStyle);
+        this.hintsText2.anchor.setTo( 0.5, 0.5 );
+        this.hintsText2.alpha = 0;
+
+        // Here are different ways to modify existing an text object!
+        // Alpha value:         this.hintsText.alpha = 0;
+        // x or y position:     this.hintsText.x = 0;
+        // the actual text:     this.hintsText.text = "Hello!";
 
 		// this.timeSoFar = this.game.time.totalElapsedSeconds();
 
@@ -603,6 +637,12 @@ BasicGame.Tutorial.prototype = {
 		this.game.physics.arcade.overlap(this.enemies, [this.player1/*,this.player2*/], this.killPlayer, null, this);
  //   	this.game.physics.arcade.moveToObject(this.redEnemy1, this.player1, 25);
 
+        this.hintsText.x = this.player1.x;
+        this.hintsText.y = this.player1.y - this.player1.body.height/2 - 50;
+
+        this.hintsText2.x = this.player1.x;
+        this.hintsText2.y = this.player1.y + this.player1.body.height/2 + 50;
+
         // Items can only pass through same-colored gates. This is done by accessing and checking the item's color property, which was set at
         // creation, and then having the item collide with all gates except for the same-colored gate. currItemTemp is used instead of currItem
         // so that the collision checking still continues for the curr item even after it is released and a new item is picked up.
@@ -627,12 +667,36 @@ BasicGame.Tutorial.prototype = {
         if (this.p1Possess != true) {
         	this.game.physics.arcade.overlap(this.player1, this.pieces, this.takeObject, null, this);
         	this.game.physics.arcade.overlap(this.player1, this.rayGuns, this.takeObject, null, this);
+
+            this.hintsText.text = "";
+            this.hintsText.alpha = 0;
+
+            this.hintsText2.text = "";
+            this.hintsText2.alpha = 0;
     	}
     	// If the player is holding an item, the item must move in sync with the player,
     	// so the item's velocity is constanly updated to equal the velocity of the player.
         if (this.p1Possess == true) {
             this.p1currItem.body.velocity.x = this.player1.body.velocity.x;
             this.p1currItem.body.velocity.y = this.player1.body.velocity.y;
+
+            this.hintsText.text = "I've picked up a "+this.p1currItem.color+" item!\nI can throw this through a "+this.p1currItem.color+" gate!";
+            this.hintsText.y -= 10; // This particular message is 2 lines, so we should move it up a little
+            this.hintsText.alpha = 1;
+
+
+            // Determine what type of item the player is holding
+            var itemType = "ray gun";
+            if (this.p1currItem.player != null) { // Ray guns don't have assigned players, but ship pieces do. This check will determine if the player is holding a ray gun.
+                if (this.p1currItem.player == "p1") {
+                    itemType = "P1 ship piece";
+                } else { // this.p1currItem.player1 == "p2"
+                    itemType = "P2 ship piece";
+                }
+            }
+
+            this.hintsText2.text = "Current item: "+this.p1currItem.color+" "+itemType;
+            this.hintsText2.alpha = 1;
         }
 
         // These are the directional buttons for Player 1 (W,S,A,D) and what they do.

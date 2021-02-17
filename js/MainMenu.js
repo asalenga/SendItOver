@@ -36,10 +36,10 @@ BasicGame.MainMenu.prototype = {
 		// \nTo get off this planet, you must work together and...
 		this.storyText.anchor.setTo(0.5,0);
 
-		this.playButton = this.add.button( this.world.centerX, this.world.height-200, 'playButton', this.startGame, this, 'over', 'out', 'down'); // 'Start', 'Play Game', 'Start' // the last 3 params correspond to 'over', 'out', 'down'
+		this.playButton = this.add.button( this.world.centerX, this.world.height-150, 'playButton', this.startGame, this, 'over', 'out', 'down'); // 'Start', 'Play Game', 'Start' // the last 3 params correspond to 'over', 'out', 'down'
 		this.playButton.anchor.setTo(0.5,0.5);
 
-		this.startTutorialButton = this.add.button( this.world.centerX, this.world.height-100, 'playButton', this.startTutorial, this, 'over', 'out', 'down'); // the last 3 params correspond to 'over', 'out', 'down'
+		this.startTutorialButton = this.add.button( this.world.centerX, this.world.height-75, 'playButton', this.startTutorial, this, 'over', 'out', 'down'); // the last 3 params correspond to 'over', 'out', 'down'
 		this.startTutorialButton.anchor.setTo(0.5,0.5);
 
 		// this.val = 50;
