@@ -30,6 +30,7 @@ BasicGame.Tutorial = function (game) {
     this.planetSurfaceData = null;
     this.planetSurfaceSprite = null;
     this.wall = null;
+    this.wall2 = null;
     this.redGate = null;
     // this.yellowGate = null;
     // this.greenGate = null;
@@ -37,10 +38,22 @@ BasicGame.Tutorial = function (game) {
     this.player1 = null;
     // this.player2 = null;
     this.rayGuns = null;
-    this.pieces = null;
+    
+    this.p1Red_pieces = null;
+    this.p1Yellow_pieces = null;
+    this.p1Green_pieces = null;
+    this.p1Blue_pieces = null;
+    this.p2Red_pieces = null;
+    this.p2Yellow_pieces = null;
+    this.p2Green_pieces = null;
+    this.p2Blue_pieces = null;
+
     this.enemies = null;
     this.p1Possess = null; // Check if PLayer 1 has possession of something
     this.p1currItem = null; // Check what item Player 1 is in possession of
+
+    this.isCurrPieceOverlapping = null;
+
     // this.p2Possess = null; // Check if PLayer 1 has possession of something
     // this.p2currItem = null; // Check what item Player 1 is in possession of
 //    this.itemInitVelocity = null; // The initial velocity of an item when thrown by a player
@@ -65,6 +78,9 @@ BasicGame.Tutorial = function (game) {
     this.hintsText = null;
     this.hintsText2 = null;
     this.playersWin = null; // Check if the players have won or lost
+
+    this.mousePointer = null;
+    this.mouseText = null;
 };
 
 /*
@@ -161,13 +177,33 @@ BasicGame.Tutorial.prototype = {
 */
 
         // Create a sprite at the center of the screen using the 'logo' image.
-        this.wall = this.game.add.sprite( this.game.world.centerX, this.game.world.centerY, 'wall' );
+        this.wall = this.game.add.sprite( this.game.world.centerX, (this.game.world.height/10)*2.75, 'wall' );
         // Anchor the sprite at its center, as opposed to its top-left corner.
         // so it will be truly centered.
         this.wall.anchor.setTo( 0.5, 0.5 );
 
         this.wall.width = 50;
-        this.wall.height = this.game.world.height/2;
+        this.wall.height = this.game.world.height/20;
+
+        // Create a sprite at the center of the screen using the 'logo' image.
+        this.wall2 = this.game.add.sprite( this.game.world.centerX, (this.game.world.height/10)*7.25, 'wall' );
+        // Anchor the sprite at its center, as opposed to its top-left corner.
+        // so it will be truly centered.
+        this.wall2.anchor.setTo( 0.5, 0.5 );
+
+        this.wall2.width = 50;
+        this.wall2.height = this.game.world.height/20;
+
+
+        // // Create a sprite at the center of the screen using the 'logo' image.
+        // this.wall = this.game.add.sprite( this.game.world.centerX, this.game.world.centerY, 'wall' );
+        // // Anchor the sprite at its center, as opposed to its top-left corner.
+        // // so it will be truly centered.
+        // this.wall.anchor.setTo( 0.5, 0.5 );
+
+        // this.wall.width = 50;
+        // this.wall.height = this.game.world.height/2;
+
 
         this.redGate = this.game.add.sprite( this.game.world.centerX, (this.game.world.height/5)*2, 'RedGate');
         this.redGate.anchor.setTo(0.5,0.5);
@@ -211,6 +247,7 @@ BasicGame.Tutorial.prototype = {
         this.player1.anchor.setTo( 0.5, 0.5 );
         this.player1.width = 75;
         this.player1.height = 75;
+
         this.player1.spawnBeginning = 0;
         // this.player2 = this.game.add.sprite( (this.game.world.width/4)*3, this.game.world.centerY, 'player2' );
         // this.player2.anchor.setTo( 0.5, 0.5 );
@@ -218,13 +255,24 @@ BasicGame.Tutorial.prototype = {
         // this.player2.height = 75;
         // this.player2.spawnBeginning = 0;
 
-        this.game.physics.enable( [this.player1,/*this.player2,*/this.wall], Phaser.Physics.ARCADE );
+        this.game.physics.enable( [this.player1,/*this.player2,*/this.wall,this.wall2], Phaser.Physics.ARCADE );
+
+        // this.player1.body.isCircle = true;
+    //  this.player1.body.setCircle(this.player1.width/2.0); // Note: the argument is for the radius size of the circle, not the diameter
+
+        // this.game.debug.renderPhysicsBody(this.player1.body);
+        // this.player1.setDebug(true, true, 255);
+        // this.player1.debugShowBody = true;
+        // this.player1.body.drawDebug(this.game.world);
+
         // this.player1.body.setSize(55, 55, 10, 10);
         // this.player2.body.setSize(55, 55, 10, 10);
         //this.game.physics.enable( this.player2, Phaser.Physics.ARCADE );
         //this.game.physics.enable( this.wall, Phaser.Physics.ARCADE );
         this.wall.body.collideWorldBounds = true;
         this.wall.body.immovable = true;
+        this.wall2.body.collideWorldBounds = true;
+        this.wall2.body.immovable = true;
 
         this.game.physics.enable( [this.redGate,/*this.yellowGate,this.greenGate,*/this.blueGate], Phaser.Physics.ARCADE );
         this.redGate.body.immovable = true;
@@ -356,13 +404,54 @@ BasicGame.Tutorial.prototype = {
     	this.enemies.enableBody = true;
     	this.enemies.physicsBodyType = Phaser.Physics.ARCADE;
 
-        this.pieces = this.game.add.group();
-        this.pieces.enableBody = true;
-        this.pieces.physicsBodyType = Phaser.Physics.ARCADE;
+        // // Create a group that encompasses all ship pieces
+        // this.pieces = this.game.add.group();
+        // this.pieces.enableBody = true;
+        // this.pieces.physicsBodyType = Phaser.Physics.ARCADE;
+
+        // Create subgroups for each category of ship piece, distinguished by color and player
+        this.p1Red_pieces = this.game.add.group();
+        this.p1Yellow_pieces = this.game.add.group();
+        this.p1Green_pieces = this.game.add.group();
+        this.p1Blue_pieces = this.game.add.group();
+        
+        this.p2Red_pieces = this.game.add.group();
+        this.p2Yellow_pieces = this.game.add.group();
+        this.p2Green_pieces = this.game.add.group();
+        this.p2Blue_pieces = this.game.add.group();
+
+        this.p1Red_pieces.enableBody = true;
+        this.p1Red_pieces.physicsBodyType = Phaser.Physics.ARCADE;
+        this.p1Yellow_pieces.enableBody = true;
+        this.p1Yellow_pieces.physicsBodyType = Phaser.Physics.ARCADE;
+        this.p1Green_pieces.enableBody = true;
+        this.p1Green_pieces.physicsBodyType = Phaser.Physics.ARCADE;
+        this.p1Blue_pieces.enableBody = true;
+        this.p1Blue_pieces.physicsBodyType = Phaser.Physics.ARCADE;
+
+        this.p2Red_pieces.enableBody = true;
+        this.p2Red_pieces.physicsBodyType = Phaser.Physics.ARCADE;
+        this.p2Yellow_pieces.enableBody = true;
+        this.p2Yellow_pieces.physicsBodyType = Phaser.Physics.ARCADE;
+        this.p2Green_pieces.enableBody = true;
+        this.p2Green_pieces.physicsBodyType = Phaser.Physics.ARCADE;
+        this.p2Blue_pieces.enableBody = true;
+        this.p2Blue_pieces.physicsBodyType = Phaser.Physics.ARCADE;
+
+        // // Add all piece subgroups to the overall pieces group (the parent group)
+        // this.pieces.add(this.p1Red_pieces);
+        // this.pieces.add(this.p1Yellow_pieces);
+        // this.pieces.add(this.p1Green_pieces);
+        // this.pieces.add(this.p1Blue_pieces);
+        
+        // this.pieces.add(this.p2Red_pieces);
+        // this.pieces.add(this.p2Yellow_pieces);
+        // this.pieces.add(this.p2Green_pieces);
+        // this.pieces.add(this.p2Blue_pieces);
 
 // P1 pieces
 
-        this.p1Red = this.pieces.create(1050, 500, 'RedP1');
+        this.p1Red = this.p1Red_pieces.create(1050, 500, 'RedP1');
         this.p1Red.anchor.setTo(0.5,0.5);
         this.p1Red.body.velocity.x = 0;
         this.p1Red.body.velocity.y = 0;
@@ -371,7 +460,7 @@ BasicGame.Tutorial.prototype = {
         this.p1Red.player = "p1";
         this.p1Red.color = "red";
 
-        this.p1Red2 = this.pieces.create(675, 225, 'RedP1');
+        this.p1Red2 = this.p1Red_pieces.create(675, 225, 'RedP1');
         this.p1Red2.anchor.setTo(0.5,0.5);
         this.p1Red2.body.velocity.x = 0;
         this.p1Red2.body.velocity.y = 0;
@@ -380,7 +469,7 @@ BasicGame.Tutorial.prototype = {
         this.p1Red2.player = "p1";
         this.p1Red2.color = "red";
 
-		this.p1Red3 = this.pieces.create(425, 575, 'RedP1');
+		this.p1Red3 = this.p1Red_pieces.create(425, 575, 'RedP1');
         this.p1Red3.anchor.setTo(0.5,0.5);
         this.p1Red3.body.velocity.x = 0;
         this.p1Red3.body.velocity.y = 0;
@@ -425,7 +514,7 @@ BasicGame.Tutorial.prototype = {
         this.p1Green2.player = "p1";
         this.p1Green2.color = "green";
 */
-        this.p1Blue = this.pieces.create(50,100,'BlueP1');
+        this.p1Blue = this.p1Blue_pieces.create(50,100,'BlueP1');
         this.p1Blue.anchor.setTo(0.5,0.5);
         this.p1Blue.body.velocity.x = 0;
         this.p1Blue.body.velocity.y = 0;
@@ -434,7 +523,7 @@ BasicGame.Tutorial.prototype = {
         this.p1Blue.player = "p1";
         this.p1Blue.color = "blue";
 
-        this.p1Blue2 = this.pieces.create(850,75,'BlueP1');
+        this.p1Blue2 = this.p1Blue_pieces.create(850,75,'BlueP1');
         this.p1Blue2.anchor.setTo(0.5,0.5);
         this.p1Blue2.body.velocity.x = 0;
         this.p1Blue2.body.velocity.y = 0;
@@ -443,7 +532,7 @@ BasicGame.Tutorial.prototype = {
         this.p1Blue2.player = "p1";
         this.p1Blue2.color = "blue";
 
-        this.p1Blue3 = this.pieces.create(925,300,'BlueP1');
+        this.p1Blue3 = this.p1Blue_pieces.create(925,300,'BlueP1');
         this.p1Blue3.anchor.setTo(0.5,0.5);
         this.p1Blue3.body.velocity.x = 0;
         this.p1Blue3.body.velocity.y = 0;
@@ -454,7 +543,7 @@ BasicGame.Tutorial.prototype = {
 
 // P2 pieces
 
-        this.p2Red = this.pieces.create(1100, 50, 'RedP2');
+        this.p2Red = this.p2Red_pieces.create(1100, 50, 'RedP2');
         this.p2Red.anchor.setTo(0.5,0.5);
         this.p2Red.body.velocity.x = 0;
         this.p2Red.body.velocity.y = 0;
@@ -463,7 +552,7 @@ BasicGame.Tutorial.prototype = {
         this.p2Red.player = "p2";
         this.p2Red.color = "red";
 
-        this.p2Red2 = this.pieces.create(550, 325, 'RedP2');
+        this.p2Red2 = this.p2Red_pieces.create(550, 325, 'RedP2');
         this.p2Red2.anchor.setTo(0.5,0.5);
         this.p2Red2.body.velocity.x = 0;
         this.p2Red2.body.velocity.y = 0;
@@ -472,7 +561,7 @@ BasicGame.Tutorial.prototype = {
         this.p2Red2.player = "p2";
         this.p2Red2.color = "red";
 
-        this.p2Red3 = this.pieces.create(200, 250, 'RedP2');
+        this.p2Red3 = this.p2Red_pieces.create(200, 250, 'RedP2');
         this.p2Red3.anchor.setTo(0.5,0.5);
         this.p2Red3.body.velocity.x = 0;
         this.p2Red3.body.velocity.y = 0;
@@ -517,7 +606,7 @@ BasicGame.Tutorial.prototype = {
         this.p2Green2.player = "p2";
         this.p2Green2.color = "green";
 */
-        this.p2Blue = this.pieces.create(800,550,'BlueP2');
+        this.p2Blue = this.p2Blue_pieces.create(800,550,'BlueP2');
         this.p2Blue.anchor.setTo(0.5,0.5);
         this.p2Blue.body.velocity.x = 0;
         this.p2Blue.body.velocity.y = 0;
@@ -526,7 +615,7 @@ BasicGame.Tutorial.prototype = {
         this.p2Blue.player = "p2";
         this.p2Blue.color = "blue";
 
-        this.p2Blue2 = this.pieces.create(350,175,'BlueP2');
+        this.p2Blue2 = this.p2Blue_pieces.create(350,175,'BlueP2');
         this.p2Blue2.anchor.setTo(0.5,0.5);
         this.p2Blue2.body.velocity.x = 0;
         this.p2Blue2.body.velocity.y = 0;
@@ -535,7 +624,7 @@ BasicGame.Tutorial.prototype = {
         this.p2Blue2.player = "p2";
         this.p2Blue2.color = "blue";
 
-        this.p2Blue3 = this.pieces.create(400,450,'BlueP2');
+        this.p2Blue3 = this.p2Blue_pieces.create(400,450,'BlueP2');
         this.p2Blue3.anchor.setTo(0.5,0.5);
         this.p2Blue3.body.velocity.x = 0;
         this.p2Blue3.body.velocity.y = 0;
@@ -602,6 +691,39 @@ BasicGame.Tutorial.prototype = {
         this.oneKey = this.game.input.keyboard.addKey(Phaser.Keyboard.ONE);
         // spaceKey = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
 
+        // this.game.input.mouse.contextMenu.disable();
+
+        // this.input.on('pointerdown', function (pointer) {
+
+        //     if (pointer.rightButtonDown())
+        //     {
+        //         if (pointer.getDuration() > 500)
+        //         {
+        //             this.add.image(pointer.x, pointer.y, 'disk');
+        //         }
+        //         else
+        //         {
+        //             this.add.image(pointer.x, pointer.y, 'asuna');
+        //         }
+        //     }
+        //     else
+        //     {
+        //         if (pointer.getDuration() > 500)
+        //         {
+        //             this.add.image(pointer.x, pointer.y, 'tree');
+        //         }
+        //         else
+        //         {
+        //             this.add.image(pointer.x, pointer.y, 'logo');
+        //         }
+        //     }
+
+        // }, this);
+
+        this.mousePointer = this.game.input.activePointer;
+        // this.mousePointer.contextMenu.disable();
+        this.mouseText = this.game.add.text( this.mousePointer.x, this.mousePointer.y, '' , hintsTextStyle);
+
         // this.player1.body.onOverlap = new Phaser.Signal();
         // this.player1.body.onOverlap.add(this.takeObject, this);
 //        this.itemInitVelocity = 200;
@@ -620,12 +742,28 @@ BasicGame.Tutorial.prototype = {
         // new trajectory.
       // this.wall.rotation = this.game.physics.arcade.accelerateToPointer( this.wall, this.game.input.activePointer, 500, 500, 500 );
 
-      	// Players cannot phase through walls
-        this.hitWall = this.game.physics.arcade.collide([this.player1/*,this.player2*/], this.wall);
-        this.game.physics.arcade.overlap([this.redBullets,/*this.yellowBullets,this.greenBullets,*/this.blueBullets], this.wall, this.killBullet, null, this);
-    //    this.hitShip = this.game.physics.arcade.collide([this.player1,this.player2], [this.p1Ship,this.p2Ship]);
-    	this.game.physics.arcade.overlap(this.pieces, [this.p1Ship,this.p2Ship], this.pieceShip, null, this);
+        this.mouseText.setText("x: "+this.mousePointer.x+"\ny: "+this.mousePointer.y+"\nleftButton.isDown: "+this.mousePointer.leftButton.isDown+"\nrightButton.isDown: "+this.mousePointer.rightButton.isDown);
+        this.mouseText.x = this.mousePointer.x
+        this.mouseText.y = this.mousePointer.y;
 
+      	// Players cannot phase through walls
+        this.hitWall = this.game.physics.arcade.collide([this.player1/*,this.player2*/], [this.wall,this.wall2]);
+        this.playerHitGates = this.game.physics.arcade.collide(this.player1, [this.redGate,this.blueGate]);
+        this.game.physics.arcade.overlap([this.redBullets,/*this.yellowBullets,this.greenBullets,*/this.blueBullets], [this.wall,this.wall2], this.killBullet, null, this);
+    //    this.hitShip = this.game.physics.arcade.collide([this.player1,this.player2], [this.p1Ship,this.p2Ship]);
+    	this.game.physics.arcade.overlap([this.p1Red_pieces, this.p1Yellow_pieces, this.p1Green_pieces, this.p1Blue_pieces, this.p2Red_pieces, this.p2Yellow_pieces, this.p2Green_pieces, this.p2Blue_pieces], [this.p1Ship,this.p2Ship], this.pieceShip, null, this);
+        this.game.physics.arcade.collide([this.p1Red_pieces, this.p1Yellow_pieces, this.p1Green_pieces, this.p1Blue_pieces, this.p2Red_pieces, this.p2Yellow_pieces, this.p2Green_pieces, this.p2Blue_pieces], [this.wall,this.wall2]);
+
+        var isRedPieceColliding = this.game.physics.arcade.collide([this.p1Red_pieces,this.p2Red_pieces],[this.yellowGate,this.greenGate,this.blueGate]);
+        var isYellowPieceColliding = this.game.physics.arcade.collide([this.p1Yellow_pieces,this.p2Yellow_pieces],[this.redGate,this.greenGate,this.blueGate]);
+        var isGreenPieceColliding = this.game.physics.arcade.collide([this.p1Green_pieces,this.p2Green_pieces],[this.redGate,this.yellowGate,this.blueGate]);
+        var isBluePieceColliding = this.game.physics.arcade.collide([this.p1Blue_pieces,this.p2Blue_pieces],[this.redGate,this.yellowGate,this.greenGate]);
+/*        
+        var isRedPieceOverlapping = this.game.physics.arcade.overlap([this.p1Red_pieces,this.p2Red_pieces],[this.yellowGate,this.greenGate,this.blueGate]);
+        var isYellowPieceOverlapping = this.game.physics.arcade.overlap([this.p1Yellow_pieces,this.p2Yellow_pieces],[this.redGate,this.greenGate,this.blueGate]);
+        var isGreenPieceOverlapping = this.game.physics.arcade.overlap([this.p1Green_pieces,this.p2Green_pieces],[this.redGate,this.yellowGate,this.blueGate]);
+        var isBluePieceOverlapping = this.game.physics.arcade.overlap([this.p1Blue_pieces,this.p2Blue_pieces],[this.redGate,this.yellowGate,this.greenGate]);
+*/
     	// if (this.redBullet != null) {
      //    	this.game.physics.arcade.collide(this.redBullet, this.redEnemy1);
     	// }
@@ -646,7 +784,7 @@ BasicGame.Tutorial.prototype = {
         // Items can only pass through same-colored gates. This is done by accessing and checking the item's color property, which was set at
         // creation, and then having the item collide with all gates except for the same-colored gate. currItemTemp is used instead of currItem
         // so that the collision checking still continues for the curr item even after it is released and a new item is picked up.
-        if (this.p1currItemTemp != null) {
+/*        if (this.p1currItemTemp != null) {
         	if (this.p1currItemTemp.color == "red") {
         		this.hitGate1 = this.game.physics.arcade.collide(this.p1currItemTemp, [this.yellowGate,this.greenGate,this.blueGate]);
         	}
@@ -660,12 +798,12 @@ BasicGame.Tutorial.prototype = {
         		this.hitGate1 = this.game.physics.arcade.collide(this.p1currItemTemp, [this.redGate,this.yellowGate,this.greenGate]);
         	}
     	}
-
+*/
     //    this.takePieces = this.game.physics.arcade.overlap([this.player1,this.player2], this.p1Blue, this.takeObject, null, this);
         // this.game.physics.arcade.overlap(this.player, this.door, this.notFinished, null, this);
         // Only executes takeObject when the player is holding nothing (has nothing in their possession)
         if (this.p1Possess != true) {
-        	this.game.physics.arcade.overlap(this.player1, this.pieces, this.takeObject, null, this);
+        	this.game.physics.arcade.overlap(this.player1, [this.p1Red_pieces, this.p1Yellow_pieces, this.p1Green_pieces, this.p1Blue_pieces, this.p2Red_pieces, this.p2Yellow_pieces, this.p2Green_pieces, this.p2Blue_pieces], this.takeObject, null, this);
         	this.game.physics.arcade.overlap(this.player1, this.rayGuns, this.takeObject, null, this);
 
             this.hintsText.text = "";
@@ -756,8 +894,27 @@ BasicGame.Tutorial.prototype = {
         // thrown in the direction that the item is facing (as tracked before).
         // Notice that an initial velocity is set in the corresponding direction...
 
-        if ((this.oneKey.isDown) && (this.hitGate1 != true) && (this.p1currItem != null) && (this.keyIsPressed1 != true)) {
-            if ((this.p1Possess == true) && (this.p1currItem != null)) {
+        // Sometimes, the item held by the player can be within an obstacle because a player is right next to the obstacle and the piece
+        // has no choice but to go to the position that is assigned to it and that position is within. So, we should check for overlap.
+        this.isCurrPieceOverlapping = false;
+        if ((this.oneKey.isDown) /*&& (this.hitGate1 != true)*/ && (this.p1currItem != null)/* && (this.keyIsPressed1 != true)*/) {
+
+            switch (this.p1currItem.color) {
+                case "red":
+                    this.isCurrPieceOverlapping = this.game.physics.arcade.overlap([this.p1Red_pieces,this.p2Red_pieces],[this.yellowGate,this.greenGate,this.blueGate]);
+                    break;
+                case "yellow":
+                    this.isCurrPieceOverlapping = this.game.physics.arcade.overlap([this.p1Yellow_pieces,this.p2Yellow_pieces],[this.redGate,this.greenGate,this.blueGate]);
+                    break;
+                case "green":
+                    this.isCurrPieceOverlapping = this.game.physics.arcade.overlap([this.p1Green_pieces,this.p2Green_pieces],[this.redGate,this.yellowGate,this.blueGate]);
+                    break;
+                case "blue":
+                    this.isCurrPieceOverlapping = this.game.physics.arcade.overlap([this.p1Blue_pieces,this.p2Blue_pieces],[this.redGate,this.yellowGate,this.greenGate]);
+                    break;
+            }
+
+            if ((this.p1Possess == true) && (this.isCurrPieceOverlapping == false) /*&& (this.p1currItem != null)*/) {
                 if (this.p1currItem.pos == "left") {
                     // this.p1currItem.body.velocity.setTo(-100,0);
                     this.velocityX1 = -200;
@@ -786,6 +943,7 @@ BasicGame.Tutorial.prototype = {
             // this.slowDownValue1 = 5;
             // this.slowDownValue1 = 2;
             // this.keyIsPressed1 = true; // sets throw button as pressed
+            // this.isCurrPieceOverlapping = false;
         }
 
         // ...and when the 1 key is pressed, the item is thrown and its velocity gradually decreases because of an opposite acceleration that is added,
@@ -793,28 +951,33 @@ BasicGame.Tutorial.prototype = {
         // which takes p1currItemTemp as its argument. p1currItemTemp is a variable that stores a copy of p1currItem, allowing the original item stored in
         // p1currItem to be manipulated even after p1currItem changes, which happens when the player throws the original p1currItem and picks up another item.
 
-        if ((this.oneKey.isDown) && (this.hitGate1 != true) && (this.p1currItem != null) && (this.keyIsPressed1 != true)) { // Checks if object to throw exists and if throw button has been pressed
+        if ((this.oneKey.isDown) /*&& (this.isCurrPieceOverlapping == false)*/ && (this.p1currItem != null)/* && (this.keyIsPressed1 != true)*/) { // Checks if object to throw exists and if throw button has been pressed
             if (this.p1currItem.body.velocity.x > 0) {
                 this.p1currItem.body.acceleration.setTo(-100,0);
                 this.p1currItemTemp = this.p1currItem;
-                this.throwTimer1 = this.game.time.events.add(Phaser.Timer.SECOND * 2, this.stopMovement, this, this.p1currItemTemp);
+                // this.decelerateItem(this.p1currItem);
+                this.throwTimer1 = this.game.time.events.add(Phaser.Timer.SECOND * 2, this.stopMovement, this, this.p1currItem);
             }
             else if (this.p1currItem.body.velocity.x < 0) {
                 this.p1currItem.body.acceleration.setTo(100,0);
                 this.p1currItemTemp = this.p1currItem;
-                this.throwTimer1 = this.game.time.events.add(Phaser.Timer.SECOND * 2, this.stopMovement, this, this.p1currItemTemp);
+                // this.decelerateItem(this.p1currItem);
+                this.throwTimer1 = this.game.time.events.add(Phaser.Timer.SECOND * 2, this.stopMovement, this, this.p1currItem);
             }
             else if (this.p1currItem.body.velocity.y > 0) {
                 this.p1currItem.body.acceleration.setTo(0,-100);
                 this.p1currItemTemp = this.p1currItem;
-                this.throwTimer1 = this.game.time.events.add(Phaser.Timer.SECOND * 2, this.stopMovement, this, this.p1currItemTemp);
+                // this.decelerateItem(this.p1currItem);
+                this.throwTimer1 = this.game.time.events.add(Phaser.Timer.SECOND * 2, this.stopMovement, this, this.p1currItem);
             }
             else if (this.p1currItem.body.velocity.y < 0) {
                 this.p1currItem.body.acceleration.setTo(0,100);
                 this.p1currItemTemp = this.p1currItem;
-                this.throwTimer1 = this.game.time.events.add(Phaser.Timer.SECOND * 2, this.stopMovement, this, this.p1currItemTemp);
+                // this.decelerateItem(this.p1currItem);
+                this.throwTimer1 = this.game.time.events.add(Phaser.Timer.SECOND * 2, this.stopMovement, this, this.p1currItem);
             }
-            this.keyIsPressed1 = true;
+            // this.p1currItem = null;
+            // this.keyIsPressed1 = true;
         }        
 
 //             this.p1currItem.body.velocity.setTo(this.velocityX1,this.velocityY1);
@@ -850,7 +1013,7 @@ BasicGame.Tutorial.prototype = {
         // }
 
         // if (this.p1currItem in this.rayGuns.children) {
-        if ((this.p1currItem != null) && (this.twoKey.isDown) && (this.keyIsPressed1 != true) && (this.p1Possess == true)) {
+        if ((this.p1currItem != null) && (this.twoKey.isDown)/* && (this.keyIsPressed1 != true) */&& (this.p1Possess == true)) {
          	if ((this.p1currItem == this.redGun) && (this.game.time.now > this.redBulletTime)) {
         		// this.redBullet = this.redBullets.getFirstExists(false);
 
@@ -952,9 +1115,9 @@ BasicGame.Tutorial.prototype = {
             // The deceleration event timer of an item must be removed and reset if the current item was the previous item (i.e. the player threw an item
             // and took the same item again). This is so that if the item is thrown, picked up, and thrown again very quickly, the old
             // deceleration event of the old throw doesn't overlap with the new deceleration event of the new throw and affect the throw.
-            if ((this.throwTimer1 != null) && (this.p1prevItem  == this.p1currItem)) {
-            	this.game.time.events.remove(this.throwTimer1);
-            }
+            // if ((this.throwTimer1 != null)/* && (this.p1prevItem  == this.p1currItem)*/) {
+            	// this.game.time.events.remove(this.throwTimer1);
+            // }
         }
     },
 
@@ -978,7 +1141,7 @@ BasicGame.Tutorial.prototype = {
     		if (piece == this.p1currItem) {this.p1Possess = false;}
     		piece.kill();
     	}
-    	if (this.pieces.countLiving() == 0) { // Ends the game once all pieces have been brought back
+    	if ((this.p1Red_pieces.countLiving() == 0) && (this.p1Yellow_pieces.countLiving() == 0) && (this.p1Green_pieces.countLiving() == 0) && (this.p1Blue_pieces.countLiving() == 0) && (this.p2Red_pieces.countLiving() == 0) && (this.p2Yellow_pieces.countLiving() == 0) && (this.p2Green_pieces.countLiving() == 0) && (this.p2Blue_pieces.countLiving() == 0)) { // Ends the game once all pieces have been brought back
     		// The players win; call quitGame
     		this.playersWin = true;
     		this.quitGame();
@@ -996,9 +1159,28 @@ BasicGame.Tutorial.prototype = {
     },
 */
     stopMovement: function (piece) {
-    	piece.body.acceleration.setTo(0,0);
-    	piece.body.velocity.setTo(0,0);
+        // if (this.p1currItem != piece) {
+        	piece.body.acceleration.setTo(0,0);
+        	piece.body.velocity.setTo(0,0);
+        // }
     },
+
+    // decelerateItem: function (piece) {
+    //     while (piece.body.velocity.x > 10) {
+    //         piece.body.acceleration.setTo(-100,0);
+    //     }
+    //     while (piece.body.velocity.x < -10) {
+    //         piece.body.acceleration.setTo(100,0);
+    //     }
+    //     while (piece.body.velocity.y > 10) {
+    //         piece.body.acceleration.setTo(0,-100);
+    //     }
+    //     while (piece.body.velocity.y < -10) {
+    //         piece.body.acceleration.setTo(0,100);
+    //     }
+    //     piece.body.acceleration.setTo(0,0);
+    //     piece.body.velocity.setTo(0,0);
+    // },
 
     fireBullet: function (bullet, player, xDir, yDir) {
     	if (bullet.color == "red") {
