@@ -815,6 +815,29 @@ BasicGame.Tutorial.prototype = {
     	// If the player is holding an item, the item must move in sync with the player,
     	// so the item's velocity is constanly updated to equal the velocity of the player.
         if (this.p1Possess == true) {
+
+            // Quick Maths!!!
+
+            // Gets the distance to the mouse pointer in both x and y directions
+            var xDistToMousePointer = this.mousePointer.x - this.player1.x; // x direction vector towards the mouse pointer
+            var yDistToMousePointer = this.mousePointer.y - this.player1.y; // y direction vector towards the mouse pointer
+
+            // Uses the x and y directions--which create 2 sides of a 90 degree triangle--to get the 3 side, the hypotenuse,
+            // of the triangle. This hypotenuse is the actual distance to the mouse pointer.
+            var distToMousePointer = Math.sqrt(Math.pow(xDistToMousePointer,2.0) + Math.pow(yDistToMousePointer,2.0)); // c = root(a^2 + b^2)
+
+            // Divide both x and y directions by the distance in order to normalize them (yeah, I came up with this myself)
+            var xDistToMousePointer_norm = xDistToMousePointer/distToMousePointer; // Normalize both of the
+            var yDistToMousePointer_norm = yDistToMousePointer/distToMousePointer; // x and y direction vectors
+
+            // Calculate the distance the item should be from the player
+            var itemXPos = ((this.player1.width + 10) * xDistToMousePointer_norm);
+            var itemYPos = ((this.player1.width + 10) * yDistToMousePointer_norm);
+
+            // Finally, put the item at the proper spot, using the player's current position.
+            this.p1currItem.x = this.player1.x + itemXPos;
+            this.p1currItem.y = this.player1.y + itemYPos;
+
             this.p1currItem.body.velocity.x = this.player1.body.velocity.x;
             this.p1currItem.body.velocity.y = this.player1.body.velocity.y;
 
@@ -859,34 +882,34 @@ BasicGame.Tutorial.prototype = {
         if (this.aKey.isDown) {
             this.player1.body.velocity.x = -10 - 200;//*(currPerlinVal / 255.0); // Move left; currPerlinVal will be a value from 0 to 255
             if ((this.p1Possess == true) && (this.p1currItem != null)) {
-                this.p1currItem.x = this.player1.x-this.player1.width/1.25;
-                this.p1currItem.y = this.player1.y;
-                this.p1currItem.pos = "left";
+                // this.p1currItem.x = this.player1.x-this.player1.width/1.25;
+                // this.p1currItem.y = this.player1.y;
+                // this.p1currItem.pos = "left";
                 // this.p1currItem.position.setTo(this.player1.x-this.player1.width/1.25,this.player1.y);    ...This works too, it's just less readable
             }
         }
         if (this.dKey.isDown) {
             this.player1.body.velocity.x = 10 + 200;//*(currPerlinVal / 255.0); // Move right; currPerlinVal will be a value from 0 to 255
             if ((this.p1Possess == true) && (this.p1currItem != null)) {
-                this.p1currItem.x = this.player1.x+this.player1.width/1.25;
-                this.p1currItem.y = this.player1.y;
-                this.p1currItem.pos = "right";
+                // this.p1currItem.x = this.player1.x+this.player1.width/1.25;
+                // this.p1currItem.y = this.player1.y;
+                // this.p1currItem.pos = "right";
             }
         }
         if (this.wKey.isDown) {
             this.player1.body.velocity.y = -10 - 200;//*(currPerlinVal / 255.0); // Move up; currPerlinVal will be a value from 0 to 255
             if ((this.p1Possess == true) && (this.p1currItem != null)) {
-                this.p1currItem.x = this.player1.x;
-                this.p1currItem.y = this.player1.y-this.player1.height/1.25;
-                this.p1currItem.pos = "up";
+                // this.p1currItem.x = this.player1.x;
+                // this.p1currItem.y = this.player1.y-this.player1.height/1.25;
+                // this.p1currItem.pos = "up";
             }
         }
         if (this.sKey.isDown) {
             this.player1.body.velocity.y = 10 + 200;//*(currPerlinVal / 255.0); // Move down; currPerlinVal will be a value from 0 to 255
             if ((this.p1Possess == true) && (this.p1currItem != null)) {
-                this.p1currItem.x = this.player1.x;
-                this.p1currItem.y = this.player1.y+this.player1.height/1.25;
-                this.p1currItem.pos = "down";
+                // this.p1currItem.x = this.player1.x;
+                // this.p1currItem.y = this.player1.y+this.player1.height/1.25;
+                // this.p1currItem.pos = "down";
             }
         }
 
