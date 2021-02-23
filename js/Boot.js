@@ -14,7 +14,11 @@ BasicGame.Boot.prototype = {
         this.input.maxPointers = 1;
 
         //  Phaser will automatically pause if the browser tab the game is in loses focus. You can disable that here:
-        this.stage.disableVisibilityChange = true;
+        // this.stage.disableVisibilityChange = false;//true;
+
+        // This prevents the context menu from appearing whenever the user right-clicks within the game window. If the menu still pops up, go to the 
+        // index.html and use the other solution, which disables the context menu entirely, even when right-clicking on the white space outside the game window.
+        this.game.canvas.oncontextmenu = function (e) { e.preventDefault(); }
 
         if (this.game.device.desktop)
         {

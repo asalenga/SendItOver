@@ -59,7 +59,8 @@ body {
 
 
 </head>
-<body oncontextmenu="return false;">
+<!-- This line is used to diable the context menu from appearing whenever the user right-clicks. However, this disables it even if the user right-clicks outside of the actual game window, so I used another solution within Boot.js. If other browsers don't like my solution, just uncomment this line right here to use the original solution and disable all right clicks -->
+<!-- <body oncontextmenu="return false;"> -->
 <div id="game"></div>
 <div id="readme">
 <h1>Send It Over!</h1>
