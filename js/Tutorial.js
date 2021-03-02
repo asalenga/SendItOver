@@ -711,7 +711,7 @@ BasicGame.Tutorial.prototype = {
         this.tutorialModeTitle.anchor.setTo( 0.5, 0.5 );
 
         // Instructions right below the title
-        this.TutorialInstructions = this.game.add.text( this.game.world.centerX, this.tutorialModeTitle.y + 40, 'Use the WASD keys to move. If you pick up any item, press the left mouse button to throw in the direction of the mouse cursor.\nIf that item is a ray gun, press the right mouse button to fire in the direction of the mouse cursor.', hintsTextStyle );
+        this.TutorialInstructions = this.game.add.text( this.game.world.centerX, this.tutorialModeTitle.y + 40, 'Use the WASD keys to move. If you pick up ship piece, press either the left or right mouse button to throw it in the direction of the mouse cursor.\nIf you pick up a ray gun, press the left mouse button to fire in the direction of the mouse cursor and the right button to throw.', hintsTextStyle );
         this.TutorialInstructions.anchor.setTo( 0.5, 0.5 );
 
         // Instructions at the bottom of the screen
@@ -787,7 +787,7 @@ BasicGame.Tutorial.prototype = {
         this.mouseText = this.game.add.text( this.mousePointer.x, this.mousePointer.y, '' , hintsTextStyle);
 
         // this.player1.body.onOverlap = new Phaser.Signal();
-        // this.player1.body.onOverlap.add(this.takeObject, this);
+        // this.player1.body.onOverlap.add(this.takeItem, this);
 //        this.itemInitVelocity = 200;
         // this.slowDownValue = 0;
     },
@@ -868,12 +868,12 @@ BasicGame.Tutorial.prototype = {
         	}
     	}
 */
-    //    this.takePieces = this.game.physics.arcade.overlap([this.player1,this.player2], this.p1Blue, this.takeObject, null, this);
+    //    this.takePieces = this.game.physics.arcade.overlap([this.player1,this.player2], this.p1Blue, this.takeItem, null, this);
         // this.game.physics.arcade.overlap(this.player, this.door, this.notFinished, null, this);
-        // Only executes takeObject when the player is holding nothing (has nothing in their possession)
+        // Only executes takeItem when the player is holding nothing (has nothing in their possession)
         if (this.p1Possess != true) {
-        	this.game.physics.arcade.overlap(this.player1, [this.p1Red_pieces, this.p1Yellow_pieces, this.p1Green_pieces, this.p1Blue_pieces, this.p2Red_pieces, this.p2Yellow_pieces, this.p2Green_pieces, this.p2Blue_pieces], this.takeObject, null, this);
-        	this.game.physics.arcade.overlap(this.player1, this.rayGuns, this.takeObject, null, this);
+        	this.game.physics.arcade.overlap(this.player1, [this.p1Red_pieces, this.p1Yellow_pieces, this.p1Green_pieces, this.p1Blue_pieces, this.p2Red_pieces, this.p2Yellow_pieces, this.p2Green_pieces, this.p2Blue_pieces], this.takeItem, null, this);
+        	this.game.physics.arcade.overlap(this.player1, this.rayGuns, this.takeItem, null, this);
 
             this.hintsText.text = "";
             this.hintsText.alpha = 0;
@@ -990,65 +990,11 @@ BasicGame.Tutorial.prototype = {
 
         // Sometimes, the item held by the player can be within an obstacle because a player is right next to the obstacle and the item has no choice
         // but to go to the position that is assigned to it and that position happens to be within the obstacle. So, we should check for overlap.
-        this.isCurrItemOverlapping = false;
-        if ( this.mousePointer.leftButton.isDown /*&& (this.hitGate1 != true)*/ && (this.p1currItem != null) && (this.itemThrowIsInitiated != true)) {
+        
+        if ( this.mousePointer.rightButton.isDown /*&& (this.hitGate1 != true)*/ && (this.p1currItem != null) && (this.itemThrowIsInitiated != true)) {
 
-            switch (this.p1currItem.color) {
-                case "red":
-                    this.isCurrItemOverlapping = this.game.physics.arcade.overlap(this.p1currItem /*[this.p1Red_pieces,this.p2Red_pieces]*/,[this.yellowGate,this.greenGate,this.blueGate,this.wall,this.wall2]);
-                    break;
-                case "yellow":
-                    this.isCurrItemOverlapping = this.game.physics.arcade.overlap(this.p1currItem /*[this.p1Yellow_pieces,this.p2Yellow_pieces]*/,[this.redGate,this.greenGate,this.blueGate,this.wall,this.wall2]);
-                    break;
-                case "green":
-                    this.isCurrItemOverlapping = this.game.physics.arcade.overlap(this.p1currItem /*[this.p1Green_pieces,this.p2Green_pieces]*/,[this.redGate,this.yellowGate,this.blueGate,this.wall,this.wall2]);
-                    break;
-                case "blue":
-                    this.isCurrItemOverlapping = this.game.physics.arcade.overlap(this.p1currItem /*[this.p1Blue_pieces,this.p2Blue_pieces]*/,[this.redGate,this.yellowGate,this.greenGate,this.wall,this.wall2]);
-                    break;
-            }
+            this.throwItem();
 
-            // this.baseVelocityVal = 200;
-            if ((this.p1Possess == true) && (this.isCurrItemOverlapping == false) /*&& (this.p1currItem != null)*/) {
-                // if (this.p1currItem.pos == "left") {
-                //     // this.p1currItem.body.velocity.setTo(-100,0);
-                //     this.velocityX1 = -200;
-                //     this.velocityY1 = 0;
-                // }
-                // if (this.p1currItem.pos == "right") {
-                //     // this.p1currItem.body.velocity.setTo(100,0);
-                //     this.velocityX1 = 200;
-                //     this.velocityY1 = 0;
-                // }
-                // if (this.p1currItem.pos == "up") {
-                //     // this.p1currItem.body.velocity.setTo(0,-100);
-                //     this.velocityX1 = 0;
-                //     this.velocityY1 = -200;
-                // }
-                // if (this.p1currItem.pos == "down") {
-                //     // this.p1currItem.body.velocity.setTo(0,100);
-                //     this.velocityX1 = 0;
-                //     this.velocityY1 = 200;
-                // }
-                // this.p1currItem.body.velocity.setTo(this.velocityX1,this.velocityY1);
-
-                // We will use the normalized vectors (unit vectors) going towards the mouse pointer and set the item velocity to go in that direction
-                
-                this.p1currItem.body.velocity.setTo(this.xDistToMousePointer_norm*this.baseVelocityVal,this.yDistToMousePointer_norm*this.baseVelocityVal);
-                // Set the x and y drag values of the current item in proportion to how much the item is moving in the x direction and y direction.
-                this.p1currItem.body.drag.x = 100*(Math.abs(this.xDistToMousePointer_norm));
-                this.p1currItem.body.drag.y = 100*(Math.abs(this.yDistToMousePointer_norm));
-                this.itemThrowIsInitiated = true;
-
-                this.resetPossessionTimer = this.game.time.events.add(Phaser.Timer.SECOND * 0.5, this.setPossessionFalse, this, this.player1);
-                // this.p1Possess = false;
-            }
-            // this.p1Possess = false;
-            // this.p1currItem = null;
-            // this.slowDownValue1 = 5;
-            // this.slowDownValue1 = 2;
-            // this.itemThrowIsInitiated = true; // sets throw button as pressed
-            // this.isCurrItemOverlapping = false;
         }
 
         // ...and when the 1 key is pressed, the item is thrown and its velocity gradually decreases because of an opposite acceleration that is added,
@@ -1144,7 +1090,7 @@ BasicGame.Tutorial.prototype = {
         // }
 
         // if (this.p1currItem in this.rayGuns.children) {
-        if ((this.p1currItem != null) && this.mousePointer.rightButton.isDown /*(this.twoKey.isDown)*//* && (this.itemThrowIsInitiated != true) */&& (this.p1Possess == true)) {
+        if ((this.p1currItem != null) && this.mousePointer.leftButton.isDown /*(this.twoKey.isDown)*//* && (this.itemThrowIsInitiated != true) */&& (this.p1Possess == true)) {
          	
             // switch (this.p1currItem.color) {
             //     case "red":
@@ -1163,20 +1109,62 @@ BasicGame.Tutorial.prototype = {
 
             this.isCurrItemOverlapping = this.game.physics.arcade.overlap(this.p1currItem /*[this.p1Blue_pieces,this.p2Blue_pieces]*/,[this.redGate,this.yellowGate,this.greenGate,this.blueGate,this.wall,this.wall2]);
 
-            if ((this.p1currItem == this.redGun) && (this.game.time.now > this.redBulletTime)) {
-        		// this.redBullet = this.redBullets.getFirstExists(false);
+            if (this.p1currItem == this.redGun) {
+                if (this.game.time.now > this.redBulletTime) {
+            		// this.redBullet = this.redBullets.getFirstExists(false);
 
-		    	// this.redBullet.anchor.setTo(0.5,0.5);
-		     //    this.redBullet.width = 10;
-		     //   	this.redBullet.height = 10;
-		     //   	this.redBullet.color = "red";
-		    	// this.game.physics.enable( this.redBullet, Phaser.Physics.ARCADE );
-        		// this.redBullet.body.onOverlap = new Phaser.Signal();
-        		// this.redBullet.body.onOverlap.add(this.killEnemy, this);
+    		    	// this.redBullet.anchor.setTo(0.5,0.5);
+    		     //    this.redBullet.width = 10;
+    		     //   	this.redBullet.height = 10;
+    		     //   	this.redBullet.color = "red";
+    		    	// this.game.physics.enable( this.redBullet, Phaser.Physics.ARCADE );
+            		// this.redBullet.body.onOverlap = new Phaser.Signal();
+            		// this.redBullet.body.onOverlap.add(this.killEnemy, this);
 
-       			// this.redBullet.reset(this.player1.x, this.player1.y);
-        		
-        		// switch (this.p1currItem.pos) {
+           			// this.redBullet.reset(this.player1.x, this.player1.y);
+            		
+            		// switch (this.p1currItem.pos) {
+                        // Calculate the distance the item should be from the player
+                        this.bulletXPos = (this.player1.width + this.p1currItem.width*0.7) * this.xDistToMousePointer_norm;
+                        this.bulletYPos = (this.player1.height + this.p1currItem.height*0.7) * this.yDistToMousePointer_norm;
+
+                        // Put the bullet at the proper spot, using the player's current position.
+                        var finalBulletXPos = this.player1.x + this.bulletXPos;
+                        var finalbulletYPos = this.player1.y + this.bulletYPos;
+
+                        // Determine the bullet velocity
+                        this.bulletXVel = this.xDistToMousePointer_norm*this.baseVelocityVal*2
+                        this.bulletYVel = this.yDistToMousePointer_norm*this.baseVelocityVal*2;
+
+                        // If there are no overlaps with any obstacles, we are all set to fire
+                        if (this.isCurrItemOverlapping == false) {
+                            this.fireBullet(this.redBullet,finalBulletXPos,finalbulletYPos,this.bulletXVel,this.bulletYVel);
+                        }
+
+            			// case "right":
+            			// 	// this.redBullet.body.velocity.x = 300;
+            			// 	this.fireBullet(this.redBullet,this.player1,300,0);
+            			// 	break;
+            			// case "left":
+            			// 	// this.redBullet.body.velocity.x = -300;
+            			// 	this.fireBullet(this.redBullet,this.player1,-300,0);
+            			// 	break;
+            			// case "up":
+            			// 	// this.redBullet.body.velocity.y = -300;
+            			// 	this.fireBullet(this.redBullet,this.player1,0,-300);
+            			// 	break;
+            			// case "down":
+            			// 	// this.redBullet.body.velocity.y = 300;
+            			// 	this.fireBullet(this.redBullet,this.player1,0,300);
+            			// 	break;
+            		// }
+            		// this.redBullet.events.onOutOfBounds.add(this.killBullet, this);
+            		this.redBulletTime = this.game.time.now + 300;
+                }
+         	}
+/*         	else if (this.p1currItem == this.yellowGun) {
+                if (this.game.time.now > this.yellowBulletTime) {
+
                     // Calculate the distance the item should be from the player
                     this.bulletXPos = (this.player1.width + this.p1currItem.width*0.7) * this.xDistToMousePointer_norm;
                     this.bulletYPos = (this.player1.height + this.p1currItem.height*0.7) * this.yDistToMousePointer_norm;
@@ -1191,134 +1179,107 @@ BasicGame.Tutorial.prototype = {
 
                     // If there are no overlaps with any obstacles, we are all set to fire
                     if (this.isCurrItemOverlapping == false) {
-                        this.fireBullet(this.redBullet,finalBulletXPos,finalbulletYPos,this.bulletXVel,this.bulletYVel);
+                        this.fireBullet(this.yellowBullet,finalBulletXPos,finalbulletYPos,this.bulletXVel,this.bulletYVel);
                     }
 
-        			// case "right":
-        			// 	// this.redBullet.body.velocity.x = 300;
-        			// 	this.fireBullet(this.redBullet,this.player1,300,0);
-        			// 	break;
-        			// case "left":
-        			// 	// this.redBullet.body.velocity.x = -300;
-        			// 	this.fireBullet(this.redBullet,this.player1,-300,0);
-        			// 	break;
-        			// case "up":
-        			// 	// this.redBullet.body.velocity.y = -300;
-        			// 	this.fireBullet(this.redBullet,this.player1,0,-300);
-        			// 	break;
-        			// case "down":
-        			// 	// this.redBullet.body.velocity.y = 300;
-        			// 	this.fireBullet(this.redBullet,this.player1,0,300);
-        			// 	break;
-        		// }
-        		// this.redBullet.events.onOutOfBounds.add(this.killBullet, this);
-        		this.redBulletTime = this.game.time.now + 300;
-         	}
-/*         	if ((this.p1currItem == this.yellowGun) && (this.game.time.now > this.yellowBulletTime)) {
-
-                // Calculate the distance the item should be from the player
-                this.bulletXPos = (this.player1.width + this.p1currItem.width*0.7) * this.xDistToMousePointer_norm;
-                this.bulletYPos = (this.player1.height + this.p1currItem.height*0.7) * this.yDistToMousePointer_norm;
-
-                // Put the bullet at the proper spot, using the player's current position.
-                var finalBulletXPos = this.player1.x + this.bulletXPos;
-                var finalbulletYPos = this.player1.y + this.bulletYPos;
-
-                // Determine the bullet velocity
-                this.bulletXVel = this.xDistToMousePointer_norm*this.baseVelocityVal*2
-                this.bulletYVel = this.yDistToMousePointer_norm*this.baseVelocityVal*2;
-
-                // If there are no overlaps with any obstacles, we are all set to fire
-                if (this.isCurrItemOverlapping == false) {
-                    this.fireBullet(this.yellowBullet,finalBulletXPos,finalbulletYPos,this.bulletXVel,this.bulletYVel);
+            		// switch (this.p1currItem.pos) {
+            		// 	case "right":
+            		// 		this.fireBullet(this.yellowBullet,this.player1,300,0);
+            		// 		break;
+            		// 	case "left":
+            		// 		this.fireBullet(this.yellowBullet,this.player1,-300,0);
+            		// 		break;
+            		// 	case "up":
+            		// 		this.fireBullet(this.yellowBullet,this.player1,0,-300);
+            		// 		break;
+            		// 	case "down":
+            		// 		this.fireBullet(this.yellowBullet,this.player1,0,300);
+            		// 		break;
+            		// }
+            		this.yellowBulletTime = this.game.time.now + 300;
                 }
-
-        		// switch (this.p1currItem.pos) {
-        		// 	case "right":
-        		// 		this.fireBullet(this.yellowBullet,this.player1,300,0);
-        		// 		break;
-        		// 	case "left":
-        		// 		this.fireBullet(this.yellowBullet,this.player1,-300,0);
-        		// 		break;
-        		// 	case "up":
-        		// 		this.fireBullet(this.yellowBullet,this.player1,0,-300);
-        		// 		break;
-        		// 	case "down":
-        		// 		this.fireBullet(this.yellowBullet,this.player1,0,300);
-        		// 		break;
-        		// }
-        		this.yellowBulletTime = this.game.time.now + 300;
          	}
-         	if ((this.p1currItem == this.greenGun) && (this.game.time.now > this.greenBulletTime)) {
+         	else if (this.p1currItem == this.greenGun) {
+                if (this.game.time.now > this.greenBulletTime) {
 
-                // Calculate the distance the item should be from the player
-                this.bulletXPos = (this.player1.width + this.p1currItem.width*0.7) * this.xDistToMousePointer_norm;
-                this.bulletYPos = (this.player1.height + this.p1currItem.height*0.7) * this.yDistToMousePointer_norm;
+                    // Calculate the distance the item should be from the player
+                    this.bulletXPos = (this.player1.width + this.p1currItem.width*0.7) * this.xDistToMousePointer_norm;
+                    this.bulletYPos = (this.player1.height + this.p1currItem.height*0.7) * this.yDistToMousePointer_norm;
 
-                // Put the bullet at the proper spot, using the player's current position.
-                var finalBulletXPos = this.player1.x + this.bulletXPos;
-                var finalbulletYPos = this.player1.y + this.bulletYPos;
+                    // Put the bullet at the proper spot, using the player's current position.
+                    var finalBulletXPos = this.player1.x + this.bulletXPos;
+                    var finalbulletYPos = this.player1.y + this.bulletYPos;
 
-                // Determine the bullet velocity
-                this.bulletXVel = this.xDistToMousePointer_norm*this.baseVelocityVal*2
-                this.bulletYVel = this.yDistToMousePointer_norm*this.baseVelocityVal*2;
+                    // Determine the bullet velocity
+                    this.bulletXVel = this.xDistToMousePointer_norm*this.baseVelocityVal*2
+                    this.bulletYVel = this.yDistToMousePointer_norm*this.baseVelocityVal*2;
 
-                // If there are no overlaps with any obstacles, we are all set to fire
-                if (this.isCurrItemOverlapping == false) {
-                    this.fireBullet(this.greenBullet,finalBulletXPos,finalbulletYPos,this.bulletXVel,this.bulletYVel);
+                    // If there are no overlaps with any obstacles, we are all set to fire
+                    if (this.isCurrItemOverlapping == false) {
+                        this.fireBullet(this.greenBullet,finalBulletXPos,finalbulletYPos,this.bulletXVel,this.bulletYVel);
+                    }
+
+            		// switch (this.p1currItem.pos) {
+            		// 	case "right":
+            		// 		this.fireBullet(this.greenBullet,this.player1,300,0);
+            		// 		break;
+            		// 	case "left":
+            		// 		this.fireBullet(this.greenBullet,this.player1,-300,0);
+            		// 		break;
+            		// 	case "up":
+            		// 		this.fireBullet(this.greenBullet,this.player1,0,-300);
+            		// 		break;
+            		// 	case "down":
+            		// 		this.fireBullet(this.greenBullet,this.player1,0,300);
+            		// 		break;
+            		// }
+            		this.greenBulletTime = this.game.time.now + 300;
                 }
-
-        		// switch (this.p1currItem.pos) {
-        		// 	case "right":
-        		// 		this.fireBullet(this.greenBullet,this.player1,300,0);
-        		// 		break;
-        		// 	case "left":
-        		// 		this.fireBullet(this.greenBullet,this.player1,-300,0);
-        		// 		break;
-        		// 	case "up":
-        		// 		this.fireBullet(this.greenBullet,this.player1,0,-300);
-        		// 		break;
-        		// 	case "down":
-        		// 		this.fireBullet(this.greenBullet,this.player1,0,300);
-        		// 		break;
-        		// }
-        		this.greenBulletTime = this.game.time.now + 300;
          	}*/
-         	if ((this.p1currItem == this.blueGun) && (this.game.time.now > this.blueBulletTime)) {
-        		
-                // Calculate the distance the item should be from the player
-                this.bulletXPos = (this.player1.width + this.p1currItem.width*0.7) * this.xDistToMousePointer_norm;
-                this.bulletYPos = (this.player1.height + this.p1currItem.height*0.7) * this.yDistToMousePointer_norm;
+         	else if (this.p1currItem == this.blueGun) {
+                if (this.game.time.now > this.blueBulletTime) {
+            		
+                    // Calculate the distance the item should be from the player
+                    this.bulletXPos = (this.player1.width + this.p1currItem.width*0.7) * this.xDistToMousePointer_norm;
+                    this.bulletYPos = (this.player1.height + this.p1currItem.height*0.7) * this.yDistToMousePointer_norm;
 
-                // Put the bullet at the proper spot, using the player's current position.
-                var finalBulletXPos = this.player1.x + this.bulletXPos;
-                var finalbulletYPos = this.player1.y + this.bulletYPos;
+                    // Put the bullet at the proper spot, using the player's current position.
+                    var finalBulletXPos = this.player1.x + this.bulletXPos;
+                    var finalbulletYPos = this.player1.y + this.bulletYPos;
 
-                // Determine the bullet velocity
-                this.bulletXVel = this.xDistToMousePointer_norm*this.baseVelocityVal*2
-                this.bulletYVel = this.yDistToMousePointer_norm*this.baseVelocityVal*2;
+                    // Determine the bullet velocity
+                    this.bulletXVel = this.xDistToMousePointer_norm*this.baseVelocityVal*2
+                    this.bulletYVel = this.yDistToMousePointer_norm*this.baseVelocityVal*2;
 
-                // If there are no overlaps with any obstacles, we are all set to fire
-                if (this.isCurrItemOverlapping == false) {
-                    this.fireBullet(this.blueBullet,finalBulletXPos,finalbulletYPos,this.bulletXVel,this.bulletYVel);
+                    // If there are no overlaps with any obstacles, we are all set to fire
+                    if (this.isCurrItemOverlapping == false) {
+                        this.fireBullet(this.blueBullet,finalBulletXPos,finalbulletYPos,this.bulletXVel,this.bulletYVel);
+                    }
+
+                    // switch (this.p1currItem.pos) {
+            		// 	case "right":
+            		// 		this.fireBullet(this.blueBullet,this.player1,300,0);
+            		// 		break;
+            		// 	case "left":
+            		// 		this.fireBullet(this.blueBullet,this.player1,-300,0);
+            		// 		break;
+            		// 	case "up":
+            		// 		this.fireBullet(this.blueBullet,this.player1,0,-300);
+            		// 		break;
+            		// 	case "down":
+            		// 		this.fireBullet(this.blueBullet,this.player1,0,300);
+            		// 		break;
+            		// }
+            		this.blueBulletTime = this.game.time.now + 300;
                 }
-
-                // switch (this.p1currItem.pos) {
-        		// 	case "right":
-        		// 		this.fireBullet(this.blueBullet,this.player1,300,0);
-        		// 		break;
-        		// 	case "left":
-        		// 		this.fireBullet(this.blueBullet,this.player1,-300,0);
-        		// 		break;
-        		// 	case "up":
-        		// 		this.fireBullet(this.blueBullet,this.player1,0,-300);
-        		// 		break;
-        		// 	case "down":
-        		// 		this.fireBullet(this.blueBullet,this.player1,0,300);
-        		// 		break;
-        		// }
-        		this.blueBulletTime = this.game.time.now + 300;
          	}
+            else {// if ((this.p1currItem != this.redGun) && (this.p1currItem != this.yellowGun) && (this.p1currItem != this.greenGun) && (this.p1currItem != this.blueGun)) {
+                if ( (this.p1currItem != null) && (this.itemThrowIsInitiated != true)) {
+
+                    this.throwItem();
+
+                }
+            }
 
         }
 
@@ -1352,6 +1313,68 @@ BasicGame.Tutorial.prototype = {
     //     this.p1Possess = false;
     // },
 
+    throwItem: function () {
+
+        this.isCurrItemOverlapping = false;
+
+        switch (this.p1currItem.color) {
+            case "red":
+                this.isCurrItemOverlapping = this.game.physics.arcade.overlap(this.p1currItem /*[this.p1Red_pieces,this.p2Red_pieces]*/,[this.yellowGate,this.greenGate,this.blueGate,this.wall,this.wall2]);
+                break;
+            case "yellow":
+                this.isCurrItemOverlapping = this.game.physics.arcade.overlap(this.p1currItem /*[this.p1Yellow_pieces,this.p2Yellow_pieces]*/,[this.redGate,this.greenGate,this.blueGate,this.wall,this.wall2]);
+                break;
+            case "green":
+                this.isCurrItemOverlapping = this.game.physics.arcade.overlap(this.p1currItem /*[this.p1Green_pieces,this.p2Green_pieces]*/,[this.redGate,this.yellowGate,this.blueGate,this.wall,this.wall2]);
+                break;
+            case "blue":
+                this.isCurrItemOverlapping = this.game.physics.arcade.overlap(this.p1currItem /*[this.p1Blue_pieces,this.p2Blue_pieces]*/,[this.redGate,this.yellowGate,this.greenGate,this.wall,this.wall2]);
+                break;
+        }
+
+        // this.baseVelocityVal = 200;
+        if ((this.p1Possess == true) && (this.isCurrItemOverlapping == false) /*&& (this.p1currItem != null)*/) {
+            // if (this.p1currItem.pos == "left") {
+            //     // this.p1currItem.body.velocity.setTo(-100,0);
+            //     this.velocityX1 = -200;
+            //     this.velocityY1 = 0;
+            // }
+            // if (this.p1currItem.pos == "right") {
+            //     // this.p1currItem.body.velocity.setTo(100,0);
+            //     this.velocityX1 = 200;
+            //     this.velocityY1 = 0;
+            // }
+            // if (this.p1currItem.pos == "up") {
+            //     // this.p1currItem.body.velocity.setTo(0,-100);
+            //     this.velocityX1 = 0;
+            //     this.velocityY1 = -200;
+            // }
+            // if (this.p1currItem.pos == "down") {
+            //     // this.p1currItem.body.velocity.setTo(0,100);
+            //     this.velocityX1 = 0;
+            //     this.velocityY1 = 200;
+            // }
+            // this.p1currItem.body.velocity.setTo(this.velocityX1,this.velocityY1);
+
+            // We will use the normalized vectors (unit vectors) going towards the mouse pointer and set the item velocity to go in that direction
+            
+            this.p1currItem.body.velocity.setTo(this.xDistToMousePointer_norm*this.baseVelocityVal,this.yDistToMousePointer_norm*this.baseVelocityVal);
+            // Set the x and y drag values of the current item in proportion to how much the item is moving in the x direction and y direction.
+            this.p1currItem.body.drag.x = 100*(Math.abs(this.xDistToMousePointer_norm));
+            this.p1currItem.body.drag.y = 100*(Math.abs(this.yDistToMousePointer_norm));
+            this.itemThrowIsInitiated = true;
+
+            this.resetPossessionTimer = this.game.time.events.add(Phaser.Timer.SECOND * 0.5, this.setPossessionFalse, this, this.player1);
+            // this.p1Possess = false;
+        }
+        // this.p1Possess = false;
+        // this.p1currItem = null;
+        // this.slowDownValue1 = 5;
+        // this.slowDownValue1 = 2;
+        // this.itemThrowIsInitiated = true; // sets throw button as pressed
+        // this.isCurrItemOverlapping = false;
+    },
+
     setPossessionFalse: function (player) {
         if (player == this.player1) {
             // this.p1currItem.body.velocity.setTo(0,0);
@@ -1360,7 +1383,7 @@ BasicGame.Tutorial.prototype = {
         }
     },
 
-    takeObject: function (player, piece) {
+    takeItem: function (player, piece) {
         if (player == this.player1) {
             this.p1Possess = true;
             // this.p1prevItem = this.p1currItem;
