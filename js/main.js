@@ -1,6 +1,6 @@
 "use strict";
 
-window.onload = function() {
+// window.onload = function() {
 
 	// var config = {
 	//     type: Phaser.AUTO,
@@ -39,4 +39,4 @@ window.onload = function() {
 	//	Now start the Boot state.
 	game.state.start('Boot');
 
-};
+// };

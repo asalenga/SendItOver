@@ -2,6 +2,8 @@
 
 // NOTE: As of 2/23/21 (and since CS 325), this is currently Phaser 2, not Phaser 3!!!
 
+// var Game = {};
+
 BasicGame.Game = function (game) {
 
     //  When a State is added to Phaser it automatically has the following properties set on it, even if they already exist:
@@ -26,7 +28,7 @@ BasicGame.Game = function (game) {
     //  You can use any of these from any function within this State.
     //  But do consider them as being 'reserved words', i.e. don't create a property for your own game called "world" or you'll over-write the world reference.
     */
-    
+    // this.stage.disableVisibilityChange = true;
     // For optional clarity, you can initialize
     // member variables here. Otherwise, you will do it in create().
     this.planetSurfaceData = null;
@@ -132,7 +134,19 @@ BasicGame.Game.prototype = {
     //   }
     // };
 
+    // init: function () {
+
+    //     //  Phaser will automatically pause if the browser tab the game is in loses focus. You can disable that here:
+    //     this.game.stage.disableVisibilityChange = true;
+
+    // },
+
     create: function () {
+
+        // The tutorial at https://www.dynetisgames.com/2017/03/06/how-to-make-a-multiplayer-online-game-with-phaser-socket-io-and-node-js/
+        // says that "Game.playerMap = {}" is an "empty object [that] will be useful later on to keep track of players"
+        BasicGame.Game.playerMap = {};
+
 
         // NOTE: noise and perlin stuff is usable here only if the necessary files are loaded;
         // If you check index.html, you'll see the js/noisejs/perlin.js script loaded right before Game.js (which is this file).
@@ -1095,6 +1109,22 @@ BasicGame.Game.prototype = {
         // this.player1.body.onOverlap.add(this.takeItem, this);
 //        this.itemInitVelocity = 200;
         // this.slowDownValue = 0;
+
+        // Tutorial: "the client will notify the server that a new player should be created"
+        // Note: See how it is at the end of the create() method; my theory is that it's so that
+        // no more than one player executes the entire process of initializing everything above
+        Client.askNewPlayer();
+
+    },
+
+    // This func is for adding a new player to the game; they are placed at a specified x and y pos, and are given a unique id,
+    // which are stored in the socket object (lines 38-42 of server.js) created when the player connects to the server
+    // Tutorial: "This method creates a new sprite at the specified coordinates, and stores the corresponding Sprite object into
+    // an associative array declared in Game.create(), with the supplied id as the key. This allows to easily access the sprite
+    // corresponding to a specific player, for example when we need to move or remove it"
+    addNewPlayer: function(id,x,y){
+        console.log(`From addNewPlayer in Game.js... id: ${id}, x: ${x}, y: ${y}`);
+        BasicGame.Game.playerMap[id] = game.add.sprite(x,y,'player1');
     },
 
     update: function () {
@@ -2042,3 +2072,16 @@ BasicGame.Game.prototype = {
     }
 
 };
+
+
+// Note: This version of addNewPlayer() works too if you want to use it instead of the one in the .prototype above.
+// In client.js, you'd just need to call BasicGame.Game.addNewPlayer(data.id,data.x,data.y) instead of BasicGame.Game.prototype.addNewPlayer(data.id,data.x,data.y)
+
+// // This func is for adding a new player to the game; they are placed at a specified x and y pos, and are given a unique id,
+// // which are stored in the socket object (lines 38-42 of server.js) created when the player connects to the server
+// // Tutorial: "This method creates a new sprite at the specified coordinates, and stores the corresponding Sprite object into
+// // an associative array declared in Game.create(), with the supplied id as the key. This allows to easily access the sprite
+// // corresponding to a specific player, for example when we need to move or remove it"
+// BasicGame.Game.addNewPlayer = function(id,x,y){
+//     BasicGame.Game.playerMap[id] = game.add.sprite( x,y,'player1');
+// };
