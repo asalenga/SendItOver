@@ -21,7 +21,7 @@ window.onload = function() {
 
 	//	Create your Phaser game and inject it into the 'game' div.
 	//	We did it in a window.onload event, but you can do it anywhere (requireJS load, anonymous function, jQuery dom ready, - whatever floats your boat)
-	var game = new Phaser.Game( 1200, 600, Phaser.AUTO, 'game' );
+	var game = new Phaser.Game( 1200, 600, Phaser.AUTO, 'game' ); // That last argument, 'game' can also be replaced by document.getElementById('game'), which means that this arg likely corresponds to the 'game' div from the index.html file
 
 	// this.timeSoFar = null;
 
