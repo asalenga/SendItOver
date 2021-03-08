@@ -51,14 +51,14 @@ BasicGame.Tutorial = function (game) {
     this.p2Blue_pieces = null;
 
     this.enemies = null;
-    this.p1Possess = null; // Check if PLayer 1 has possession of something
+    this.p1Possess = null; // Check if Player 1 has possession of something
     this.p1currItem = null; // Check what item Player 1 is in possession of
 
     this.isCurrItemOverlapping = null;
     this.itemThrowIsInitiated = null;
 
-    // this.p2Possess = null; // Check if PLayer 1 has possession of something
-    // this.p2currItem = null; // Check what item Player 1 is in possession of
+    // this.p2Possess = null; // Check if Player 2 has possession of something
+    // this.p2currItem = null; // Check what item Player 2 is in possession of
 //    this.itemInitVelocity = null; // The initial velocity of an item when thrown by a player
     // this.slowDownValue1 = null; // The decrement value of the velocity over time (how quickly it slows down) for Player 1's current item
     // this.slowDownValue2 = null; // The decrement value of the velocity over time (how quickly it slows down) for Player 2's current item
@@ -75,12 +75,13 @@ BasicGame.Tutorial = function (game) {
     // this.greenBulletTime = null;
     this.blueBulletTime = null;
     // this.gameClock = null;
+    this.playersWin = null; // Check if the players have won or lost
+
     this.tutorialModeTitle = null;
     this.TutorialInstructions = null;
     this.TutorialInstructions2 = null;
     this.hintsText = null;
     this.hintsText2 = null;
-    this.playersWin = null; // Check if the players have won or lost
 
     this.mousePointer = null;
     this.mouseText = null;
@@ -198,7 +199,9 @@ BasicGame.Tutorial.prototype = {
         this.planetSurfaceSprite.y = this.game.world.centerY - this.planetSurfaceSprite.height / 2;
 */
 
-        // Create a sprite at the center of the screen using the 'logo' image.
+    // Create the walls
+
+        // Create a sprite using the 'wall' image.
         this.wall = this.game.add.sprite( this.game.world.centerX, (this.game.world.height/10)*2.75, 'wall' );
         // Anchor the sprite at its center, as opposed to its top-left corner.
         // so it will be truly centered.
@@ -207,7 +210,7 @@ BasicGame.Tutorial.prototype = {
         this.wall.width = 50;
         this.wall.height = this.game.world.height/20;
 
-        // Create a sprite at the center of the screen using the 'logo' image.
+        // Create a sprite using the 'wall' image.
         this.wall2 = this.game.add.sprite( this.game.world.centerX, (this.game.world.height/10)*7.25, 'wall' );
         // Anchor the sprite at its center, as opposed to its top-left corner.
         // so it will be truly centered.
@@ -216,16 +219,7 @@ BasicGame.Tutorial.prototype = {
         this.wall2.width = 50;
         this.wall2.height = this.game.world.height/20;
 
-
-        // // Create a sprite at the center of the screen using the 'logo' image.
-        // this.wall = this.game.add.sprite( this.game.world.centerX, this.game.world.centerY, 'wall' );
-        // // Anchor the sprite at its center, as opposed to its top-left corner.
-        // // so it will be truly centered.
-        // this.wall.anchor.setTo( 0.5, 0.5 );
-
-        // this.wall.width = 50;
-        // this.wall.height = this.game.world.height/2;
-
+    // Create the gates
 
         this.redGate = this.game.add.sprite( this.game.world.centerX, (this.game.world.height/5)*2, 'RedGate');
         this.redGate.anchor.setTo(0.5,0.5);
@@ -706,6 +700,10 @@ BasicGame.Tutorial.prototype = {
         // this.gameClock = this.game.add.text( 50, 15, 'Elapsed seconds: '+this.game.time.totalElapsedSeconds(), style );
         // this.gameClock.anchor.setTo( 0.0, 0.0 );
 
+        // this.timeSoFar = this.game.time.totalElapsedSeconds();
+
+        // this.spawnBeginning = 0;
+
         // The Tutorial Mode Title
         this.tutorialModeTitle = this.game.add.text( this.game.world.centerX, 30, 'Tutorial Mode', style );
         this.tutorialModeTitle.anchor.setTo( 0.5, 0.5 );
@@ -732,10 +730,6 @@ BasicGame.Tutorial.prototype = {
         // Alpha value:         this.hintsText.alpha = 0;
         // x or y position:     this.hintsText.x = 0;
         // the actual text:     this.hintsText.text = "Hello!";
-
-		// this.timeSoFar = this.game.time.totalElapsedSeconds();
-
-        // this.spawnBeginning = 0;
         
         // // When you click on the sprite, you go back to the MainMenu.
         // this.wall.inputEnabled = true;
@@ -1273,7 +1267,7 @@ BasicGame.Tutorial.prototype = {
             		this.blueBulletTime = this.game.time.now + 300;
                 }
          	}
-            else {// if ((this.p1currItem != this.redGun) && (this.p1currItem != this.yellowGun) && (this.p1currItem != this.greenGun) && (this.p1currItem != this.blueGun)) {
+            else { // The current item is not a ray gun, i.e. if ((this.p1currItem != this.redGun) && (this.p1currItem != this.yellowGun) && (this.p1currItem != this.greenGun) && (this.p1currItem != this.blueGun)) {
                 if ( (this.p1currItem != null) && (this.itemThrowIsInitiated != true)) {
 
                     this.throwItem();
@@ -1375,14 +1369,6 @@ BasicGame.Tutorial.prototype = {
         // this.isCurrItemOverlapping = false;
     },
 
-    setPossessionFalse: function (player) {
-        if (player == this.player1) {
-            // this.p1currItem.body.velocity.setTo(0,0);
-            // this.p1currItem.body.acceleration.setTo(0,0);
-            this.p1Possess = false;
-        }
-    },
-
     takeItem: function (player, piece) {
         if (player == this.player1) {
             this.p1Possess = true;
@@ -1398,6 +1384,14 @@ BasicGame.Tutorial.prototype = {
             // if ((this.throwTimer1 != null)/* && (this.p1prevItem  == this.p1currItem)*/) {
             	// this.game.time.events.remove(this.throwTimer1);
             // }
+        }
+    },
+
+    setPossessionFalse: function (player) {
+        if (player == this.player1) {
+            // this.p1currItem.body.velocity.setTo(0,0);
+            // this.p1currItem.body.acceleration.setTo(0,0);
+            this.p1Possess = false;
         }
     },
 
