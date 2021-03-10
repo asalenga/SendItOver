@@ -31,6 +31,7 @@
 	game.state.add('Preloader', BasicGame.Preloader);
 	game.state.add('MainMenu', BasicGame.MainMenu);
 	game.state.add('Tutorial', BasicGame.Tutorial);
+	game.state.add('WaitingRoom', BasicGame.WaitingRoom);
 	game.state.add('Game', BasicGame.Game);
 
 	game.state.add('WinScreen', BasicGame.WinScreen);
@@ -40,3 +41,28 @@
 	game.state.start('Boot');
 
 // };
+
+// class MyGame extends Phaser.Game {
+
+// 	constructor() {
+
+// 		super( 1200, 600, Phaser.AUTO, 'game' );
+
+// 		this.state.add('Boot', BasicGame.Boot);
+// 		this.state.add('Preloader', BasicGame.Preloader);
+// 		this.state.add('MainMenu', BasicGame.MainMenu);
+// 		this.state.add('Tutorial', BasicGame.Tutorial);
+// 		this.state.add('WaitingRoom', BasicGame.WaitingRoom);
+// 		this.state.add('Game', BasicGame.Game);
+
+// 		this.state.add('WinScreen', BasicGame.WinScreen);
+// 		this.state.add('LoseScreen', BasicGame.LoseScreen);
+
+// 		//	Now start the Boot state.
+// 		this.state.start('Boot');
+
+// 	}
+
+// }
+
+// new MyGame();

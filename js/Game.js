@@ -2,7 +2,16 @@
 
 // NOTE: As of 2/23/21 (and since CS 325), this is currently Phaser 2, not Phaser 3!!!
 
-// var Game = {};
+// class NewGame {
+
+//     constructor(p1, p2) {
+//         this._p1 = p1;
+//         this._p2 = p2;
+//     }
+
+// }
+
+var Game = {};
 
 BasicGame.Game = function (game) {
 
@@ -145,7 +154,7 @@ BasicGame.Game.prototype = {
 
         // The tutorial at https://www.dynetisgames.com/2017/03/06/how-to-make-a-multiplayer-online-game-with-phaser-socket-io-and-node-js/
         // says that "Game.playerMap = {}" is an "empty object [that] will be useful later on to keep track of players"
-        BasicGame.Game.playerMap = {};
+        Game.playerMap = {};
 
 
         // NOTE: noise and perlin stuff is usable here only if the necessary files are loaded;
@@ -432,7 +441,7 @@ BasicGame.Game.prototype = {
     	this.enemies = this.game.add.group();
     	this.enemies.enableBody = true;
     	this.enemies.physicsBodyType = Phaser.Physics.ARCADE;
-
+/*
 // Wave 1
 
     	this.redEnemy1 = this.enemies.create(300, -50, 'RedEnemy');
@@ -716,8 +725,8 @@ BasicGame.Game.prototype = {
     	this.redEnemy5.height = 60;
     	this.redEnemy5.width = 60;
     	this.redEnemy5.color = "red";
-
-    	
+*/
+// Player pieces
 
         // this.pieces = this.game.add.group();
         // this.pieces.enableBody = true;
@@ -1124,14 +1133,42 @@ BasicGame.Game.prototype = {
     // corresponding to a specific player, for example when we need to move or remove it"
     addNewPlayer: function(id,x,y){
         console.log(`From addNewPlayer in Game.js... id: ${id}, x: ${x}, y: ${y}`);
-        BasicGame.Game.playerMap[id] = game.add.sprite(x,y,'player1');
+        Game.playerMap[id] = game.add.sprite(x,y,'player1');
+        Game.playerMap[id].anchor.setTo( 0.5, 0.5 );
+        Game.playerMap[id].width = 75;//50;
+        Game.playerMap[id].height = 75;//50;
+
+        // this.player1 = this.game.add.sprite( (this.game.world.width/4), this.game.world.centerY, 'player1' );
+        // this.player1.anchor.setTo( 0.5, 0.5 );
+        // this.player1.width = 75;
+        // this.player1.height = 75;
     },
 
     // This func is for removing a player (with the specified id) from the game. It is called when the Client receives the
     // message from the server that the player disconnected from the game.
     removePlayer: function(id){
-        BasicGame.Game.playerMap[id].destroy();
-        delete BasicGame.Game.playerMap[id];
+        Game.playerMap[id].destroy();
+        delete Game.playerMap[id];
+    },
+
+    // This func is for sending the player's position to the server, so that the other player sees when they move
+    sendPlayerPos: function(x,y){
+        Client.updatePlayerPos(x,y);
+    },
+
+    // This func is for seeing the other player (with the specified id) move
+    movePlayer: function(id,x,y){
+        if (Game.playerMap[id] != null) {
+            Game.playerMap[id].x = x;
+            Game.playerMap[id].y = y;
+        }
+        // var distance = Phaser.Math.distance(player.x,player.y,x,y);
+        // var duration = distance;
+        // var tween = game.add.tween(player);
+        // tween.to({x:x,y:y}, 1.0);
+        // tween.start();
+        // player.x = x;
+        // player.y = y;
     },
 
     update: function () {
@@ -1757,6 +1794,9 @@ BasicGame.Game.prototype = {
             }
 
         }
+
+        // Send the player position to the server
+        this.sendPlayerPos(this.player1.x,this.player1.y);
 
     },
 

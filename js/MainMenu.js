@@ -36,7 +36,7 @@ BasicGame.MainMenu.prototype = {
 		// \nTo get off this planet, you must work together and...
 		this.storyText.anchor.setTo(0.5,0);
 
-		this.playButton = this.add.button( this.world.centerX, this.world.height-150, 'playButton', this.startGame, this, 'over', 'out', 'down'); // 'Start', 'Play Game', 'Start' // the last 3 params correspond to 'over', 'out', 'down'
+		this.playButton = this.add.button( this.world.centerX, this.world.height-150, 'playButton', this.startWaitingRoom, this, 'over', 'out', 'down'); // 'Start', 'Play Game', 'Start' // the last 3 params correspond to 'over', 'out', 'down'
 		this.playButton.anchor.setTo(0.5,0.5);
 
 		this.startTutorialButton = this.add.button( this.world.centerX, this.world.height-75, 'playButton', this.startTutorial, this, 'over', 'out', 'down'); // the last 3 params correspond to 'over', 'out', 'down'
@@ -55,14 +55,17 @@ BasicGame.MainMenu.prototype = {
 
 	},
 
-	startGame: function (pointer) {
+	startWaitingRoom: function (pointer) {
 
 		//	Ok, the Play Button has been clicked or touched, so let's stop the music (otherwise it'll carry on playing)
 		// this.music.stop();
 		// this.timeSoFar = this.game.time.totalElapsedSeconds();
 
-		//	And start the actual game
-		this.state.start('Game');
+//		//	And start the actual game
+//		this.state.start('Game');
+
+		// Put the player in a Waiting Room until there are enough players to start the game
+		this.state.start('WaitingRoom');
 
 	},
 
