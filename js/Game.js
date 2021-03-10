@@ -1127,6 +1127,13 @@ BasicGame.Game.prototype = {
         BasicGame.Game.playerMap[id] = game.add.sprite(x,y,'player1');
     },
 
+    // This func is for removing a player (with the specified id) from the game. It is called when the Client receives the
+    // message from the server that the player disconnected from the game.
+    removePlayer: function(id){
+        BasicGame.Game.playerMap[id].destroy();
+        delete BasicGame.Game.playerMap[id];
+    },
+
     update: function () {
 
     	this.gameClock.text = 'Elapsed seconds: ' + Phaser.Math.roundTo(this.game.time.totalElapsedSeconds()-this.timeSoFar,-2);

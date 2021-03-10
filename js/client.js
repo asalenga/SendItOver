@@ -27,6 +27,11 @@ Client.socket.on('newplayer',function(data){
 Client.socket.on('allplayers',function(data){
     console.log(data);
     for(var i = 0; i < data.length; i++){
-        Game.addNewPlayer(data[i].id,data[i].x,data[i].y);
+        BasicGame.Game.prototype.addNewPlayer(data[i].id,data[i].x,data[i].y);
     }
+});
+
+// Process the 'remove' message, which is emitting when a player disconnects from the game
+Client.socket.on('remove',function(id){
+    BasicGame.Game.prototype.removePlayer(id);
 });

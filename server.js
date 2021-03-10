@@ -49,6 +49,14 @@ io.on('connection',function(socket){
         // It allows to broadcast events from a client to all other clients without echoing them back to the initiating client. Here, we
         // broadcast the 'newplayer' message, and send as data the new player object."
         socket.broadcast.emit('newplayer',socket.player);
+
+        // Tutorial: "[process] the 'disconnect' message that the server automatically receives when a client actively disconnects or times out"
+        // "In reaction to the 'disconnect' message, we use io.emit(), which sends a message to all connected clients. We send the message 'remove',
+        // and send the id of the disconnected player to remove."
+        socket.on('disconnect',function(){
+            io.emit('remove',socket.player.id);
+        });
+
     });
 
 });
