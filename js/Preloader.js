@@ -74,6 +74,8 @@ BasicGame.Preloader.prototype = {
         this.load.image( 'moonSurface', 'assets/moon_surface.jpg');
         this.load.image( 'slimeSurface', 'assets/slime.jpg');
 
+        this.load.image( 'chatButton', 'assets/ChatButton.png');
+
 	},
 
 	create: function () {

@@ -106,6 +106,11 @@ io.on('connection',function(socket){
             io.emit('remove',socket.player.id);
         });
 
+        socket.on('sendPlayerMessage',function(data){
+        	console.log("data.message: "+data.message);
+        	io.emit('messageSent',data.message);
+        });
+
     });
 
 });

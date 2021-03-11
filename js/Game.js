@@ -14,6 +14,7 @@
 var Game = {};
 this.player1 = null;
 this.hintsText = null;
+this.otherPlayerHintsText = null;
 
 BasicGame.Game = function (game) {
 
@@ -96,6 +97,8 @@ BasicGame.Game = function (game) {
     // this.hintsText = null;
     this.hintsText2 = null;
 
+    this.chatButton = null;
+
     this.mousePointer = null;
     this.mouseText = null;
 
@@ -157,6 +160,7 @@ BasicGame.Game.prototype = {
         // The tutorial at https://www.dynetisgames.com/2017/03/06/how-to-make-a-multiplayer-online-game-with-phaser-socket-io-and-node-js/
         // says that "Game.playerMap = {}" is an "empty object [that] will be useful later on to keep track of players"
         Game.playerMap = {};
+        // Game.hintsMap = {};
 
 
         // NOTE: noise and perlin stuff is usable here only if the necessary files are loaded;
@@ -1115,6 +1119,12 @@ BasicGame.Game.prototype = {
 //        this.itemInitVelocity = 200;
         // this.slowDownValue = 0;
 
+        this.chatButton = this.add.button( this.game.world.centerX, 30, 'chatButton', this.chatButtonClicked, this);
+        this.chatButton.anchor.setTo(0.5,0.5);
+        this.chatButton.width = 55;
+        this.chatButton.height = 55;
+
+
         // Tutorial: "the client will notify the server that a new player should be created"
         // Note: See how it is at the end of the create() method; my theory is that it's so that
         // no more than one player executes the entire process of initializing everything above
@@ -1146,6 +1156,25 @@ BasicGame.Game.prototype = {
         this.hintsText.anchor.setTo( 0.5, 0.5 );
         this.hintsText.alpha = 0;
     },
+
+    chatButtonClicked: function() {
+        var msg = "Hello, other player!";
+
+        Client.sendMessageToOtherPlayer(msg);
+
+        // this.playerSendMessage();
+    },
+
+    displayReceivedMessage: function(message) {
+        console.log(message);
+        // Game.playerMap[id]
+        this.hintsText.text = message;
+        this.hintsText.alpha = 1;
+    },
+
+    // playerSendMessage: function(message) {
+    //     Client.sendMessageToOtherPlayer(message);
+    // },
 
     // This func is for adding a new player to the game; they are placed at a specified x and y pos, and are given a unique id,
     // which are stored in the socket object (lines 38-42 of server.js) created when the player connects to the server
@@ -1291,8 +1320,8 @@ BasicGame.Game.prototype = {
             this.game.physics.arcade.overlap(this.player1, [this.p1Red_pieces, this.p1Yellow_pieces, this.p1Green_pieces, this.p1Blue_pieces, this.p2Red_pieces, this.p2Yellow_pieces, this.p2Green_pieces, this.p2Blue_pieces], this.takeItem, null, this);
             this.game.physics.arcade.overlap(this.player1, this.rayGuns, this.takeItem, null, this);
 
-            this.hintsText.text = "";
-            this.hintsText.alpha = 0;
+            // this.hintsText.text = "";
+            // this.hintsText.alpha = 0;
 
             // this.hintsText2.text = "";
             // this.hintsText2.alpha = 0;
@@ -1327,10 +1356,10 @@ BasicGame.Game.prototype = {
             this.p1currItem.body.velocity.x = this.player1.body.velocity.x;
             this.p1currItem.body.velocity.y = this.player1.body.velocity.y;
 
-            // Adjust the hint to show relevant item info
-            this.hintsText.text = "I've picked up a "+this.p1currItem.color+" item!\nI can throw this through a "+this.p1currItem.color+" gate!";
-            this.hintsText.y -= 10; // This particular message is 2 lines, so we should move it up a little
-            this.hintsText.alpha = 1;
+            // // Adjust the hint to show relevant item info
+            // this.hintsText.text = "I've picked up a "+this.p1currItem.color+" item!\nI can throw this through a "+this.p1currItem.color+" gate!";
+            // this.hintsText.y -= 10; // This particular message is 2 lines, so we should move it up a little
+            // this.hintsText.alpha = 1;
 
 
             // Determine what type of item the player is holding

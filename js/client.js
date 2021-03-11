@@ -64,4 +64,13 @@ Client.connectToServer = function() {
 		BasicGame.WaitingRoom.prototype.startGame();
 	});
 
+
+    Client.sendMessageToOtherPlayer = function(message) {
+    	Client.socket.emit('sendPlayerMessage',{message:message});
+    }
+
+    Client.socket.on('messageSent', function(message){
+    	BasicGame.Game.prototype.displayReceivedMessage(message);
+    });
+
 };
