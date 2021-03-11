@@ -15,6 +15,8 @@ var Game = {};
 this.player1 = null;
 this.hintsText = null;
 this.otherPlayerHintsText = null;
+this.hintsTimer = null;
+this.otherPlayerHintsTimer = null;
 
 BasicGame.Game = function (game) {
 
@@ -1167,9 +1169,13 @@ BasicGame.Game.prototype = {
 
         Client.sendMessageToOtherPlayer(msg);
 
+        if (this.hintsTimer != null) {
+            this.game.time.events.remove(this.hintsTimer);
+        }
+
         // Clear the text after some time. Note: I defined the callback function right here. Of course
         // I could simply define a separate function entirely and call that, but this works too
-        this.game.time.events.add(Phaser.Timer.SECOND * 5, () => {
+        this.hintsTimer = this.game.time.events.add(Phaser.Timer.SECOND * 5, () => {
             this.hintsText.text = "";
             this.hintsText.alpha = 0;
         });
@@ -1186,9 +1192,13 @@ BasicGame.Game.prototype = {
         this.otherPlayerHintsText.text = message;
         this.otherPlayerHintsText.alpha = 1;
 
+        if (this.otherPlayerHintsTimer != null) {
+            game.time.events.remove(this.otherPlayerHintsTimer);
+        }
+
         // Clear the text after some time. Note: I defined the callback function right here. Of course
         // I could simply define a separate function entirely and call that, but this works too
-        game.time.events.add(Phaser.Timer.SECOND * 5, () => {
+        this.otherPlayerHintsTimer = game.time.events.add(Phaser.Timer.SECOND * 5, () => {
             this.otherPlayerHintsText.text = "";
             this.otherPlayerHintsText.alpha = 0;
         });
