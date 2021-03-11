@@ -58,8 +58,8 @@ io.on('connection',function(socket){
     	var xPos = 0;
     	var yPos = 0;
     	if (socket === waitingPlayer) {
-    		xPos = 50;
-    		yPos = 10;
+    		xPos = 300;
+    		yPos = 300;
     	} else {
     		xPos = 900;
     		yPos = 300;
@@ -84,6 +84,7 @@ io.on('connection',function(socket){
         // It allows to broadcast events from a client to all other clients without echoing them back to the initiating client. Here, we
         // broadcast the 'newplayer' message, and send as data the new player object."
         socket.broadcast.emit('newplayer',socket.player);
+        socket.emit('myplayer',socket.player);
 
         // This is called when the Client sends the message to update the player position
         // Tutorial: "The x and y fields of the player property of the socket are updated with the new coordinates, and then immediately
@@ -93,7 +94,7 @@ io.on('connection',function(socket){
             // console.log('Player moved to '+data.x+', '+data.y);
             socket.player.x = data.x;
             socket.player.y = data.y;
-            io.emit('move',socket.player);
+            socket.broadcast.emit('move',socket.player);
         });
 
         // Tutorial: "[process] the 'disconnect' message that the server automatically receives when a client actively disconnects or times out"

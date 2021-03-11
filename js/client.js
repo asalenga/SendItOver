@@ -25,10 +25,15 @@ Client.connectToServer = function() {
 	// corresponds to the socket.player data sent by the server."
 	// if (Client.socket != null) {
 	Client.socket.on('newplayer',function(data){
-		console.log(`From Client.socket.on in client.js... data.id: ${data.id}, data.x: ${data.x}, data.y: ${data.y}`);
+		console.log(`From Client.socket.on newplayer in client.js... data.id: ${data.id}, data.x: ${data.x}, data.y: ${data.y}`);
 	    BasicGame.Game.prototype.addNewPlayer(data.id,data.x,data.y); // The way we have structured the game system, we need to go into the .prototype to access the addNewPlayer function
 	});
 	// }
+
+	Client.socket.on('myplayer',function(data){
+		console.log(`From Client.socket.on myplayer in client.js... data.id: ${data.id}, data.x: ${data.x}, data.y: ${data.y}`);
+	    BasicGame.Game.prototype.addMyPlayer(data.id,data.x,data.y); // The way we have structured the game system, we need to go into the .prototype to access the addNewPlayer function
+	});
 
 	// "...For the 'allplayers' message, [the data] is a list of socket.player objects. In both cases, this data is processed by calling
 	// Game.addNewPlayer(), which we can now define in Game.js"

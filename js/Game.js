@@ -12,6 +12,8 @@
 // }
 
 var Game = {};
+this.player1 = null;
+this.hintsText = null;
 
 BasicGame.Game = function (game) {
 
@@ -48,7 +50,7 @@ BasicGame.Game = function (game) {
     this.yellowGate = null;
     this.greenGate = null;
     this.blueGate = null;
-    this.player1 = null;
+    // this.player1 = null;
     // this.player2 = null;
     this.rayGuns = null;
     
@@ -91,7 +93,7 @@ BasicGame.Game = function (game) {
     this.tutorialModeTitle = null;
     this.TutorialInstructions = null;
     this.TutorialInstructions2 = null;
-    this.hintsText = null;
+    // this.hintsText = null;
     this.hintsText2 = null;
 
     this.mousePointer = null;
@@ -281,19 +283,19 @@ BasicGame.Game.prototype = {
         this.p2Ship.body.immovable = true;
 
 
-        this.player1 = this.game.add.sprite( (this.game.world.width/4), this.game.world.centerY, 'player1' );
-        this.player1.anchor.setTo( 0.5, 0.5 );
-        this.player1.width = 75;
-        this.player1.height = 75;
+        // this.player1 = this.game.add.sprite( (this.game.world.width/4), this.game.world.centerY, 'player1' );
+        // this.player1.anchor.setTo( 0.5, 0.5 );
+        // this.player1.width = 75;
+        // this.player1.height = 75;
 
-        this.player1.spawnBeginning = 0;
+        // this.player1.spawnBeginning = 0;
         // this.player2 = this.game.add.sprite( (this.game.world.width/4)*3, this.game.world.centerY, 'player2' );
         // this.player2.anchor.setTo( 0.5, 0.5 );
         // this.player2.width = 75;
         // this.player2.height = 75;
         // this.player2.spawnBeginning = 0;
 
-        this.game.physics.enable( [this.player1,/*this.player2,*/this.wall,this.wall2], Phaser.Physics.ARCADE );
+        this.game.physics.enable( [/*this.player1,*//*this.player2,*/this.wall,this.wall2], Phaser.Physics.ARCADE );
         
         // this.player1.body.isCircle = true;
     //  this.player1.body.setCircle(this.player1.width/2.0); // Note: the argument is for the radius size of the circle, not the diameter
@@ -1072,7 +1074,6 @@ BasicGame.Game.prototype = {
         // Add some text using a CSS style.
         // Center it in X, and position its top 15 pixels from the top of the world.
         var style = { font: "25px Verdana", fill: "#FFFFFF", align: "center" };
-        var hintsTextStyle = { font: "15px Verdana", fill: "#FFFFFF", align: "center" };
         var subtitleTextStyle = { font: "18px Verdana", fill: "#FFFFFF", align: "center" };
         // var text = this.game.add.text( this.game.world.centerX, 15, "Get your ship up and running!", style );
         // text.anchor.setTo( 0.5, 0.0 );
@@ -1083,11 +1084,6 @@ BasicGame.Game.prototype = {
 		this.timeSoFar = this.game.time.totalElapsedSeconds();
 
         // this.spawnBeginning = 0;
-
-        // Text above the player
-        this.hintsText = this.game.add.text( this.player1.x, this.player1.y - this.player1.body.height/2 - 50, 'Hints will go here!' , hintsTextStyle);
-        this.hintsText.anchor.setTo( 0.5, 0.5 );
-        this.hintsText.alpha = 0;
 
         // Here are different ways to modify existing an text object!
         // Alpha value:         this.hintsText.alpha = 0;
@@ -1126,22 +1122,45 @@ BasicGame.Game.prototype = {
 
     },
 
+    addMyPlayer: function(id,x,y) {
+        // this.player1.x = x;
+        // this.player1.y = y;
+
+        // var p1x = (x === 900) ? 300 : 900;
+        // var p1y = 300;
+
+        // this.player1 = game.add.sprite( p1x, p1y, 'player1' );
+        this.player1 = game.add.sprite( x, y, 'player1' );
+        this.player1.anchor.setTo( 0.5, 0.5 );
+        this.player1.width = 75;
+        this.player1.height = 75;
+
+        game.physics.enable( this.player1, Phaser.Physics.ARCADE );
+
+        Game.playerMap[id] = this.player1;
+
+        var hintsTextStyle = { font: "15px Verdana", fill: "#FFFFFF", align: "center" };
+
+        // Text above the player
+        this.hintsText = game.add.text( this.player1.x, this.player1.y - this.player1.body.height/2 - 50, 'Hints will go here!' , hintsTextStyle);
+        this.hintsText.anchor.setTo( 0.5, 0.5 );
+        this.hintsText.alpha = 0;
+    },
+
     // This func is for adding a new player to the game; they are placed at a specified x and y pos, and are given a unique id,
     // which are stored in the socket object (lines 38-42 of server.js) created when the player connects to the server
     // Tutorial: "This method creates a new sprite at the specified coordinates, and stores the corresponding Sprite object into
     // an associative array declared in Game.create(), with the supplied id as the key. This allows to easily access the sprite
     // corresponding to a specific player, for example when we need to move or remove it"
+    // NOTE: if the server is performing socket.broadcast.emit, that means it sends a given message to all sockets *except* the
+    // one who called for the message to be sent. If the server is performing io.emit, that means it sends the given message to
+    // all sockets.
     addNewPlayer: function(id,x,y){
         console.log(`From addNewPlayer in Game.js... id: ${id}, x: ${x}, y: ${y}`);
         Game.playerMap[id] = game.add.sprite(x,y,'player1');
         Game.playerMap[id].anchor.setTo( 0.5, 0.5 );
         Game.playerMap[id].width = 75;//50;
         Game.playerMap[id].height = 75;//50;
-
-        // this.player1 = this.game.add.sprite( (this.game.world.width/4), this.game.world.centerY, 'player1' );
-        // this.player1.anchor.setTo( 0.5, 0.5 );
-        // this.player1.width = 75;
-        // this.player1.height = 75;
     },
 
     // This func is for removing a player (with the specified id) from the game. It is called when the Client receives the
@@ -1172,6 +1191,10 @@ BasicGame.Game.prototype = {
     },
 
     update: function () {
+
+        if (this.player1 === undefined) {
+            return;
+        }
 
     	this.gameClock.text = 'Elapsed seconds: ' + Phaser.Math.roundTo(this.game.time.totalElapsedSeconds()-this.timeSoFar,-2);
         //  Honestly, just about anything could go here. It's YOUR game after all. Eat your heart out!
