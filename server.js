@@ -108,7 +108,7 @@ io.on('connection',function(socket){
 
         socket.on('sendPlayerMessage',function(data){
         	console.log("data.message: "+data.message);
-        	io.emit('messageSent',data.message);
+        	socket.broadcast.emit('messageSent',data.message);
         });
 
     });

@@ -1155,21 +1155,43 @@ BasicGame.Game.prototype = {
         this.hintsText = game.add.text( this.player1.x, this.player1.y - this.player1.body.height/2 - 50, 'Hints will go here!' , hintsTextStyle);
         this.hintsText.anchor.setTo( 0.5, 0.5 );
         this.hintsText.alpha = 0;
+
     },
 
     chatButtonClicked: function() {
         var msg = "Hello, other player!";
 
+        // Display the message above yourself
+        this.hintsText.text = msg;
+        this.hintsText.alpha = 1;
+
         Client.sendMessageToOtherPlayer(msg);
+
+        // Clear the text after some time. Note: I defined the callback function right here. Of course
+        // I could simply define a separate function entirely and call that, but this works too
+        this.game.time.events.add(Phaser.Timer.SECOND * 5, () => {
+            this.hintsText.text = "";
+            this.hintsText.alpha = 0;
+        });
 
         // this.playerSendMessage();
     },
 
+    // Display an incoming message above the player who sent it
     displayReceivedMessage: function(message) {
         console.log(message);
         // Game.playerMap[id]
-        this.hintsText.text = message;
-        this.hintsText.alpha = 1;
+        // this.hintsText.text = message;
+        // this.hintsText.alpha = 1;
+        this.otherPlayerHintsText.text = message;
+        this.otherPlayerHintsText.alpha = 1;
+
+        // Clear the text after some time. Note: I defined the callback function right here. Of course
+        // I could simply define a separate function entirely and call that, but this works too
+        game.time.events.add(Phaser.Timer.SECOND * 5, () => {
+            this.otherPlayerHintsText.text = "";
+            this.otherPlayerHintsText.alpha = 0;
+        });
     },
 
     // playerSendMessage: function(message) {
@@ -1190,6 +1212,12 @@ BasicGame.Game.prototype = {
         Game.playerMap[id].anchor.setTo( 0.5, 0.5 );
         Game.playerMap[id].width = 75;//50;
         Game.playerMap[id].height = 75;//50;
+
+        var hintsTextStyle = { font: "15px Verdana", fill: "#FFFFFF", align: "center" };
+        // Text above the other player
+        this.otherPlayerHintsText = game.add.text( x, y - Game.playerMap[id].height/2 - 50, 'The other player\'s hints will go here!' , hintsTextStyle);
+        this.otherPlayerHintsText.anchor.setTo( 0.5, 0.5 );
+        this.otherPlayerHintsText.alpha = 0;
     },
 
     // This func is for removing a player (with the specified id) from the game. It is called when the Client receives the
@@ -1209,6 +1237,9 @@ BasicGame.Game.prototype = {
         if (Game.playerMap[id] != null) {
             Game.playerMap[id].x = x;
             Game.playerMap[id].y = y;
+
+            this.otherPlayerHintsText.x = x;
+            this.otherPlayerHintsText.y = y - Game.playerMap[id].height/2 - 50;
         }
         // var distance = Phaser.Math.distance(player.x,player.y,x,y);
         // var duration = distance;
