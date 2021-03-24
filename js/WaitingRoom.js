@@ -34,6 +34,8 @@ BasicGame.WaitingRoom.prototype = {
 
 		//	And start the actual game
 		game.state.start('Game');
+		// var currGame = new GameState();
+  //       currGame.start('Game');
 
 		// var aNewGame = new MyGame();
  

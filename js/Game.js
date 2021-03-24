@@ -11,6 +11,30 @@
 
 // }
 
+
+// Create Game class that extends Phaser.State
+
+// class GameState extends Phaser.State {
+//     init() {
+
+//     }
+
+//     // start(stateName) {
+//     //     super(stateName);
+//     // }
+
+//     create() {
+
+//     }
+
+//     update() {
+
+//     }
+
+// }
+
+// Override the game.state.start method
+
 var Game = {};
 this.player1 = null;
 this.hintsText = null;
