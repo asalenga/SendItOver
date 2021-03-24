@@ -16,7 +16,7 @@ app.get('/',function(req,res){
     res.sendFile(__dirname+'/index.html'); 
 });
 
-server.listen(8081,function(){ // Listens to port 8081
+server.listen(process.env.PORT || 8081,function(){ // Listens to the proper deployment port (when running through Heroku) or port 8081 when testing locally
     console.log('Listening on '+server.address().port);
 });
 
