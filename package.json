@@ -1,0 +1,17 @@
+{
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/asalenga/SendItOver.git"
+  },
+  "author": "Aaron Salenga",
+  "homepage": "https://github.com/asalenga/SendItOver#readme",
+  "dependencies": {
+    "express": "^4.17.1",
+    "socket.io": "^3.1.2"
+  }
+}
