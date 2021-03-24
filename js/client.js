@@ -67,18 +67,54 @@ Client.connectToServer = function() {
 
 	// Send to server
 	Client.updateObjMotion = function(objName, objPlayer, objColor, velocityX, velocityY, dragX, dragY) {
-		Client.socket.emit('objectPosUpdated',{objName:objName, objPlayer:objPlayer, objColor:objColor, velocityX:velocityX, velocityY:velocityY, dragX:dragX, dragY:dragY});
+		Client.socket.emit('objectMotionUpdated',{objName:objName, objPlayer:objPlayer, objColor:objColor, velocityX:velocityX, velocityY:velocityY, dragX:dragX, dragY:dragY});
 	}
 
 	// Receive from server
-	Client.socket.on('moveObject',function(data){
-	    BasicGame.Game.prototype.moveObject(data.objName, data.objPlayer, data.objColor, data.velocityX, data.velocityY, data.dragX, data.dragY);
+	Client.socket.on('moveObject_velocity',function(data){
+	    BasicGame.Game.prototype.moveObject_velocity(data.objName, data.objPlayer, data.objColor, data.velocityX, data.velocityY, data.dragX, data.dragY);
+	});
+
+// Updating object position
+
+	// Send to server
+	Client.updateObjPosition = function(objName,objPlayer,objColor,positionX,positionY) {
+		Client.socket.emit('objectPosUpdated',{objName:objName, objPlayer:objPlayer, objColor:objColor, positionX:positionX, positionY:positionY});
+	}
+
+	// Receive from server
+	Client.socket.on('moveObject_position',function(data){
+	    BasicGame.Game.prototype.moveObject_position(data.objName, data.objPlayer, data.objColor, data.positionX, data.positionY);
+	});
+
+// Updating killed piece
+
+	// Send to server
+	Client.updateKilledPiece = function(objName,objPlayer,objColor) {
+		Client.socket.emit('pieceKilled',{objName:objName, objPlayer:objPlayer, objColor:objColor});
+	}
+
+	// Receive from server
+	Client.socket.on('killPiece',function(data){
+	    BasicGame.Game.prototype.killPieceAndCheckRemaining_receive(data.objName, data.objPlayer, data.objColor);
 	});
 
 // Starting a game
 
+	// Receive from server
 	Client.socket.on('startGame', function(){
 		BasicGame.WaitingRoom.prototype.startGame();
+	});
+
+// Ending a game
+
+	// Send to server
+	Client.updateGameOverStatus = function(didPlayersWin) {
+		Client.socket.emit('gameOverSignaled',{didPlayersWin:didPlayersWin});
+	}
+
+	Client.socket.on('quitGame', function(data) {
+		BasicGame.Game.prototype.quitGame(data.didPlayersWin);
 	});
 
 // Sending a message from one player to the other

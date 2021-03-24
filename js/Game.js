@@ -1306,13 +1306,79 @@ BasicGame.Game.prototype = {
         // player.y = y;
     },
 
+    // Send to server so the other client can see the object changing position
+    // Note: This is for when there is a change in the object's position, i.e. it is being carried and moved by a player
+    sendObjPosition: function(objName,objPlayer,objColor,positionX,positionY) {
+        Client.updateObjPosition(objName,objPlayer,objColor,positionX,positionY);
+    },
+
+    // From server; this function executes if the other player executed sendObjPosition
+    moveObject_position: function(objName,objPlayer,objColor,positionX,positionY) {
+
+        var listToCheck = null;
+
+        // Rather than search every list, find which list of pieces to search through, based on the object's assigned player and color; this should make things more efficient
+        switch (objColor) {
+            case "red":
+                if (objPlayer === "p1") {
+                    listToCheck = this.p1Red_pieces;
+                } else if (objPlayer === "p2") {
+                    listToCheck = this.p2Red_pieces;
+                } else { // Although there was an assigned color, there was no assigned player; it must be one of the ray guns
+                    listToCheck = this.rayGuns;
+                }
+                break;
+            case "yellow":
+                if (objPlayer === "p1") {
+                    listToCheck = this.p1Yellow_pieces;
+                } else if (objPlayer === "p2") {
+                    listToCheck = this.p2Yellow_pieces;
+                } else { // Although there was an assigned color, there was no assigned player; it must be one of the ray guns
+                    listToCheck = this.rayGuns;
+                }
+                break;
+            case "green":
+                if (objPlayer === "p1") {
+                    listToCheck = this.p1Green_pieces;
+                } else if (objPlayer === "p2") {
+                    listToCheck = this.p2Green_pieces;
+                } else { // Although there was an assigned color, there was no assigned player; it must be one of the ray guns
+                    listToCheck = this.rayGuns;
+                }
+                break;
+            case "blue":
+                if (objPlayer === "p1") {
+                    listToCheck = this.p1Blue_pieces;
+                } else if (objPlayer === "p2") {
+                    listToCheck = this.p2Blue_pieces;
+                } else { // Although there was an assigned color, there was no assigned player; it must be one of the ray guns
+                    listToCheck = this.rayGuns;
+                }
+                break;
+        }
+
+        // Search through the list for the object with the specific name, and set its position accordingly
+        // Note: Since the pieces lists are Objects and not simple arrays, the same is true for listToCheck. It has a "children" property,
+        // and THAT is a simple array that holds all the members of the group.
+        for (var i=0; i<listToCheck.children.length; i++) {
+            if (listToCheck.children[i].name === objName) { // Object found
+
+                listToCheck.children[i].x = positionX;
+                listToCheck.children[i].y = positionY;
+                break;
+            }
+        }
+
+    },
+
     // Send to server so the other client can see the object in motion
+    // Note: This is for when there is a change in the object's velocity, i.e. it is thrown by a player
     sendObjMotion: function(objName,objPlayer,objColor,velocityX,velocityY,dragX,dragY) {
         Client.updateObjMotion(objName,objPlayer,objColor,velocityX,velocityY,dragX,dragY);
     },
 
     // From server; this function executes if the other player executed sendObjMotion
-    moveObject: function(objName,objPlayer,objColor,velocityX,velocityY,dragX,dragY) {
+    moveObject_velocity: function(objName,objPlayer,objColor,velocityX,velocityY,dragX,dragY) {
 
         var listToCheck = null;
 
@@ -1507,6 +1573,8 @@ BasicGame.Game.prototype = {
             // Set the velocity of the item equal to the velocity of the player, so that it moves with the player
             this.p1currItem.body.velocity.x = this.player1.body.velocity.x;
             this.p1currItem.body.velocity.y = this.player1.body.velocity.y;
+
+            this.sendObjPosition(this.p1currItem.name, this.p1currItem.player, this.p1currItem.color, this.p1currItem.x, this.p1currItem.y);
 
             // // Adjust the hint to show relevant item info
             // this.hintsText.text = "I've picked up a "+this.p1currItem.color+" item!\nI can throw this through a "+this.p1currItem.color+" gate!";
@@ -2105,6 +2173,7 @@ BasicGame.Game.prototype = {
             // if (this.p1prevItem == null) {this.p1prevItem = this.p1currItem;}
             // this.stopMovement(piece);
             piece.body.velocity.setTo(0,0);
+            // this.sendObjMotion(piece.name, piece.player, piece.color, 0, 0, 0, 0);
             this.itemThrowIsInitiated = false;
             // The deceleration event timer of an item must be removed and reset if the current item was the previous item (i.e. the player threw an item
             // and took the same item again). This is so that if the item is thrown, picked up, and thrown again very quickly, the old
@@ -2142,12 +2211,82 @@ BasicGame.Game.prototype = {
         if (piece.player == ship.player) { // Checks if the piece is brought back to the correct ship
             if (piece == this.p1currItem) {this.p1Possess = false;}
             piece.kill();
+            this.killPieceAndCheckRemaining_send(piece.name, piece.player, piece.color);
         }
         if ((this.p1Red_pieces.countLiving() == 0) && (this.p1Yellow_pieces.countLiving() == 0) && (this.p1Green_pieces.countLiving() == 0) && (this.p1Blue_pieces.countLiving() == 0) && (this.p2Red_pieces.countLiving() == 0) && (this.p2Yellow_pieces.countLiving() == 0) && (this.p2Green_pieces.countLiving() == 0) && (this.p2Blue_pieces.countLiving() == 0)) { // Ends the game once all pieces have been brought back
             // The players win; call quitGame
             this.playersWin = true;
-            this.quitGame();
+            // this.signalGameOver(playersWin);
+            this.quitGame(this.playersWin);
         }
+    },
+
+    // Send to server
+    signalGameOver: function(didPlayersWin) {
+        Client.updateGameOverStatus(didPlayersWin);
+    },
+
+    // Send to server
+    killPieceAndCheckRemaining_send: function(objName,objPlayer,objColor) {
+        Client.updateKilledPiece(objName,objPlayer,objColor);
+    },
+
+    // Receive from server
+    killPieceAndCheckRemaining_receive: function(objName,objPlayer,objColor) {
+
+        var listToCheck = null;
+
+        // Rather than search every list, find which list of pieces to search through, based on the object's assigned player and color; this should make things more efficient
+        // Note that we don't check for ray guns here because they should not be able to be killed.
+        switch (objColor) {
+            case "red":
+                if (objPlayer === "p1") {
+                    listToCheck = this.p1Red_pieces;
+                } else if (objPlayer === "p2") {
+                    listToCheck = this.p2Red_pieces;
+                }
+                break;
+            case "yellow":
+                if (objPlayer === "p1") {
+                    listToCheck = this.p1Yellow_pieces;
+                } else if (objPlayer === "p2") {
+                    listToCheck = this.p2Yellow_pieces;
+                }
+                break;
+            case "green":
+                if (objPlayer === "p1") {
+                    listToCheck = this.p1Green_pieces;
+                } else if (objPlayer === "p2") {
+                    listToCheck = this.p2Green_pieces;
+                }
+                break;
+            case "blue":
+                if (objPlayer === "p1") {
+                    listToCheck = this.p1Blue_pieces;
+                } else if (objPlayer === "p2") {
+                    listToCheck = this.p2Blue_pieces;
+                }
+                break;
+        }
+
+        // Search through the list for the object with the specific name, and set its position accordingly
+        // Note: Since the pieces lists are Objects and not simple arrays, the same is true for listToCheck. It has a "children" property,
+        // and THAT is a simple array that holds all the members of the group.
+        for (var i=0; i<listToCheck.children.length; i++) { // If the object isn't found, then it must have been killed already
+            if (listToCheck.children[i].name === objName) { // Object found
+
+                listToCheck.children[i].kill();
+                break;
+            }
+        }
+
+        if ((this.p1Red_pieces.countLiving() == 0) && (this.p1Yellow_pieces.countLiving() == 0) && (this.p1Green_pieces.countLiving() == 0) && (this.p1Blue_pieces.countLiving() == 0) && (this.p2Red_pieces.countLiving() == 0) && (this.p2Yellow_pieces.countLiving() == 0) && (this.p2Green_pieces.countLiving() == 0) && (this.p2Blue_pieces.countLiving() == 0)) { // Ends the game once all pieces have been brought back
+            // The players win; call quitGame
+            this.playersWin = true;
+            // this.signalGameOver(playersWin);
+            this.quitGame(this.playersWin);
+        }
+
     },
 
     eachEnemy: function () {
@@ -2259,7 +2398,7 @@ BasicGame.Game.prototype = {
         if (this.player1.alive == false) {
             // The players lose
             this.playersWin = false;
-            this.quitGame();
+            this.quitGame(this.playersWin);
         }
 
     	// if (player == this.player1) {
@@ -2301,9 +2440,9 @@ BasicGame.Game.prototype = {
         tween.repeat(2);
     },
 
-    quitGame: function () {
+    quitGame: function (didPlayersWin) {
 
-    	this.finalTime = this.game.time.totalElapsedSeconds()-this.timeSoFar;
+    	this.finalTime = game.time.totalElapsedSeconds()-this.timeSoFar;
 
         var style = { font: "25px Verdana", fill: "#FFFFFF", align: "center" };
         // var text = this.game.add.text( this.game.world.centerX, 15, "Get your ship up and running!", style );
@@ -2313,14 +2452,14 @@ BasicGame.Game.prototype = {
 // So, find a way to pass the value of the final time to the next state (win or lose) and display it there
 
         // Displays the final time
-        this.endText = this.game.add.text( this.game.world.centerX, this.game.world.centerY, 'Your time: '+Phaser.Math.roundTo(this.finalTime,-2), style );
-        this.endText.anchor.setTo(0.5,0.5);
+        // this.endText = game.add.text( game.world.centerX, game.world.centerY, 'Your time: '+Phaser.Math.roundTo(this.finalTime,-2), style );
+        // this.endText.anchor.setTo(0.5,0.5);
 
-        if (this.playersWin == true) {
-        	this.state.start('WinScreen');
+        if (didPlayersWin == true) {
+        	game.state.start('WinScreen');
         }
-        else if (this.playersWin == false) {
-        	this.state.start('LoseScreen');
+        else if (didPlayersWin == false) {
+        	game.state.start('LoseScreen');
         }
 
     }

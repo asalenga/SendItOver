@@ -123,7 +123,7 @@ io.on('connection',function(socket){
             socket.broadcast.emit('movePlayer',socket.player);
         });
 
-        socket.on('objectPosUpdated', function(data){ // data contains objName, objPlayer, objColor, velocityX, velocityY, dragX, and dragY
+        socket.on('objectMotionUpdated', function(data){ // data contains objName, objPlayer, objColor, velocityX, velocityY, dragX, and dragY
 
             // socket.object.objName = data.objName;
             // socket.object.objPlayer = data.objPlayer;
@@ -134,7 +134,19 @@ io.on('connection',function(socket){
             // socket.object.dragY = data.dragY;
 
             // socket.broadcast.emit('moveObject',socket.object); // Remember: socket.broadcast.emit sends a message to all clients *except* the one who triggered this function
-            socket.broadcast.emit('moveObject',data); // Remember: socket.broadcast.emit sends a message to all clients *except* the one who triggered this function
+            socket.broadcast.emit('moveObject_velocity',data); // Remember: socket.broadcast.emit sends a message to all clients *except* the one who triggered this function
+        });
+
+        socket.on('objectPosUpdated',function(data){
+            socket.broadcast.emit('moveObject_position',data);
+        });
+
+        socket.on('pieceKilled',function(data){
+            socket.broadcast.emit('killPiece',data);
+        });
+
+        socket.on('gameOverSignaled',function(data){
+            socket.broadcast.emit('quitGame',data);
         });
 
         // Tutorial: "[process] the 'disconnect' message that the server automatically receives when a client actively disconnects or times out"
