@@ -49,26 +49,46 @@ Client.connectToServer = function() {
 	    BasicGame.Game.prototype.removePlayer(id);
 	});
 
-	// Here, we just send the player position coordinates to the server, with the label 'updatedPlayerPos'.
+// Updating player movement
+
+	// Here, we just send the player position coordinates to the server, with the label 'playerPosUpdated'.
 	// Tutorial: "No need to send any player id, since the socket is client-specific and associated to only one player."
 	Client.updatePlayerPos = function(x,y) {
 		Client.socket.emit('playerPosUpdated',{x:x,y:y});
 	}
 
+	// Here we wait for the 'movePlayer' message from the server
 	// Tutorial: "we need to handle the 'move' message from the server, so that the clients can react to another player moving"
-	Client.socket.on('move',function(data){
+	Client.socket.on('movePlayer',function(data){
 	    BasicGame.Game.prototype.movePlayer(data.id,data.x,data.y);
 	});
+
+// Updating object movement
+
+	// Send to server
+	Client.updateObjMotion = function(objName, objPlayer, objColor, velocityX, velocityY, dragX, dragY) {
+		Client.socket.emit('objectPosUpdated',{objName:objName, objPlayer:objPlayer, objColor:objColor, velocityX:velocityX, velocityY:velocityY, dragX:dragX, dragY:dragY});
+	}
+
+	// Receive from server
+	Client.socket.on('moveObject',function(data){
+	    BasicGame.Game.prototype.moveObject(data.objName, data.objPlayer, data.objColor, data.velocityX, data.velocityY, data.dragX, data.dragY);
+	});
+
+// Starting a game
 
 	Client.socket.on('startGame', function(){
 		BasicGame.WaitingRoom.prototype.startGame();
 	});
 
+// Sending a message from one player to the other
 
+	// Send to server
     Client.sendMessageToOtherPlayer = function(message) {
     	Client.socket.emit('sendPlayerMessage',{message:message});
     }
 
+    // Receive from server
     Client.socket.on('messageSent', function(message){
     	BasicGame.Game.prototype.displayReceivedMessage(message);
     });

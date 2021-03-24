@@ -90,6 +90,17 @@ io.on('connection',function(socket){
             x: xPos,//randomInt(100,400),
             y: yPos//randomInt(100,400)
         };
+
+        // socket.object = {
+        //     objName: "",
+        //     objPlayer: "",
+        //     objColor: "",
+        //     velocityX: 0,
+        //     velocityY: 0,
+        //     dragX: 0,
+        //     dragY: 0
+        // };
+
         // Tutorial: "Then, we want to send to the new player the list of already connected players.
         // Socket.emit() sends a message to one specific socket. Here, we send to the newly connected client a message labeled 'allplayers',
         // and as a second argument, the output of Client.getAllPlayers() which will be an array of the currently connected players. This
@@ -109,7 +120,21 @@ io.on('connection',function(socket){
             // console.log('Player moved to '+data.x+', '+data.y);
             socket.player.x = data.x;
             socket.player.y = data.y;
-            socket.broadcast.emit('move',socket.player);
+            socket.broadcast.emit('movePlayer',socket.player);
+        });
+
+        socket.on('objectPosUpdated', function(data){ // data contains objName, objPlayer, objColor, velocityX, velocityY, dragX, and dragY
+
+            // socket.object.objName = data.objName;
+            // socket.object.objPlayer = data.objPlayer;
+            // socket.object.objColor = data.objColor;
+            // socket.object.velocityX = data.velocityX;
+            // socket.object.velocityY = data.velocityY;
+            // socket.object.dragX = data.dragX;
+            // socket.object.dragY = data.dragY;
+
+            // socket.broadcast.emit('moveObject',socket.object); // Remember: socket.broadcast.emit sends a message to all clients *except* the one who triggered this function
+            socket.broadcast.emit('moveObject',data); // Remember: socket.broadcast.emit sends a message to all clients *except* the one who triggered this function
         });
 
         // Tutorial: "[process] the 'disconnect' message that the server automatically receives when a client actively disconnects or times out"

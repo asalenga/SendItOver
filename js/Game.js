@@ -42,6 +42,17 @@ this.otherPlayerHintsText = null;
 this.hintsTimer = null;
 this.otherPlayerHintsTimer = null;
 
+this.rayGuns = null;
+
+this.p1Red_pieces = null;
+this.p1Yellow_pieces = null;
+this.p1Green_pieces = null;
+this.p1Blue_pieces = null;
+this.p2Red_pieces = null;
+this.p2Yellow_pieces = null;
+this.p2Green_pieces = null;
+this.p2Blue_pieces = null;
+
 BasicGame.Game = function (game) {
 
     //  When a State is added to Phaser it automatically has the following properties set on it, even if they already exist:
@@ -79,16 +90,6 @@ BasicGame.Game = function (game) {
     this.blueGate = null;
     // this.player1 = null;
     // this.player2 = null;
-    this.rayGuns = null;
-    
-    this.p1Red_pieces = null;
-    this.p1Yellow_pieces = null;
-    this.p1Green_pieces = null;
-    this.p1Blue_pieces = null;
-    this.p2Red_pieces = null;
-    this.p2Yellow_pieces = null;
-    this.p2Green_pieces = null;
-    this.p2Blue_pieces = null;
 
     this.enemies = null;
     this.p1Possess = null; // Check if Player 1 has possession of something
@@ -351,115 +352,6 @@ BasicGame.Game.prototype = {
         this.blueGate.body.immovable = true;
         
     //    this.p1Blue = new ShipPiece("p1", "blue", 'BlueP1');
-
-    	this.rayGuns = this.game.add.group();
-    	this.rayGuns.enableBody = true;
-    	this.rayGuns.physicsBodyType = Phaser.Physics.ARCADE;
-
-    	this.redGun = this.rayGuns.create(200,450, 'RedGun');
-    	this.redGun.anchor.setTo(0.5,0.5);
-    	this.redGun.height = 50;
-    	this.redGun.width = 50;
-    	this.redGun.body.velocity.x = 0;
-    	this.redGun.body.velocity.y = 0;
-    	this.redGun.color = "red";
-
-    	this.yellowGun = this.rayGuns.create(1000,450, 'YellowGun');
-    	this.yellowGun.anchor.setTo(0.5,0.5);
-    	this.yellowGun.height = 50;
-    	this.yellowGun.width = 50;
-    	this.yellowGun.body.velocity.x = 0;
-    	this.yellowGun.body.velocity.y = 0;
-    	this.yellowGun.color = "yellow";
-
-    	this.greenGun = this.rayGuns.create(200,150, 'GreenGun');
-    	this.greenGun.anchor.setTo(0.5,0.5);
-    	this.greenGun.height = 50;
-    	this.greenGun.width = 50;
-    	this.greenGun.body.velocity.x = 0;
-    	this.greenGun.body.velocity.y = 0;
-    	this.greenGun.color = "green";
-
-    	this.blueGun = this.rayGuns.create(1000,150, 'BlueGun');
-    	this.blueGun.anchor.setTo(0.5,0.5);
-    	this.blueGun.height = 50;
-    	this.blueGun.width = 50;
-    	this.blueGun.body.velocity.x = 0;
-    	this.blueGun.body.velocity.y = 0;
-    	this.blueGun.color = "blue";
-
-    	this.redBulletTime = 0;
-	    this.yellowBulletTime = 0;
-	    this.greenBulletTime = 0;
-	    this.blueBulletTime = 0;
-
-    	this.redBullets = this.game.add.group();
-        this.redBullets.enableBody = true;
-        this.redBullets.physicsBodyType = Phaser.Physics.ARCADE;
-
-    	for (var i = 0; i < 10; i++)
-        {
-            this.redBullet = this.redBullets.create(0, 0, 'RedBullet');
-            this.redBullet.width = 20;
-            this.redBullet.height = 20;
-            this.redBullet.anchor.setTo(0.5,0.5);
-            this.redBullet.color = "red";
-            this.redBullet.exists = false;
-            this.redBullet.visible = false;
-            this.redBullet.checkWorldBounds = true;
-            this.redBullet.events.onOutOfBounds.add(this.killBullet, this);
-        }
-
-        this.yellowBullets = this.game.add.group();
-        this.yellowBullets.enableBody = true;
-        this.yellowBullets.physicsBodyType = Phaser.Physics.ARCADE;
-
-    	for (var i = 0; i < 10; i++)
-        {
-            this.yellowBullet = this.yellowBullets.create(0, 0, 'YellowBullet');
-            this.yellowBullet.width = 20;
-            this.yellowBullet.height = 20;
-            this.yellowBullet.anchor.setTo(0.5,0.5);
-            this.yellowBullet.color = "yellow";
-            this.yellowBullet.exists = false;
-            this.yellowBullet.visible = false;
-            this.yellowBullet.checkWorldBounds = true;
-            this.yellowBullet.events.onOutOfBounds.add(this.killBullet, this);
-        }
-
-        this.greenBullets = this.game.add.group();
-        this.greenBullets.enableBody = true;
-        this.greenBullets.physicsBodyType = Phaser.Physics.ARCADE;
-
-        for (var i = 0; i < 10; i++)
-        {
-            this.greenBullet = this.greenBullets.create(0, 0, 'GreenBullet');
-            this.greenBullet.width = 20;
-            this.greenBullet.height = 20;
-            this.greenBullet.anchor.setTo(0.5,0.5);
-            this.greenBullet.color = "green";
-            this.greenBullet.exists = false;
-            this.greenBullet.visible = false;
-            this.greenBullet.checkWorldBounds = true;
-            this.greenBullet.events.onOutOfBounds.add(this.killBullet, this);
-        }
-
-        this.blueBullets = this.game.add.group();
-        this.blueBullets.enableBody = true;
-        this.blueBullets.physicsBodyType = Phaser.Physics.ARCADE;
-
-        for (var i = 0; i < 10; i++)
-        {
-            this.blueBullet = this.blueBullets.create(0, 0, 'BlueBullet');
-            this.blueBullet.width = 20;
-            this.blueBullet.height = 20;
-            this.blueBullet.anchor.setTo(0.5,0.5);
-            this.blueBullet.color = "blue";
-            this.blueBullet.exists = false;
-            this.blueBullet.visible = false;
-            this.blueBullet.checkWorldBounds = true;
-            this.blueBullet.events.onOutOfBounds.add(this.killBullet, this);
-        }
 
     	// this.redBullet = this.game.add.sprite( -50, -50, 'RedBullet' );
     	// this.redBullet.anchor.setTo(0.5,0.5);
@@ -758,6 +650,204 @@ BasicGame.Game.prototype = {
     	this.redEnemy5.width = 60;
     	this.redEnemy5.color = "red";
 */
+
+        // Add some text using a CSS style.
+        // Center it in X, and position its top 15 pixels from the top of the world.
+        var style = { font: "25px Verdana", fill: "#FFFFFF", align: "center" };
+        var subtitleTextStyle = { font: "18px Verdana", fill: "#FFFFFF", align: "center" };
+        // var text = this.game.add.text( this.game.world.centerX, 15, "Get your ship up and running!", style );
+        // text.anchor.setTo( 0.5, 0.0 );
+
+        this.gameClock = this.game.add.text( 50, 15, 'Elapsed seconds: '+this.game.time.totalElapsedSeconds(), style );
+        // this.gameClock.anchor.setTo( 0.0, 0.0 );
+
+		this.timeSoFar = this.game.time.totalElapsedSeconds();
+
+        // this.spawnBeginning = 0;
+
+        // Here are different ways to modify existing an text object!
+        // Alpha value:         this.hintsText.alpha = 0;
+        // x or y position:     this.hintsText.x = 0;
+        // the actual text:     this.hintsText.text = "Hello!";
+
+        // // When you click on the sprite, you go back to the MainMenu.
+        // this.wall.inputEnabled = true;
+        // this.wall.events.onInputDown.add( function() { this.quitGame(); }, this );
+
+        this.cursors = this.game.input.keyboard.createCursorKeys();
+        this.jKey = this.game.input.keyboard.addKey(Phaser.Keyboard.J);
+        this.hKey = this.game.input.keyboard.addKey(Phaser.Keyboard.H);
+
+        this.wKey = this.game.input.keyboard.addKey(Phaser.Keyboard.W);
+        this.sKey = this.game.input.keyboard.addKey(Phaser.Keyboard.S);
+        this.aKey = this.game.input.keyboard.addKey(Phaser.Keyboard.A);
+        this.dKey = this.game.input.keyboard.addKey(Phaser.Keyboard.D);
+        this.twoKey = this.game.input.keyboard.addKey(Phaser.Keyboard.TWO);
+        this.oneKey = this.game.input.keyboard.addKey(Phaser.Keyboard.ONE);
+        // spaceKey = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
+
+        this.mousePointer = this.game.input.activePointer;
+        // this.mousePointer.contextMenu.disable();
+    //    this.mouseText = this.game.add.text( this.mousePointer.x, this.mousePointer.y, '' , hintsTextStyle);
+
+        // this.player1.body.onOverlap = new Phaser.Signal();
+        // this.player1.body.onOverlap.add(this.takeItem, this);
+//        this.itemInitVelocity = 200;
+        // this.slowDownValue = 0;
+
+        this.chatButton = this.add.button( this.game.world.centerX, 30, 'chatButton', this.chatButtonClicked, this);
+        this.chatButton.anchor.setTo(0.5,0.5);
+        this.chatButton.width = 55;
+        this.chatButton.height = 55;
+
+
+        // Tutorial: "the client will notify the server that a new player should be created"
+        // Note: See how it is at the end of the create() method; my theory is that it's so that
+        // no more than one player executes the entire process of initializing everything above
+        Client.askNewPlayer();
+
+    },
+
+    addMyPlayer: function(id,x,y) {
+        // this.player1.x = x;
+        // this.player1.y = y;
+
+        // var p1x = (x === 900) ? 300 : 900;
+        // var p1y = 300;
+
+        // this.player1 = game.add.sprite( p1x, p1y, 'player1' );
+        this.player1 = game.add.sprite( x, y, 'player1' );
+        this.player1.anchor.setTo( 0.5, 0.5 );
+        this.player1.width = 75;
+        this.player1.height = 75;
+
+        game.physics.enable( this.player1, Phaser.Physics.ARCADE );
+
+        Game.playerMap[id] = this.player1;
+
+        var hintsTextStyle = { font: "15px Verdana", fill: "#FFFFFF", align: "center" };
+
+        // Text above the player
+        this.hintsText = game.add.text( this.player1.x, this.player1.y - this.player1.body.height/2 - 50, 'Hints will go here!' , hintsTextStyle);
+        this.hintsText.anchor.setTo( 0.5, 0.5 );
+        this.hintsText.alpha = 0;
+
+// Rayguns
+
+        this.rayGuns = game.add.group();
+        this.rayGuns.enableBody = true;
+        this.rayGuns.physicsBodyType = Phaser.Physics.ARCADE;
+
+        this.redGun = this.rayGuns.create(200,450, 'RedGun');
+        this.redGun.anchor.setTo(0.5,0.5);
+        this.redGun.height = 50;
+        this.redGun.width = 50;
+        this.redGun.body.velocity.x = 0;
+        this.redGun.body.velocity.y = 0;
+        this.redGun.color = "red";
+        this.redGun.name = "redGun";
+
+        this.yellowGun = this.rayGuns.create(1000,450, 'YellowGun');
+        this.yellowGun.anchor.setTo(0.5,0.5);
+        this.yellowGun.height = 50;
+        this.yellowGun.width = 50;
+        this.yellowGun.body.velocity.x = 0;
+        this.yellowGun.body.velocity.y = 0;
+        this.yellowGun.color = "yellow";
+        this.yellowGun.name = "yellowGun";
+
+        this.greenGun = this.rayGuns.create(200,150, 'GreenGun');
+        this.greenGun.anchor.setTo(0.5,0.5);
+        this.greenGun.height = 50;
+        this.greenGun.width = 50;
+        this.greenGun.body.velocity.x = 0;
+        this.greenGun.body.velocity.y = 0;
+        this.greenGun.color = "green";
+        this.greenGun.name = "greenGun";
+
+        this.blueGun = this.rayGuns.create(1000,150, 'BlueGun');
+        this.blueGun.anchor.setTo(0.5,0.5);
+        this.blueGun.height = 50;
+        this.blueGun.width = 50;
+        this.blueGun.body.velocity.x = 0;
+        this.blueGun.body.velocity.y = 0;
+        this.blueGun.color = "blue";
+        this.blueGun.name = "blueGun";
+
+        this.redBulletTime = 0;
+        this.yellowBulletTime = 0;
+        this.greenBulletTime = 0;
+        this.blueBulletTime = 0;
+
+        this.redBullets = game.add.group();
+        this.redBullets.enableBody = true;
+        this.redBullets.physicsBodyType = Phaser.Physics.ARCADE;
+
+        for (var i = 0; i < 10; i++)
+        {
+            this.redBullet = this.redBullets.create(0, 0, 'RedBullet');
+            this.redBullet.width = 20;
+            this.redBullet.height = 20;
+            this.redBullet.anchor.setTo(0.5,0.5);
+            this.redBullet.color = "red";
+            this.redBullet.exists = false;
+            this.redBullet.visible = false;
+            this.redBullet.checkWorldBounds = true;
+            this.redBullet.events.onOutOfBounds.add(this.killBullet, this);
+        }
+
+        this.yellowBullets = game.add.group();
+        this.yellowBullets.enableBody = true;
+        this.yellowBullets.physicsBodyType = Phaser.Physics.ARCADE;
+
+        for (var i = 0; i < 10; i++)
+        {
+            this.yellowBullet = this.yellowBullets.create(0, 0, 'YellowBullet');
+            this.yellowBullet.width = 20;
+            this.yellowBullet.height = 20;
+            this.yellowBullet.anchor.setTo(0.5,0.5);
+            this.yellowBullet.color = "yellow";
+            this.yellowBullet.exists = false;
+            this.yellowBullet.visible = false;
+            this.yellowBullet.checkWorldBounds = true;
+            this.yellowBullet.events.onOutOfBounds.add(this.killBullet, this);
+        }
+
+        this.greenBullets = game.add.group();
+        this.greenBullets.enableBody = true;
+        this.greenBullets.physicsBodyType = Phaser.Physics.ARCADE;
+
+        for (var i = 0; i < 10; i++)
+        {
+            this.greenBullet = this.greenBullets.create(0, 0, 'GreenBullet');
+            this.greenBullet.width = 20;
+            this.greenBullet.height = 20;
+            this.greenBullet.anchor.setTo(0.5,0.5);
+            this.greenBullet.color = "green";
+            this.greenBullet.exists = false;
+            this.greenBullet.visible = false;
+            this.greenBullet.checkWorldBounds = true;
+            this.greenBullet.events.onOutOfBounds.add(this.killBullet, this);
+        }
+
+        this.blueBullets = game.add.group();
+        this.blueBullets.enableBody = true;
+        this.blueBullets.physicsBodyType = Phaser.Physics.ARCADE;
+
+        for (var i = 0; i < 10; i++)
+        {
+            this.blueBullet = this.blueBullets.create(0, 0, 'BlueBullet');
+            this.blueBullet.width = 20;
+            this.blueBullet.height = 20;
+            this.blueBullet.anchor.setTo(0.5,0.5);
+            this.blueBullet.color = "blue";
+            this.blueBullet.exists = false;
+            this.blueBullet.visible = false;
+            this.blueBullet.checkWorldBounds = true;
+            this.blueBullet.events.onOutOfBounds.add(this.killBullet, this);
+        }
+
+
 // Player pieces
 
         // this.pieces = this.game.add.group();
@@ -765,15 +855,15 @@ BasicGame.Game.prototype = {
         // this.pieces.physicsBodyType = Phaser.Physics.ARCADE;
 
         // Create subgroups for each category of ship piece, distinguished by color and player
-        this.p1Red_pieces = this.game.add.group();
-        this.p1Yellow_pieces = this.game.add.group();
-        this.p1Green_pieces = this.game.add.group();
-        this.p1Blue_pieces = this.game.add.group();
+        this.p1Red_pieces = game.add.group();
+        this.p1Yellow_pieces = game.add.group();
+        this.p1Green_pieces = game.add.group();
+        this.p1Blue_pieces = game.add.group();
         
-        this.p2Red_pieces = this.game.add.group();
-        this.p2Yellow_pieces = this.game.add.group();
-        this.p2Green_pieces = this.game.add.group();
-        this.p2Blue_pieces = this.game.add.group();
+        this.p2Red_pieces = game.add.group();
+        this.p2Yellow_pieces = game.add.group();
+        this.p2Green_pieces = game.add.group();
+        this.p2Blue_pieces = game.add.group();
 
         this.p1Red_pieces.enableBody = true;
         this.p1Red_pieces.physicsBodyType = Phaser.Physics.ARCADE;
@@ -793,7 +883,7 @@ BasicGame.Game.prototype = {
         this.p2Blue_pieces.enableBody = true;
         this.p2Blue_pieces.physicsBodyType = Phaser.Physics.ARCADE;
 
-// P1 pieces
+    // P1 pieces
 
 
         // NOTE: There are at least two ways to set the drag value of a body (keep in mind that the drag value, which is measured in pixels per
@@ -815,10 +905,11 @@ BasicGame.Game.prototype = {
         this.p1Red.width = 30;
         this.p1Red.player = "p1";
         this.p1Red.color = "red";
-        this.p1Red.body.damping = true;
+        // this.p1Red.body.damping = true;
         this.p1Red.body.drag = new Phaser.Point(100,100); // This is Phaser 2! So, drag is measured in pixels per second squared for both x and y directions, according to line 91066 in phaser.js
         // this.p1Red.body.drag.x = 100;
         // this.p1Red.body.drag.y = 100;
+        this.p1Red.name = "p1Red";
 
         this.p1Red2 = this.p1Red_pieces.create(675, 225, 'RedP1');
         this.p1Red2.anchor.setTo(0.5,0.5);
@@ -831,6 +922,7 @@ BasicGame.Game.prototype = {
         this.p1Red2.body.drag = new Phaser.Point(100,100); // This is Phaser 2! So, drag is measured in pixels per second squared for both x and y directions, according to line 91066 in phaser.js
         // this.p1Red2.body.drag.x = 100;
         // this.p1Red2.body.drag.y = 100;
+        this.p1Red2.name = "p1Red2";
 
         this.p1Red3 = this.p1Red_pieces.create(425, 575, 'RedP1');
         this.p1Red3.anchor.setTo(0.5,0.5);
@@ -843,6 +935,7 @@ BasicGame.Game.prototype = {
         this.p1Red3.body.drag = new Phaser.Point(100,100);
         // this.p1Red3.body.drag.x = 100;
         // this.p1Red3.body.drag.y = 100; 
+        this.p1Red3.name = "p1Red3";
 
         this.p1Blue = this.p1Blue_pieces.create(50,100,'BlueP1');
         this.p1Blue.anchor.setTo(0.5,0.5);
@@ -853,6 +946,7 @@ BasicGame.Game.prototype = {
         this.p1Blue.player = "p1";
         this.p1Blue.color = "blue";
         this.p1Blue.body.drag = new Phaser.Point(100,100);
+        this.p1Blue.name = "p1Blue";
 
         this.p1Blue2 = this.p1Blue_pieces.create(850,75,'BlueP1');
         this.p1Blue2.anchor.setTo(0.5,0.5);
@@ -863,6 +957,7 @@ BasicGame.Game.prototype = {
         this.p1Blue2.player = "p1";
         this.p1Blue2.color = "blue";
         this.p1Blue2.body.drag = new Phaser.Point(100,100);
+        this.p1Blue2.name = "p1Blue2";
 
         this.p1Blue3 = this.p1Blue_pieces.create(925,300,'BlueP1');
         this.p1Blue3.anchor.setTo(0.5,0.5);
@@ -873,6 +968,7 @@ BasicGame.Game.prototype = {
         this.p1Blue3.player = "p1";
         this.p1Blue3.color = "blue";
         this.p1Blue3.body.drag = new Phaser.Point(100,100);
+        this.p1Blue3.name = "p1Blue3";
 
 /*
         this.p1Red = this.pieces.create(900, 500, 'RedP1');
@@ -893,7 +989,7 @@ BasicGame.Game.prototype = {
         this.p1Red2.player = "p1";
         this.p1Red2.color = "red";
 
-		this.p1Red3 = this.pieces.create(425, 575, 'RedP1');
+        this.p1Red3 = this.pieces.create(425, 575, 'RedP1');
         this.p1Red3.anchor.setTo(0.5,0.5);
         this.p1Red3.body.velocity.x = 0;
         this.p1Red3.body.velocity.y = 0;
@@ -956,7 +1052,7 @@ BasicGame.Game.prototype = {
         this.p1Blue2.player = "p1";
         this.p1Blue2.color = "blue";
 */
-// P2 pieces
+    // P2 pieces
 
         this.p2Red = this.p2Red_pieces.create(1100, 50, 'RedP2');
         this.p2Red.anchor.setTo(0.5,0.5);
@@ -967,6 +1063,7 @@ BasicGame.Game.prototype = {
         this.p2Red.player = "p2";
         this.p2Red.color = "red";
         this.p2Red.body.drag = new Phaser.Point(100,100);
+        this.p2Red.name = "p2Red";
 
         this.p2Red2 = this.p2Red_pieces.create(550, 325, 'RedP2');
         this.p2Red2.anchor.setTo(0.5,0.5);
@@ -977,6 +1074,7 @@ BasicGame.Game.prototype = {
         this.p2Red2.player = "p2";
         this.p2Red2.color = "red";
         this.p2Red2.body.drag = new Phaser.Point(100,100);
+        this.p2Red2.name = "p2Red2";
 
         this.p2Red3 = this.p2Red_pieces.create(200, 250, 'RedP2');
         this.p2Red3.anchor.setTo(0.5,0.5);
@@ -987,6 +1085,7 @@ BasicGame.Game.prototype = {
         this.p2Red3.player = "p2";
         this.p2Red3.color = "red";
         this.p2Red3.body.drag = new Phaser.Point(100,100);
+        this.p2Red3.name = "p2Red3";
 
 
         this.p2Blue = this.p2Blue_pieces.create(800,550,'BlueP2');
@@ -998,6 +1097,7 @@ BasicGame.Game.prototype = {
         this.p2Blue.player = "p2";
         this.p2Blue.color = "blue";
         this.p2Blue.body.drag = new Phaser.Point(100,100);
+        this.p2Blue.name = "p2Blue";
 
         this.p2Blue2 = this.p2Blue_pieces.create(350,175,'BlueP2');
         this.p2Blue2.anchor.setTo(0.5,0.5);
@@ -1008,6 +1108,7 @@ BasicGame.Game.prototype = {
         this.p2Blue2.player = "p2";
         this.p2Blue2.color = "blue";
         this.p2Blue2.body.drag = new Phaser.Point(100,100);
+        this.p2Blue2.name = "p2Blue2";
 
         this.p2Blue3 = this.p2Blue_pieces.create(400,450,'BlueP2');
         this.p2Blue3.anchor.setTo(0.5,0.5);
@@ -1018,6 +1119,7 @@ BasicGame.Game.prototype = {
         this.p2Blue3.player = "p2";
         this.p2Blue3.color = "blue";
         this.p2Blue3.body.drag = new Phaser.Point(100,100);
+        this.p2Blue3.name = "p2Blue3";
 
 /*
         this.p2Red = this.pieces.create(750, 200, 'RedP2');
@@ -1101,86 +1203,6 @@ BasicGame.Game.prototype = {
         this.p2Blue3.player = "p2";
         this.p2Blue3.color = "blue";
 */
-        // Add some text using a CSS style.
-        // Center it in X, and position its top 15 pixels from the top of the world.
-        var style = { font: "25px Verdana", fill: "#FFFFFF", align: "center" };
-        var subtitleTextStyle = { font: "18px Verdana", fill: "#FFFFFF", align: "center" };
-        // var text = this.game.add.text( this.game.world.centerX, 15, "Get your ship up and running!", style );
-        // text.anchor.setTo( 0.5, 0.0 );
-
-        this.gameClock = this.game.add.text( 50, 15, 'Elapsed seconds: '+this.game.time.totalElapsedSeconds(), style );
-        // this.gameClock.anchor.setTo( 0.0, 0.0 );
-
-		this.timeSoFar = this.game.time.totalElapsedSeconds();
-
-        // this.spawnBeginning = 0;
-
-        // Here are different ways to modify existing an text object!
-        // Alpha value:         this.hintsText.alpha = 0;
-        // x or y position:     this.hintsText.x = 0;
-        // the actual text:     this.hintsText.text = "Hello!";
-
-        // // When you click on the sprite, you go back to the MainMenu.
-        // this.wall.inputEnabled = true;
-        // this.wall.events.onInputDown.add( function() { this.quitGame(); }, this );
-
-        this.cursors = this.game.input.keyboard.createCursorKeys();
-        this.jKey = this.game.input.keyboard.addKey(Phaser.Keyboard.J);
-        this.hKey = this.game.input.keyboard.addKey(Phaser.Keyboard.H);
-
-        this.wKey = this.game.input.keyboard.addKey(Phaser.Keyboard.W);
-        this.sKey = this.game.input.keyboard.addKey(Phaser.Keyboard.S);
-        this.aKey = this.game.input.keyboard.addKey(Phaser.Keyboard.A);
-        this.dKey = this.game.input.keyboard.addKey(Phaser.Keyboard.D);
-        this.twoKey = this.game.input.keyboard.addKey(Phaser.Keyboard.TWO);
-        this.oneKey = this.game.input.keyboard.addKey(Phaser.Keyboard.ONE);
-        // spaceKey = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
-
-        this.mousePointer = this.game.input.activePointer;
-        // this.mousePointer.contextMenu.disable();
-    //    this.mouseText = this.game.add.text( this.mousePointer.x, this.mousePointer.y, '' , hintsTextStyle);
-
-        // this.player1.body.onOverlap = new Phaser.Signal();
-        // this.player1.body.onOverlap.add(this.takeItem, this);
-//        this.itemInitVelocity = 200;
-        // this.slowDownValue = 0;
-
-        this.chatButton = this.add.button( this.game.world.centerX, 30, 'chatButton', this.chatButtonClicked, this);
-        this.chatButton.anchor.setTo(0.5,0.5);
-        this.chatButton.width = 55;
-        this.chatButton.height = 55;
-
-
-        // Tutorial: "the client will notify the server that a new player should be created"
-        // Note: See how it is at the end of the create() method; my theory is that it's so that
-        // no more than one player executes the entire process of initializing everything above
-        Client.askNewPlayer();
-
-    },
-
-    addMyPlayer: function(id,x,y) {
-        // this.player1.x = x;
-        // this.player1.y = y;
-
-        // var p1x = (x === 900) ? 300 : 900;
-        // var p1y = 300;
-
-        // this.player1 = game.add.sprite( p1x, p1y, 'player1' );
-        this.player1 = game.add.sprite( x, y, 'player1' );
-        this.player1.anchor.setTo( 0.5, 0.5 );
-        this.player1.width = 75;
-        this.player1.height = 75;
-
-        game.physics.enable( this.player1, Phaser.Physics.ARCADE );
-
-        Game.playerMap[id] = this.player1;
-
-        var hintsTextStyle = { font: "15px Verdana", fill: "#FFFFFF", align: "center" };
-
-        // Text above the player
-        this.hintsText = game.add.text( this.player1.x, this.player1.y - this.player1.body.height/2 - 50, 'Hints will go here!' , hintsTextStyle);
-        this.hintsText.anchor.setTo( 0.5, 0.5 );
-        this.hintsText.alpha = 0;
 
     },
 
@@ -1194,12 +1216,12 @@ BasicGame.Game.prototype = {
         Client.sendMessageToOtherPlayer(msg);
 
         if (this.hintsTimer != null) {
-            this.game.time.events.remove(this.hintsTimer);
+            game.time.events.remove(this.hintsTimer);
         }
 
         // Clear the text after some time. Note: I defined the callback function right here. Of course
         // I could simply define a separate function entirely and call that, but this works too
-        this.hintsTimer = this.game.time.events.add(Phaser.Timer.SECOND * 5, () => {
+        this.hintsTimer = game.time.events.add(Phaser.Timer.SECOND * 5, () => {
             this.hintsText.text = "";
             this.hintsText.alpha = 0;
         });
@@ -1282,6 +1304,71 @@ BasicGame.Game.prototype = {
         // tween.start();
         // player.x = x;
         // player.y = y;
+    },
+
+    // Send to server so the other client can see the object in motion
+    sendObjMotion: function(objName,objPlayer,objColor,velocityX,velocityY,dragX,dragY) {
+        Client.updateObjMotion(objName,objPlayer,objColor,velocityX,velocityY,dragX,dragY);
+    },
+
+    // From server; this function executes if the other player executed sendObjMotion
+    moveObject: function(objName,objPlayer,objColor,velocityX,velocityY,dragX,dragY) {
+
+        var listToCheck = null;
+
+        // Rather than search every list, find which list of pieces to search through, based on the object's assigned player and color; this should make things more efficient
+        switch (objColor) {
+            case "red":
+                if (objPlayer === "p1") {
+                    listToCheck = this.p1Red_pieces;
+                } else if (objPlayer === "p2") {
+                    listToCheck = this.p2Red_pieces;
+                } else { // Although there was an assigned color, there was no assigned player; it must be one of the ray guns
+                    listToCheck = this.rayGuns;
+                }
+                break;
+            case "yellow":
+                if (objPlayer === "p1") {
+                    listToCheck = this.p1Yellow_pieces;
+                } else if (objPlayer === "p2") {
+                    listToCheck = this.p2Yellow_pieces;
+                } else { // Although there was an assigned color, there was no assigned player; it must be one of the ray guns
+                    listToCheck = this.rayGuns;
+                }
+                break;
+            case "green":
+                if (objPlayer === "p1") {
+                    listToCheck = this.p1Green_pieces;
+                } else if (objPlayer === "p2") {
+                    listToCheck = this.p2Green_pieces;
+                } else { // Although there was an assigned color, there was no assigned player; it must be one of the ray guns
+                    listToCheck = this.rayGuns;
+                }
+                break;
+            case "blue":
+                if (objPlayer === "p1") {
+                    listToCheck = this.p1Blue_pieces;
+                } else if (objPlayer === "p2") {
+                    listToCheck = this.p2Blue_pieces;
+                } else { // Although there was an assigned color, there was no assigned player; it must be one of the ray guns
+                    listToCheck = this.rayGuns;
+                }
+                break;
+        }
+
+        // Search through the list for the object with the specific name, and set its velocity and drag accordingly
+        // Note: Since the pieces lists are Objects and not simple arrays, the same is true for listToCheck. It has a "children" property,
+        // and THAT is a simple array that holds all the members of the group.
+        for (var i=0; i<listToCheck.children.length; i++) {
+            if (listToCheck.children[i].name === objName) { // Object found
+
+                listToCheck.children[i].body.velocity.setTo(velocityX,velocityY);
+                listToCheck.children[i].body.drag.x = dragX;
+                listToCheck.children[i].body.drag.y = dragY;
+                break;
+            }
+        }
+
     },
 
     update: function () {
@@ -1992,9 +2079,12 @@ BasicGame.Game.prototype = {
             
             this.p1currItem.body.velocity.setTo(this.xDistToMousePointer_norm*this.baseVelocityVal,this.yDistToMousePointer_norm*this.baseVelocityVal);
             // Set the x and y drag values of the current item in proportion to how much the item is moving in the x direction and y direction.
+            // Doing this prevents the drag from being too much in one direction. Otherwise, the object would curve towards a certain direction.
             this.p1currItem.body.drag.x = 100*(Math.abs(this.xDistToMousePointer_norm));
             this.p1currItem.body.drag.y = 100*(Math.abs(this.yDistToMousePointer_norm));
             this.itemThrowIsInitiated = true;
+
+            this.sendObjMotion(this.p1currItem.name, this.p1currItem.player, this.p1currItem.color, this.p1currItem.body.velocity.x, this.p1currItem.body.velocity.y, this.p1currItem.body.drag.x, this.p1currItem.body.drag.y);
 
             this.resetPossessionTimer = this.game.time.events.add(Phaser.Timer.SECOND * 0.5, this.setPossessionFalse, this, this.player1);
             // this.p1Possess = false;
