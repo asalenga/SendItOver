@@ -26,6 +26,12 @@ server.lastPlayerID = 0; // Keep track of the last id assigned to a new player
 // Inspired by tutorial: "JavaScript Game Dev - Multiplayer Match", https://youtu.be/nQC7VEIyQPI
 let waitingPlayer = null;
 
+// You can use either an Object to store name-value pairs (like a dictionary) that can be indexed by name,
+// or an array to store values that can be indexed by number
+// var rooms = {}; // Object
+var rooms = []; // Array
+var numRooms = 0;
+
 // Tutorial: "We tell Socket.io to listen to the 'connection' event, which is fired each time a client connects to the server 
 // (using io.connect()). When this happens, it should call the callback specified as the second argument. This callback receives
 // as first argument the socket used to establish the connection, which, just like the client socket, can be used to pass messages."
@@ -37,7 +43,16 @@ io.on('connection',function(socket){
 		// // Send the same message to both players
 		// [socket,waitingPlayer].forEach((s) => s.emit('message', 'Game Starts!'));
 
-		[socket,waitingPlayer].forEach((s) => s.emit('startGame'));
+		// [socket,waitingPlayer].forEach((s) => s.emit('startGame'));
+        var newRoom = "Room " + numRooms;
+        numRooms++;
+        console.log("Adding players to " + newRoom);
+        [socket,waitingPlayer].forEach((s) => s.join(newRoom));
+        io.to(newRoom).emit('startGame');
+
+        // var currGame = new GameState();
+        // currGame.start();
+
 		// waitingPlayer.emit('startGame', 'p1');
 		// socket.emit('startGame', 'p2');
 
