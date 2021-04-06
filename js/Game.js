@@ -36,6 +36,7 @@
 // Override the game.state.start method
 
 var Game = {};
+Game.playerMap = {};
 this.player1 = null;
 this.hintsText = null;
 this.otherPlayerHintsText = null;
@@ -186,7 +187,6 @@ BasicGame.Game.prototype = {
 
         // The tutorial at https://www.dynetisgames.com/2017/03/06/how-to-make-a-multiplayer-online-game-with-phaser-socket-io-and-node-js/
         // says that "Game.playerMap = {}" is an "empty object [that] will be useful later on to keep track of players"
-        Game.playerMap = {};
         // Game.hintsMap = {};
 
 

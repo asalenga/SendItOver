@@ -32,10 +32,39 @@ let waitingPlayer = null;
 var rooms = []; // Array
 var numRooms = 0;
 
+var maxClients = 2;
+
 // Tutorial: "We tell Socket.io to listen to the 'connection' event, which is fired each time a client connects to the server 
 // (using io.connect()). When this happens, it should call the callback specified as the second argument. This callback receives
 // as first argument the socket used to establish the connection, which, just like the client socket, can be used to pass messages."
 io.on('connection',function(socket){
+
+    // // // console.log("Object.keys(io.sockets.sockets).length: " + Object.keys(io.sockets.sockets).length);
+
+    // // // if (io.sockets.sockets.length >= 2) { // Prevent additional players from joining if there are already 2 players connected
+    // // //     console.log("Maximum number of players reached. Please wait.");
+    // // //     return;
+    // // // }
+
+    // // let allPlayers = getAllPlayers();
+
+    // // console.log("Number of players: " + allPlayers.length);
+
+    // // if (allPlayers.length >= 2) {
+    // //     console.log("Maximum number of players reached. Please wait.");
+    // //     return;
+    // // }
+
+    // let connectedUsersCount = Object.keys(io.sockets.sockets).length;
+
+    // console.log("Number of players: " + connectedUsersCount);
+
+    if (io.engine.clientsCount > maxClients) {
+        socket.emit('err', { message: 'Maximum number of players reached! Please try again.' });
+        socket.disconnect();
+        console.log('Disconnected...');
+        return;
+    }
 
 	// If there is a waiting player, match them with the joining player--who is passed in as the "socket" variable--and start a game
 	if (waitingPlayer) {
@@ -147,6 +176,20 @@ io.on('connection',function(socket){
 
         socket.on('gameOverSignaled',function(data){
             socket.broadcast.emit('quitGame',data);
+        });
+
+        socket.on('disconnecting', () => {
+
+            console.log("Socket is disconnecting. socket.rooms: " + socket.rooms);
+
+            // // Remove the other player that is in the same room, so that each game starts and ends only with the same pair of players
+            // for (const room of socket.rooms) { // Remove the client from all rooms that they are in
+            //     for () {
+            //         socket.to(room).emit();
+            //     }
+            // }
+
+
         });
 
         // Tutorial: "[process] the 'disconnect' message that the server automatically receives when a client actively disconnects or times out"
