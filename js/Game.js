@@ -708,7 +708,9 @@ BasicGame.Game.prototype = {
 
     },
 
-    addMyPlayer: function(id,x,y) {
+    // Add all of the client-specific elements (i.e. the non-static elements that will be interacted with),
+    // including the player's character (astronaut), ship pieces, ray guns, and enemies
+    addMyGameElements: function(id,x,y) {
         // this.player1.x = x;
         // this.player1.y = y;
 
