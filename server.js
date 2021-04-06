@@ -62,7 +62,8 @@ io.on('connection',function(socket){
     if (io.engine.clientsCount > maxClients) {
         socket.emit('err', { message: 'Maximum number of players reached! Please try again.' });
         socket.disconnect();
-        console.log('Disconnected...');
+        console.log('Maximum number of players reached!');
+        console.log('Disconnected... Please try again.');
         return;
     }
 
@@ -90,6 +91,7 @@ io.on('connection',function(socket){
 	} else { // Otherwise, there is no currently waiting player, so the joining player becomes the waiting player
 
 		waitingPlayer = socket;
+        socket.emit('startWaitingRoom');
 		// waitingPlayer.emit('message', 'Waiting for a partner');
 
 	}

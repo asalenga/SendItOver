@@ -13,7 +13,7 @@ BasicGame.WaitingRoom.prototype = {
 		this.waitingMessage = this.add.text(this.world.centerX, this.world.centerY, 'Waiting for a partner', {font: "40px Verdana", fill: "#FFFFFF", align: "center"});
 		this.waitingMessage.anchor.setTo(0.5,0.5);
 
-		Client.connectToServer();
+		// Client.connectToServer();
 
 	},
 

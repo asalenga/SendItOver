@@ -101,6 +101,12 @@ Client.connectToServer = function() {
 	    BasicGame.Game.prototype.killPieceAndCheckRemaining_receive(data.objName, data.objPlayer, data.objColor);
 	});
 
+// Putting player into waiting room (if there is currently no other player to partner up with)
+
+	Client.socket.on('startWaitingRoom', function() {
+		BasicGame.MainMenu.prototype.startWaitingRoom();
+	});
+
 // Starting a game
 
 	// Receive from server
