@@ -37,6 +37,8 @@
 
 var Game = {};
 Game.playerMap = {};
+Game.enemyMap = {};
+
 this.player1 = null;
 this.hintsText = null;
 this.otherPlayerHintsText = null;
@@ -53,6 +55,8 @@ this.p2Red_pieces = null;
 this.p2Yellow_pieces = null;
 this.p2Green_pieces = null;
 this.p2Blue_pieces = null;
+
+this.enemies = null;
 
 BasicGame.Game = function (game) {
 
@@ -92,7 +96,7 @@ BasicGame.Game = function (game) {
     // this.player1 = null;
     // this.player2 = null;
 
-    this.enemies = null;
+    // this.enemies = null;
     this.p1Possess = null; // Check if Player 1 has possession of something
     this.p1currItem = null; // Check what item Player 1 is in possession of
 
@@ -116,6 +120,9 @@ BasicGame.Game = function (game) {
     this.yellowBulletTime = null;
     this.greenBulletTime = null;
     this.blueBulletTime = null;
+
+    this.enemySpawnCooldown = null;
+
     this.gameClock = null;
     this.playersWin = null; // Check if the players have won or lost
 
@@ -362,295 +369,6 @@ BasicGame.Game.prototype = {
     	// this.game.physics.enable( this.redBullet, Phaser.Physics.ARCADE );
     	// this.redBullet.body.velocity.x = 0;
 
-    	this.enemies = this.game.add.group();
-    	this.enemies.enableBody = true;
-    	this.enemies.physicsBodyType = Phaser.Physics.ARCADE;
-/*
-// Wave 1
-
-    	this.redEnemy1 = this.enemies.create(300, -50, 'RedEnemy');
-    	this.redEnemy1.anchor.setTo(0.5,0.5);
-    	this.redEnemy1.body.velocity.x = 0;
-    	this.redEnemy1.body.velocity.y = 0;
-    	this.redEnemy1.height = 60;
-    	this.redEnemy1.width = 60;
-    	this.redEnemy1.color = "red";
-    	// this.redEnemy1.body.setSize(10, 10, 25, 25);
-
-    	// this.redEnemy2 = this.enemies.create(800, this.game.world.height-10, 'RedEnemy');
-    	// this.redEnemy2.anchor.setTo(0.5,0.5);
-    	// this.redEnemy2.body.velocity.x = 0;
-    	// this.redEnemy2.body.velocity.y = 0;
-    	// this.redEnemy2.height = 60;
-    	// this.redEnemy2.width = 60;
-    	// this.redEnemy2.color = "red";
-
-    	this.yellowEnemy1 = this.enemies.create(900, this.game.world.height+100, 'YellowEnemy');
-    	this.yellowEnemy1.anchor.setTo(0.5,0.5);
-    	this.yellowEnemy1.body.velocity.x = 0;
-    	this.yellowEnemy1.body.velocity.y = 0;
-    	this.yellowEnemy1.height = 60;
-    	this.yellowEnemy1.width = 60;
-    	this.yellowEnemy1.color = "yellow";
-
-
-    	// this.greenEnemy1 = this.enemies.create(1200, 300, 'GreenEnemy');
-    	// this.greenEnemy1.anchor.setTo(0.5,0.5);
-    	// this.greenEnemy1.body.velocity.x = 0;
-    	// this.greenEnemy1.body.velocity.y = 0;
-    	// this.greenEnemy1.height = 60;
-    	// this.greenEnemy1.width = 60;
-    	// this.greenEnemy1.color = "green";
-
-		this.greenEnemy4 = this.enemies.create(350, this.game.world.height+50, 'GreenEnemy');
-    	this.greenEnemy4.anchor.setTo(0.5,0.5);
-    	this.greenEnemy4.body.velocity.x = 0;
-    	this.greenEnemy4.body.velocity.y = 0;
-    	this.greenEnemy4.height = 60;
-    	this.greenEnemy4.width = 60;
-    	this.greenEnemy4.color = "green"; 
-
-    	this.blueEnemy1 = this.enemies.create(700, -50, 'BlueEnemy');
-    	this.blueEnemy1.anchor.setTo(0.5,0.5);
-    	this.blueEnemy1.body.velocity.x = 0;
-    	this.blueEnemy1.body.velocity.y = 0;
-    	this.blueEnemy1.height = 60;
-    	this.blueEnemy1.width = 60;
-    	this.blueEnemy1.color = "blue";
-
-// Wave 2
-
-		this.yellowEnemy2 = this.enemies.create(-400, 400, 'YellowEnemy');
-    	this.yellowEnemy2.anchor.setTo(0.5,0.5);
-    	this.yellowEnemy2.body.velocity.x = 0;
-    	this.yellowEnemy2.body.velocity.y = 0;
-    	this.yellowEnemy2.height = 60;
-    	this.yellowEnemy2.width = 60;
-    	this.yellowEnemy2.color = "yellow";
-
-    	this.yellowEnemy3 = this.enemies.create(100, -350, 'YellowEnemy');
-    	this.yellowEnemy3.anchor.setTo(0.5,0.5);
-    	this.yellowEnemy3.body.velocity.x = 0;
-    	this.yellowEnemy3.body.velocity.y = 0;
-    	this.yellowEnemy3.height = 60;
-    	this.yellowEnemy3.width = 60;
-    	this.yellowEnemy3.color = "yellow";
-
-    	this.redEnemy3 = this.enemies.create(100, this.game.world.height+350, 'RedEnemy');
-    	this.redEnemy3.anchor.setTo(0.5,0.5);
-    	this.redEnemy3.body.velocity.x = 0;
-    	this.redEnemy3.body.velocity.y = 0;
-    	this.redEnemy3.height = 60;
-    	this.redEnemy3.width = 60;
-    	this.redEnemy3.color = "red";
-
-    	this.greenEnemy2 = this.enemies.create(800, this.game.world.height+350, 'GreenEnemy');
-    	this.greenEnemy2.anchor.setTo(0.5,0.5);
-    	this.greenEnemy2.body.velocity.x = 0;
-    	this.greenEnemy2.body.velocity.y = 0;
-    	this.greenEnemy2.height = 60;
-    	this.greenEnemy2.width = 60;
-    	this.greenEnemy2.color = "green";
-
-    	this.blueEnemy3 = this.enemies.create(200, this.game.world.height+400, 'BlueEnemy');
-    	this.blueEnemy3.anchor.setTo(0.5,0.5);
-    	this.blueEnemy3.body.velocity.x = 0;
-    	this.blueEnemy3.body.velocity.y = 0;
-    	this.blueEnemy3.height = 60;
-    	this.blueEnemy3.width = 60;
-    	this.blueEnemy3.color = "blue";
-
-    	this.blueEnemy4 = this.enemies.create(900, this.game.world.height+350, 'BlueEnemy');
-    	this.blueEnemy4.anchor.setTo(0.5,0.5);
-    	this.blueEnemy4.body.velocity.x = 0;
-    	this.blueEnemy4.body.velocity.y = 0;
-    	this.blueEnemy4.height = 60;
-    	this.blueEnemy4.width = 60;
-    	this.blueEnemy4.color = "blue";
-
-    	this.blueEnemy5 = this.enemies.create(1450, this.game.world.height-400, 'BlueEnemy');
-    	this.blueEnemy5.anchor.setTo(0.5,0.5);
-    	this.blueEnemy5.body.velocity.x = 0;
-    	this.blueEnemy5.body.velocity.y = 0;
-    	this.blueEnemy5.height = 60;
-    	this.blueEnemy5.width = 60;
-    	this.blueEnemy5.color = "blue";
-
-// Wave 3
-
-		this.redEnemy4 = this.enemies.create(1000, this.game.world.height+750, 'RedEnemy');
-    	this.redEnemy4.anchor.setTo(0.5,0.5);
-    	this.redEnemy4.body.velocity.x = 0;
-    	this.redEnemy4.body.velocity.y = 0;
-    	this.redEnemy4.height = 60;
-    	this.redEnemy4.width = 60;
-    	this.redEnemy4.color = "red";
-
-    	this.redEnemy4 = this.enemies.create(-750, this.game.world.height/2, 'RedEnemy');
-    	this.redEnemy4.anchor.setTo(0.5,0.5);
-    	this.redEnemy4.body.velocity.x = 0;
-    	this.redEnemy4.body.velocity.y = 0;
-    	this.redEnemy4.height = 60;
-    	this.redEnemy4.width = 60;
-    	this.redEnemy4.color = "red";
-
-		this.yellowEnemy4 = this.enemies.create(750, this.game.world.height+800, 'YellowEnemy');
-    	this.yellowEnemy4.anchor.setTo(0.5,0.5);
-    	this.yellowEnemy4.body.velocity.x = 0;
-    	this.yellowEnemy4.body.velocity.y = 0;
-    	this.yellowEnemy4.height = 60;
-    	this.yellowEnemy4.width = 60;
-    	this.yellowEnemy4.color = "yellow";
-
-    	this.greenEnemy3 = this.enemies.create(200, this.game.world.height+750, 'GreenEnemy');
-    	this.greenEnemy3.anchor.setTo(0.5,0.5);
-    	this.greenEnemy3.body.velocity.x = 0;
-    	this.greenEnemy3.body.velocity.y = 0;
-    	this.greenEnemy3.height = 60;
-    	this.greenEnemy3.width = 60;
-    	this.greenEnemy3.color = "green";
-
-    	this.greenEnemy4 = this.enemies.create(550, -850, 'GreenEnemy');
-    	this.greenEnemy4.anchor.setTo(0.5,0.5);
-    	this.greenEnemy4.body.velocity.x = 0;
-    	this.greenEnemy4.body.velocity.y = 0;
-    	this.greenEnemy4.height = 60;
-    	this.greenEnemy4.width = 60;
-    	this.greenEnemy4.color = "green";
-
-    	this.blueEnemy2 = this.enemies.create(400, this.game.world.height+750, 'BlueEnemy');
-    	this.blueEnemy2.anchor.setTo(0.5,0.5);
-    	this.blueEnemy2.body.velocity.x = 0;
-    	this.blueEnemy2.body.velocity.y = 0;
-    	this.blueEnemy2.height = 60;
-    	this.blueEnemy2.width = 60;
-    	this.blueEnemy2.color = "blue";
-
-  	  	this.blueEnemy3 = this.enemies.create(this.game.world.width+750, this.game.world.height/3, 'BlueEnemy');
-    	this.blueEnemy3.anchor.setTo(0.5,0.5);
-    	this.blueEnemy3.body.velocity.x = 0;
-    	this.blueEnemy3.body.velocity.y = 0;
-    	this.blueEnemy3.height = 60;
-    	this.blueEnemy3.width = 60;
-    	this.blueEnemy3.color = "blue";
-
-// Wave 4
-
-    	this.redEnemy4 = this.enemies.create(100, -1100, 'RedEnemy');
-    	this.redEnemy4.anchor.setTo(0.5,0.5);
-    	this.redEnemy4.body.velocity.x = 0;
-    	this.redEnemy4.body.velocity.y = 0;
-    	this.redEnemy4.height = 60;
-    	this.redEnemy4.width = 60;
-    	this.redEnemy4.color = "red";
-
-    	this.redEnemy5 = this.enemies.create(400, this.game.world.height+1200, 'RedEnemy');
-    	this.redEnemy5.anchor.setTo(0.5,0.5);
-    	this.redEnemy5.body.velocity.x = 0;
-    	this.redEnemy5.body.velocity.y = 0;
-    	this.redEnemy5.height = 60;
-    	this.redEnemy5.width = 60;
-    	this.redEnemy5.color = "red";
-
-    	this.redEnemy6 = this.enemies.create(-1150, -1200, 'RedEnemy');
-    	this.redEnemy6.anchor.setTo(0.5,0.5);
-    	this.redEnemy6.body.velocity.x = 0;
-    	this.redEnemy6.body.velocity.y = 0;
-    	this.redEnemy6.height = 60;
-    	this.redEnemy6.width = 60;
-    	this.redEnemy6.color = "red";
-
-    	this.redEnemy7 = this.enemies.create(this.game.width+1300, 0, 'RedEnemy');
-    	this.redEnemy7.anchor.setTo(0.5,0.5);
-    	this.redEnemy7.body.velocity.x = 0;
-    	this.redEnemy7.body.velocity.y = 0;
-    	this.redEnemy7.height = 60;
-    	this.redEnemy7.width = 60;
-    	this.redEnemy7.color = "red";
-
-    	this.redEnemy8 = this.enemies.create(950, 1350, 'RedEnemy');
-    	this.redEnemy8.anchor.setTo(0.5,0.5);
-    	this.redEnemy8.body.velocity.x = 0;
-    	this.redEnemy8.body.velocity.y = 0;
-    	this.redEnemy8.height = 60;
-    	this.redEnemy8.width = 60;
-    	this.redEnemy8.color = "red";
-
-    	this.redEnemy9 = this.enemies.create(700, 1300, 'RedEnemy');
-    	this.redEnemy9.anchor.setTo(0.5,0.5);
-    	this.redEnemy9.body.velocity.x = 0;
-    	this.redEnemy9.body.velocity.y = 0;
-    	this.redEnemy9.height = 60;
-    	this.redEnemy9.width = 60;
-    	this.redEnemy9.color = "red";
-
-    	this.yellowEnemy5 = this.enemies.create(750, -1200, 'YellowEnemy');
-    	this.yellowEnemy5.anchor.setTo(0.5,0.5);
-    	this.yellowEnemy5.body.velocity.x = 0;
-    	this.yellowEnemy5.body.velocity.y = 0;
-    	this.yellowEnemy5.height = 60;
-    	this.yellowEnemy5.width = 60;
-    	this.yellowEnemy5.color = "yellow";
-
-    	this.yellowEnemy6 = this.enemies.create(800, this.game.world.height+1100, 'YellowEnemy');
-    	this.yellowEnemy6.anchor.setTo(0.5,0.5);
-    	this.yellowEnemy6.body.velocity.x = 0;
-    	this.yellowEnemy6.body.velocity.y = 0;
-    	this.yellowEnemy6.height = 60;
-    	this.yellowEnemy6.width = 60;
-    	this.yellowEnemy6.color = "yellow";
-
-    	this.yellowEnemy7 = this.enemies.create(1250, -1100, 'YellowEnemy');
-    	this.yellowEnemy7.anchor.setTo(0.5,0.5);
-    	this.yellowEnemy7.body.velocity.x = 0;
-    	this.yellowEnemy7.body.velocity.y = 0;
-    	this.yellowEnemy7.height = 60;
-    	this.yellowEnemy7.width = 60;
-    	this.yellowEnemy7.color = "yellow";
-
-    	this.greenEnemy5 = this.enemies.create(350, -1250, 'GreenEnemy');
-    	this.greenEnemy5.anchor.setTo(0.5,0.5);
-    	this.greenEnemy5.body.velocity.x = 0;
-    	this.greenEnemy5.body.velocity.y = 0;
-    	this.greenEnemy5.height = 60;
-    	this.greenEnemy5.width = 60;
-    	this.greenEnemy5.color = "green";
-
-    	this.greenEnemy5 = this.enemies.create(-1300, 250, 'GreenEnemy');
-    	this.greenEnemy5.anchor.setTo(0.5,0.5);
-    	this.greenEnemy5.body.velocity.x = 0;
-    	this.greenEnemy5.body.velocity.y = 0;
-    	this.greenEnemy5.height = 60;
-    	this.greenEnemy5.width = 60;
-    	this.greenEnemy5.color = "green";
-
-    	this.blueEnemy4 = this.enemies.create(this.game.world.width+1250, this.game.world.height/3 * 2, 'BlueEnemy');
-    	this.blueEnemy4.anchor.setTo(0.5,0.5);
-    	this.blueEnemy4.body.velocity.x = 0;
-    	this.blueEnemy4.body.velocity.y = 0;
-    	this.blueEnemy4.height = 60;
-    	this.blueEnemy4.width = 60;
-    	this.blueEnemy4.color = "blue";
-
-    	this.blueEnemy5 = this.enemies.create(1000, -1300, 'BlueEnemy');
-    	this.blueEnemy5.anchor.setTo(0.5,0.5);
-    	this.blueEnemy5.body.velocity.x = 0;
-    	this.blueEnemy5.body.velocity.y = 0;
-    	this.blueEnemy5.height = 60;
-    	this.blueEnemy5.width = 60;
-    	this.blueEnemy5.color = "blue";
-
-// Wave 5    	
-
-    	this.redEnemy5 = this.enemies.create(1400, 1400, 'RedEnemy');
-    	this.redEnemy5.anchor.setTo(0.5,0.5);
-    	this.redEnemy5.body.velocity.x = 0;
-    	this.redEnemy5.body.velocity.y = 0;
-    	this.redEnemy5.height = 60;
-    	this.redEnemy5.width = 60;
-    	this.redEnemy5.color = "red";
-*/
-
         // Add some text using a CSS style.
         // Center it in X, and position its top 15 pixels from the top of the world.
         var style = { font: "25px Verdana", fill: "#FFFFFF", align: "center" };
@@ -707,6 +425,8 @@ BasicGame.Game.prototype = {
         Client.askNewPlayer();
 
     },
+
+// Adding client's own new player, along with all client-specific game elements
 
     // Add all of the client-specific elements (i.e. the non-static elements that will be interacted with),
     // including the player's character (astronaut), ship pieces, ray guns, and enemies
@@ -1206,7 +926,521 @@ BasicGame.Game.prototype = {
         this.p2Blue3.color = "blue";
 */
 
+// Enemies
+        
+        this.enemies = game.add.group();
+        this.enemies.enableBody = true;
+        this.enemies.physicsBodyType = Phaser.Physics.ARCADE;
+
+        this.enemySpawnCooldown = 0;
+
+/*
+        for (var i = 0; i < 10; i++)
+        {
+            this.redEnemy = this.enemies.create(-300, -300, 'RedEnemy'); // Just spawn it far away for now
+            this.redEnemy.width = 60;
+            this.redEnemy.height = 60;
+            this.redEnemy.anchor.setTo(0.5,0.5);
+            this.redEnemy.color = "red";
+            this.redEnemy.body.velocity.x = 0;
+            this.redEnemy.body.velocity.y = 0;
+            this.redEnemy.exists = false;
+            this.redEnemy.visible = false;
+            this.redEnemy.checkWorldBounds = false;
+        }
+
+        for (var i = 0; i < 10; i++)
+        {
+            this.yellowEnemy = this.enemies.create(-300, -300, 'YellowEnemy'); // Just spawn it far away for now
+            this.yellowEnemy.width = 60;
+            this.yellowEnemy.height = 60;
+            this.yellowEnemy.anchor.setTo(0.5,0.5);
+            this.yellowEnemy.color = "yellow";
+            this.yellowEnemy.body.velocity.x = 0;
+            this.yellowEnemy.body.velocity.y = 0;
+            this.yellowEnemy.exists = false;
+            this.yellowEnemy.visible = false;
+            this.yellowEnemy.checkWorldBounds = false;
+        }
+
+        for (var i = 0; i < 10; i++)
+        {
+            this.greenEnemy = this.enemies.create(-300, -300, 'GreenEnemy'); // Just spawn it far away for now
+            this.greenEnemy.width = 60;
+            this.greenEnemy.height = 60;
+            this.greenEnemy.anchor.setTo(0.5,0.5);
+            this.greenEnemy.color = "green";
+            this.greenEnemy.body.velocity.x = 0;
+            this.greenEnemy.body.velocity.y = 0;
+            this.greenEnemy.exists = false;
+            this.greenEnemy.visible = false;
+            this.greenEnemy.checkWorldBounds = false;
+        }
+
+        for (var i = 0; i < 10; i++)
+        {
+            this.blueEnemy = this.enemies.create(-300, -300, 'BlueEnemy'); // Just spawn it far away for now
+            this.blueEnemy.width = 60;
+            this.blueEnemy.height = 60;
+            this.blueEnemy.anchor.setTo(0.5,0.5);
+            this.blueEnemy.color = "blue";
+            this.blueEnemy.body.velocity.x = 0;
+            this.blueEnemy.body.velocity.y = 0;
+            this.blueEnemy.exists = false;
+            this.blueEnemy.visible = false;
+            this.blueEnemy.checkWorldBounds = false;
+        }
+*/
+/*
+// Wave 1
+
+        this.redEnemy1 = this.enemies.create(300, -50, 'RedEnemy');
+        this.redEnemy1.anchor.setTo(0.5,0.5);
+        this.redEnemy1.body.velocity.x = 0;
+        this.redEnemy1.body.velocity.y = 0;
+        this.redEnemy1.height = 60;
+        this.redEnemy1.width = 60;
+        this.redEnemy1.color = "red";
+        // this.redEnemy1.body.setSize(10, 10, 25, 25);
+
+        // this.redEnemy2 = this.enemies.create(800, this.game.world.height-10, 'RedEnemy');
+        // this.redEnemy2.anchor.setTo(0.5,0.5);
+        // this.redEnemy2.body.velocity.x = 0;
+        // this.redEnemy2.body.velocity.y = 0;
+        // this.redEnemy2.height = 60;
+        // this.redEnemy2.width = 60;
+        // this.redEnemy2.color = "red";
+
+        this.yellowEnemy1 = this.enemies.create(900, this.game.world.height+100, 'YellowEnemy');
+        this.yellowEnemy1.anchor.setTo(0.5,0.5);
+        this.yellowEnemy1.body.velocity.x = 0;
+        this.yellowEnemy1.body.velocity.y = 0;
+        this.yellowEnemy1.height = 60;
+        this.yellowEnemy1.width = 60;
+        this.yellowEnemy1.color = "yellow";
+
+
+        // this.greenEnemy1 = this.enemies.create(1200, 300, 'GreenEnemy');
+        // this.greenEnemy1.anchor.setTo(0.5,0.5);
+        // this.greenEnemy1.body.velocity.x = 0;
+        // this.greenEnemy1.body.velocity.y = 0;
+        // this.greenEnemy1.height = 60;
+        // this.greenEnemy1.width = 60;
+        // this.greenEnemy1.color = "green";
+
+        this.greenEnemy4 = this.enemies.create(350, this.game.world.height+50, 'GreenEnemy');
+        this.greenEnemy4.anchor.setTo(0.5,0.5);
+        this.greenEnemy4.body.velocity.x = 0;
+        this.greenEnemy4.body.velocity.y = 0;
+        this.greenEnemy4.height = 60;
+        this.greenEnemy4.width = 60;
+        this.greenEnemy4.color = "green"; 
+
+        this.blueEnemy1 = this.enemies.create(700, -50, 'BlueEnemy');
+        this.blueEnemy1.anchor.setTo(0.5,0.5);
+        this.blueEnemy1.body.velocity.x = 0;
+        this.blueEnemy1.body.velocity.y = 0;
+        this.blueEnemy1.height = 60;
+        this.blueEnemy1.width = 60;
+        this.blueEnemy1.color = "blue";
+
+// Wave 2
+
+        this.yellowEnemy2 = this.enemies.create(-400, 400, 'YellowEnemy');
+        this.yellowEnemy2.anchor.setTo(0.5,0.5);
+        this.yellowEnemy2.body.velocity.x = 0;
+        this.yellowEnemy2.body.velocity.y = 0;
+        this.yellowEnemy2.height = 60;
+        this.yellowEnemy2.width = 60;
+        this.yellowEnemy2.color = "yellow";
+
+        this.yellowEnemy3 = this.enemies.create(100, -350, 'YellowEnemy');
+        this.yellowEnemy3.anchor.setTo(0.5,0.5);
+        this.yellowEnemy3.body.velocity.x = 0;
+        this.yellowEnemy3.body.velocity.y = 0;
+        this.yellowEnemy3.height = 60;
+        this.yellowEnemy3.width = 60;
+        this.yellowEnemy3.color = "yellow";
+
+        this.redEnemy3 = this.enemies.create(100, this.game.world.height+350, 'RedEnemy');
+        this.redEnemy3.anchor.setTo(0.5,0.5);
+        this.redEnemy3.body.velocity.x = 0;
+        this.redEnemy3.body.velocity.y = 0;
+        this.redEnemy3.height = 60;
+        this.redEnemy3.width = 60;
+        this.redEnemy3.color = "red";
+
+        this.greenEnemy2 = this.enemies.create(800, this.game.world.height+350, 'GreenEnemy');
+        this.greenEnemy2.anchor.setTo(0.5,0.5);
+        this.greenEnemy2.body.velocity.x = 0;
+        this.greenEnemy2.body.velocity.y = 0;
+        this.greenEnemy2.height = 60;
+        this.greenEnemy2.width = 60;
+        this.greenEnemy2.color = "green";
+
+        this.blueEnemy3 = this.enemies.create(200, this.game.world.height+400, 'BlueEnemy');
+        this.blueEnemy3.anchor.setTo(0.5,0.5);
+        this.blueEnemy3.body.velocity.x = 0;
+        this.blueEnemy3.body.velocity.y = 0;
+        this.blueEnemy3.height = 60;
+        this.blueEnemy3.width = 60;
+        this.blueEnemy3.color = "blue";
+
+        this.blueEnemy4 = this.enemies.create(900, this.game.world.height+350, 'BlueEnemy');
+        this.blueEnemy4.anchor.setTo(0.5,0.5);
+        this.blueEnemy4.body.velocity.x = 0;
+        this.blueEnemy4.body.velocity.y = 0;
+        this.blueEnemy4.height = 60;
+        this.blueEnemy4.width = 60;
+        this.blueEnemy4.color = "blue";
+
+        this.blueEnemy5 = this.enemies.create(1450, this.game.world.height-400, 'BlueEnemy');
+        this.blueEnemy5.anchor.setTo(0.5,0.5);
+        this.blueEnemy5.body.velocity.x = 0;
+        this.blueEnemy5.body.velocity.y = 0;
+        this.blueEnemy5.height = 60;
+        this.blueEnemy5.width = 60;
+        this.blueEnemy5.color = "blue";
+
+// Wave 3
+
+        this.redEnemy4 = this.enemies.create(1000, this.game.world.height+750, 'RedEnemy');
+        this.redEnemy4.anchor.setTo(0.5,0.5);
+        this.redEnemy4.body.velocity.x = 0;
+        this.redEnemy4.body.velocity.y = 0;
+        this.redEnemy4.height = 60;
+        this.redEnemy4.width = 60;
+        this.redEnemy4.color = "red";
+
+        this.redEnemy4 = this.enemies.create(-750, this.game.world.height/2, 'RedEnemy');
+        this.redEnemy4.anchor.setTo(0.5,0.5);
+        this.redEnemy4.body.velocity.x = 0;
+        this.redEnemy4.body.velocity.y = 0;
+        this.redEnemy4.height = 60;
+        this.redEnemy4.width = 60;
+        this.redEnemy4.color = "red";
+
+        this.yellowEnemy4 = this.enemies.create(750, this.game.world.height+800, 'YellowEnemy');
+        this.yellowEnemy4.anchor.setTo(0.5,0.5);
+        this.yellowEnemy4.body.velocity.x = 0;
+        this.yellowEnemy4.body.velocity.y = 0;
+        this.yellowEnemy4.height = 60;
+        this.yellowEnemy4.width = 60;
+        this.yellowEnemy4.color = "yellow";
+
+        this.greenEnemy3 = this.enemies.create(200, this.game.world.height+750, 'GreenEnemy');
+        this.greenEnemy3.anchor.setTo(0.5,0.5);
+        this.greenEnemy3.body.velocity.x = 0;
+        this.greenEnemy3.body.velocity.y = 0;
+        this.greenEnemy3.height = 60;
+        this.greenEnemy3.width = 60;
+        this.greenEnemy3.color = "green";
+
+        this.greenEnemy4 = this.enemies.create(550, -850, 'GreenEnemy');
+        this.greenEnemy4.anchor.setTo(0.5,0.5);
+        this.greenEnemy4.body.velocity.x = 0;
+        this.greenEnemy4.body.velocity.y = 0;
+        this.greenEnemy4.height = 60;
+        this.greenEnemy4.width = 60;
+        this.greenEnemy4.color = "green";
+
+        this.blueEnemy2 = this.enemies.create(400, this.game.world.height+750, 'BlueEnemy');
+        this.blueEnemy2.anchor.setTo(0.5,0.5);
+        this.blueEnemy2.body.velocity.x = 0;
+        this.blueEnemy2.body.velocity.y = 0;
+        this.blueEnemy2.height = 60;
+        this.blueEnemy2.width = 60;
+        this.blueEnemy2.color = "blue";
+
+        this.blueEnemy3 = this.enemies.create(this.game.world.width+750, this.game.world.height/3, 'BlueEnemy');
+        this.blueEnemy3.anchor.setTo(0.5,0.5);
+        this.blueEnemy3.body.velocity.x = 0;
+        this.blueEnemy3.body.velocity.y = 0;
+        this.blueEnemy3.height = 60;
+        this.blueEnemy3.width = 60;
+        this.blueEnemy3.color = "blue";
+
+// Wave 4
+
+        this.redEnemy4 = this.enemies.create(100, -1100, 'RedEnemy');
+        this.redEnemy4.anchor.setTo(0.5,0.5);
+        this.redEnemy4.body.velocity.x = 0;
+        this.redEnemy4.body.velocity.y = 0;
+        this.redEnemy4.height = 60;
+        this.redEnemy4.width = 60;
+        this.redEnemy4.color = "red";
+
+        this.redEnemy5 = this.enemies.create(400, this.game.world.height+1200, 'RedEnemy');
+        this.redEnemy5.anchor.setTo(0.5,0.5);
+        this.redEnemy5.body.velocity.x = 0;
+        this.redEnemy5.body.velocity.y = 0;
+        this.redEnemy5.height = 60;
+        this.redEnemy5.width = 60;
+        this.redEnemy5.color = "red";
+
+        this.redEnemy6 = this.enemies.create(-1150, -1200, 'RedEnemy');
+        this.redEnemy6.anchor.setTo(0.5,0.5);
+        this.redEnemy6.body.velocity.x = 0;
+        this.redEnemy6.body.velocity.y = 0;
+        this.redEnemy6.height = 60;
+        this.redEnemy6.width = 60;
+        this.redEnemy6.color = "red";
+
+        this.redEnemy7 = this.enemies.create(this.game.width+1300, 0, 'RedEnemy');
+        this.redEnemy7.anchor.setTo(0.5,0.5);
+        this.redEnemy7.body.velocity.x = 0;
+        this.redEnemy7.body.velocity.y = 0;
+        this.redEnemy7.height = 60;
+        this.redEnemy7.width = 60;
+        this.redEnemy7.color = "red";
+
+        this.redEnemy8 = this.enemies.create(950, 1350, 'RedEnemy');
+        this.redEnemy8.anchor.setTo(0.5,0.5);
+        this.redEnemy8.body.velocity.x = 0;
+        this.redEnemy8.body.velocity.y = 0;
+        this.redEnemy8.height = 60;
+        this.redEnemy8.width = 60;
+        this.redEnemy8.color = "red";
+
+        this.redEnemy9 = this.enemies.create(700, 1300, 'RedEnemy');
+        this.redEnemy9.anchor.setTo(0.5,0.5);
+        this.redEnemy9.body.velocity.x = 0;
+        this.redEnemy9.body.velocity.y = 0;
+        this.redEnemy9.height = 60;
+        this.redEnemy9.width = 60;
+        this.redEnemy9.color = "red";
+
+        this.yellowEnemy5 = this.enemies.create(750, -1200, 'YellowEnemy');
+        this.yellowEnemy5.anchor.setTo(0.5,0.5);
+        this.yellowEnemy5.body.velocity.x = 0;
+        this.yellowEnemy5.body.velocity.y = 0;
+        this.yellowEnemy5.height = 60;
+        this.yellowEnemy5.width = 60;
+        this.yellowEnemy5.color = "yellow";
+
+        this.yellowEnemy6 = this.enemies.create(800, this.game.world.height+1100, 'YellowEnemy');
+        this.yellowEnemy6.anchor.setTo(0.5,0.5);
+        this.yellowEnemy6.body.velocity.x = 0;
+        this.yellowEnemy6.body.velocity.y = 0;
+        this.yellowEnemy6.height = 60;
+        this.yellowEnemy6.width = 60;
+        this.yellowEnemy6.color = "yellow";
+
+        this.yellowEnemy7 = this.enemies.create(1250, -1100, 'YellowEnemy');
+        this.yellowEnemy7.anchor.setTo(0.5,0.5);
+        this.yellowEnemy7.body.velocity.x = 0;
+        this.yellowEnemy7.body.velocity.y = 0;
+        this.yellowEnemy7.height = 60;
+        this.yellowEnemy7.width = 60;
+        this.yellowEnemy7.color = "yellow";
+
+        this.greenEnemy5 = this.enemies.create(350, -1250, 'GreenEnemy');
+        this.greenEnemy5.anchor.setTo(0.5,0.5);
+        this.greenEnemy5.body.velocity.x = 0;
+        this.greenEnemy5.body.velocity.y = 0;
+        this.greenEnemy5.height = 60;
+        this.greenEnemy5.width = 60;
+        this.greenEnemy5.color = "green";
+
+        this.greenEnemy5 = this.enemies.create(-1300, 250, 'GreenEnemy');
+        this.greenEnemy5.anchor.setTo(0.5,0.5);
+        this.greenEnemy5.body.velocity.x = 0;
+        this.greenEnemy5.body.velocity.y = 0;
+        this.greenEnemy5.height = 60;
+        this.greenEnemy5.width = 60;
+        this.greenEnemy5.color = "green";
+
+        this.blueEnemy4 = this.enemies.create(this.game.world.width+1250, this.game.world.height/3 * 2, 'BlueEnemy');
+        this.blueEnemy4.anchor.setTo(0.5,0.5);
+        this.blueEnemy4.body.velocity.x = 0;
+        this.blueEnemy4.body.velocity.y = 0;
+        this.blueEnemy4.height = 60;
+        this.blueEnemy4.width = 60;
+        this.blueEnemy4.color = "blue";
+
+        this.blueEnemy5 = this.enemies.create(1000, -1300, 'BlueEnemy');
+        this.blueEnemy5.anchor.setTo(0.5,0.5);
+        this.blueEnemy5.body.velocity.x = 0;
+        this.blueEnemy5.body.velocity.y = 0;
+        this.blueEnemy5.height = 60;
+        this.blueEnemy5.width = 60;
+        this.blueEnemy5.color = "blue";
+
+// Wave 5       
+
+        this.redEnemy5 = this.enemies.create(1400, 1400, 'RedEnemy');
+        this.redEnemy5.anchor.setTo(0.5,0.5);
+        this.redEnemy5.body.velocity.x = 0;
+        this.redEnemy5.body.velocity.y = 0;
+        this.redEnemy5.height = 60;
+        this.redEnemy5.width = 60;
+        this.redEnemy5.color = "red";
+*/
+
     },
+
+    generateEnemyWave: function() {
+
+        var numEnemiesToSpawn = Math.floor(Math.random() * 4) + 2; // Generate 2 to 6 enemies per wave
+
+        for (var i = 0; i < numEnemiesToSpawn; i++) {
+
+            // Generate a random int, either 0 or 1; this number will represent whether the enemy will spawn at the left or right half of the map
+            // Note: Math.random returns a decimal number from 0 (inclusive) to 1 (exclusive)
+            var mapSide = Math.floor(Math.random() * 2); // 0 is left half, 1 is right half
+
+            // Random int from 0 to 2 inclusive; this number will represent which part of the map half (top, middle, or bottom) the enemy will spawn at
+            var mapBorderSection = Math.floor(Math.random() * 3);
+            // game.rnd.integerInRange(0, 2); // Note: This does the same thing. game.rnd.integerInRange is useful if you want repeatable results because it already seeds the random number generator
+
+            var xCoord = -300;
+            var yCoord = -300;
+
+            switch(mapSide) {
+                case 0: // Left half of map
+                    switch(mapBorderSection) {
+                        case 0: // Top border section
+                            // spawn the enemy at a random location on the left side, top border
+                            xCoord = Math.random() * this.game.world.width/2.0;                                 // Random x on the left half of map
+                            yCoord = -50;                                                                       // Off-screen at the top
+                            break;
+                        case 1: // Middle border section
+                            // spawn the enemy at a random location on the left end of the map
+                            xCoord = -50;                                                                       // Off-screen at the left
+                            yCoord = Math.random() * this.game.world.height;                                    // Random y
+                            break;
+                        case 2: // Bottom border section
+                            // spawn the enemy at a random location on the left side, bottom border
+                            xCoord = Math.random() * this.game.world.width/2.0;                                 // Random x on the left half of map
+                            yCoord = this.game.world.height + 50;                                               // Off-screen at the bottom
+                            break;
+                    }
+                    break;
+                case 1: // Right half of map; spawn the enemy at a random location on the right border
+                    switch(mapBorderSection) {
+                        case 0: // Top border section
+                            // spawn the enemy at a random location on the right side, top border
+                            xCoord = (Math.random() * this.game.world.width/2.0) + this.game.world.width/2.0;   // Random x on the right half of the map
+                            yCoord = -50;                                                                       // Off-screen at the top
+                            break;
+                        case 1: // Middle border section
+                            // spawn the enemy at a random location on the right end of the map
+                            xCoord = this.game.world.width + 50;                                                // Off-screen at the right
+                            yCoord = Math.random() * this.game.world.height;                                    // Random y
+                            break;
+                        case 2: // Bottom border section
+                            // spawn the enemy at a random location on the right side, bottom border
+                            xCoord = (Math.random() * this.game.world.width/2.0) + this.game.world.width/2.0;   // Random x at the right half of map
+                            yCoord = this.game.world.height + 50;                                               // Off-screen at the bottom
+                            break;
+                    }
+                    break;
+            } // end switch(mapSide)
+    /*
+            switch(mapBorderSection) {
+                case 0: // spawn the enemy at a random location on the left side, top border
+                    // Note: Math.random returns a decimal number from 0 (inclusive) to 1 (exclusive)
+                    xCoord = Math.random() * this.game.world.width/2.0;                                 // Random x on the left half of map
+                    yCoord = -50;                                                                       // Off-screen at the top
+                    break;
+                case 1: // spawn the enemy at a random location on the right side, top border
+                    xCoord = (Math.random() * this.game.world.width/2.0) + this.game.world.width/2.0;   // Random x on the right half of the map
+                    yCoord = -50;                                                                       // Off-screen at the top
+                    break;
+                case 2: // spawn the enemy at a random location on the left border
+                    xCoord = -50;                                                                       // Off-screen at the left
+                    yCoord = Math.random() * this.game.world.height;                                    // Random y
+                    break;
+                case 3: // spawn the enemy at a random location on the right border
+                    xCoord = this.game.world.width + 50;                                                // Off-screen at the right
+                    yCoord = Math.random() * this.game.world.height;                                    // Random y
+                    break;
+                case 4: // spawn the enemy at a random location on the left side, bottom border
+                    xCoord = Math.random() * this.game.world.width/2.0;                                 // Random x on the left half of map
+                    yCoord = this.game.world.height + 50;                                               // Off-screen at the bottom
+                    break;
+                case 5: // spawn the enemy at a random location on the right side, bottom border
+                    xCoord = (Math.random() * this.game.world.width/2.0) + this.game.world.width/2.0;   // Random x at the right half of map
+                    yCoord = this.game.world.height + 50;                                               // Off-screen at the bottom
+                    break;
+            }
+    */
+            // Random int from 0 to 3 inclusive; the generated number represents the color that the spawned enemy will be
+            var enemyColor = Math.floor(Math.random() * 4);
+
+            switch(enemyColor) {
+                case 0: // Enemy will be red
+                    this.redEnemy = this.enemies.create(xCoord, yCoord, 'RedEnemy'); // Just spawn it far away for now
+                    this.redEnemy.width = 60;
+                    this.redEnemy.height = 60;
+                    this.redEnemy.anchor.setTo(0.5,0.5);
+                    this.redEnemy.color = "red";
+                    this.redEnemy.body.velocity.x = 0;
+                    this.redEnemy.body.velocity.y = 0;
+                    // this.redEnemy.exists = false;
+                    // this.redEnemy.visible = false;
+                    this.redEnemy.checkWorldBounds = false;
+                    break;
+                case 1: // Enemy will be yellow
+                    this.yellowEnemy = this.enemies.create(xCoord, yCoord, 'YellowEnemy'); // Just spawn it far away for now
+                    this.yellowEnemy.width = 60;
+                    this.yellowEnemy.height = 60;
+                    this.yellowEnemy.anchor.setTo(0.5,0.5);
+                    this.yellowEnemy.color = "yellow";
+                    this.yellowEnemy.body.velocity.x = 0;
+                    this.yellowEnemy.body.velocity.y = 0;
+                    // this.yellowEnemy.exists = false;
+                    // this.yellowEnemy.visible = false;
+                    this.yellowEnemy.checkWorldBounds = false;
+                    break;
+                case 2: // Enemy will be green
+                    this.greenEnemy = this.enemies.create(xCoord, yCoord, 'GreenEnemy'); // Just spawn it far away for now
+                    this.greenEnemy.width = 60;
+                    this.greenEnemy.height = 60;
+                    this.greenEnemy.anchor.setTo(0.5,0.5);
+                    this.greenEnemy.color = "green";
+                    this.greenEnemy.body.velocity.x = 0;
+                    this.greenEnemy.body.velocity.y = 0;
+                    // this.greenEnemy.exists = false;
+                    // this.greenEnemy.visible = false;
+                    this.greenEnemy.checkWorldBounds = false;
+                    break;
+                case 3: // Enemy will be blue
+                    this.blueEnemy = this.enemies.create(xCoord, yCoord, 'BlueEnemy'); // Just spawn it far away for now
+                    this.blueEnemy.width = 60;
+                    this.blueEnemy.height = 60;
+                    this.blueEnemy.anchor.setTo(0.5,0.5);
+                    this.blueEnemy.color = "blue";
+                    this.blueEnemy.body.velocity.x = 0;
+                    this.blueEnemy.body.velocity.y = 0;
+                    // this.blueEnemy.exists = false;
+                    // this.blueEnemy.visible = false;
+                    this.blueEnemy.checkWorldBounds = false;
+                    break;
+            } // end switch(enemyColor)
+
+
+
+        } // end for-loop
+
+    }, // end generateEnemyWave function
+
+// Update enemies positions
+
+    // This func is for sending the enemies' positions to the server, so that the other player sees when they move
+    sendEnemiesPos: function(x,y){
+        Client.updateEnemiesPos(x,y);
+    },
+
+    // This func is for seeing the enemies move
+    moveEnemies: function(id,x,y){
+        if (Game.enemyMap[id] != null) {
+            Game.enemyMap[id].x = x;
+            Game.enemyMap[id].y = y;
+        }
+    },
+
+// Send messages from this player to the other player and receive messages from the other player to this player
 
     chatButtonClicked: function() {
         var msg = "Hello, other player!";
@@ -1252,6 +1486,8 @@ BasicGame.Game.prototype = {
         });
     },
 
+// Add and remove another player (not this client's player) to the game
+
     // playerSendMessage: function(message) {
     //     Client.sendMessageToOtherPlayer(message);
     // },
@@ -1285,6 +1521,8 @@ BasicGame.Game.prototype = {
         delete Game.playerMap[id];
     },
 
+// Update player motion
+
     // This func is for sending the player's position to the server, so that the other player sees when they move
     sendPlayerPos: function(x,y){
         Client.updatePlayerPos(x,y);
@@ -1307,6 +1545,8 @@ BasicGame.Game.prototype = {
         // player.x = x;
         // player.y = y;
     },
+
+// Update object position
 
     // Send to server so the other client can see the object changing position
     // Note: This is for when there is a change in the object's position, i.e. it is being carried and moved by a player
@@ -1372,6 +1612,8 @@ BasicGame.Game.prototype = {
         }
 
     },
+
+// Update object motion
 
     // Send to server so the other client can see the object in motion
     // Note: This is for when there is a change in the object's velocity, i.e. it is thrown by a player
@@ -1439,6 +1681,8 @@ BasicGame.Game.prototype = {
 
     },
 
+// Overall game loop
+
     update: function () {
 
         if (this.player1 === undefined) {
@@ -1487,6 +1731,10 @@ BasicGame.Game.prototype = {
     	// if (this.redBullet != null) {
      //    	this.game.physics.arcade.collide(this.redBullet, this.redEnemy1);
     	// }
+        if (this.game.time.now > this.enemySpawnCooldown) { // Spawn a new wave of enemies after a certain cooldown period
+            this.enemySpawnCooldown += 15000; // Cooldown is 15 seconds
+            this.generateEnemyWave();
+        }
     	// this.game.physics.arcade.overlap(this.enemies, this.bullets, this.killEnemy, null, this);
     	this.game.physics.arcade.overlap([this.redBullets,this.yellowBullets,this.greenBullets,this.blueBullets],this.enemies,this.killEnemy,null,this);
     	        // game.physics.arcade.overlap(bullets, enemies, enemyKill, null, this);
@@ -2296,12 +2544,23 @@ BasicGame.Game.prototype = {
     },
 
     chasePlayer: function (enemy) {
-    	if (enemy.x < (this.game.world.width/2)) { // If the enemy is on the left half of the screen, follow player 1
+        // An enemy should follow player 1 if both of them are on the same half of the screen
+    	if ((enemy.x < (this.game.world.width/2.0)) && (this.player1.x < this.game.world.width/2.0)) {
     		this.game.physics.arcade.moveToObject(enemy, this.player1, 10);
-    	}
+    	} else if ((enemy.x >= (this.game.world.width/2.0)) && (this.player1.x >= this.game.world.width/2.0)) {
+            this.game.physics.arcade.moveToObject(enemy, this.player1, 10);
+        }
     	// else { // If the enemy is on the right half of the screen, follow player 2
     	// 	this.game.physics.arcade.moveToObject(enemy, this.player2, 10);
     	// }
+
+        // Move the enemies to the other player based on the positions received from that other player's client
+
+        // if ((enemy.x < (this.game.world.width/2.0)) && (Game.playerMap < this.game.world.width/2.0)) {
+        //     this.game.physics.arcade.moveToObject(enemy, this.player1, 10);
+        // } else if ((enemy.x >= (this.game.world.width/2.0)) && (this.player1.x >= this.game.world.width/2.0)) {
+        //     this.game.physics.arcade.moveToObject(enemy, this.player1, 10);
+        // }
     },
 
     stopMovement: function (piece) {

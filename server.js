@@ -208,9 +208,9 @@ io.on('connection',function(socket){
         	socket.broadcast.emit('messageSent',data.message);
         });
 
-    });
+    }); // end socket.on('newplayer')
 
-});
+}); // end io.on('connection')
 
 // Tutorial: "io.sockets.connected is a Socket.io internal array of the sockets currently connected to the server. We can use it to iterate
 // over all sockets, get the player property we have added to them (if any), and push them to a list, effectively listing the connected players."
