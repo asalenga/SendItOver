@@ -427,8 +427,8 @@ BasicGame.GameLvl2.prototype = {
 
         this.timeSoFar = this.game.time.totalElapsedSeconds();
 
-        var bigTextStyle = { font: "30px Verdana", fill: "#FFFFFF", align: "center" };
-        this.levelTitle = this.game.add.text( this.game.world.width/2.0, this.game.world.height/2.0, 'Level 2', bigTextStyle);
+        var bigTextStyle = { font: "50px Verdana", fill: "#FFFFFF", align: "center" };
+        this.levelTitle = this.game.add.text( this.game.world.width/2.0, this.game.world.height/2.0, 'LEVEL 2', bigTextStyle);
         this.levelTitle.anchor.setTo(0.5,0.5);
         this.levelTitle.alpha = 1;
 
@@ -762,7 +762,7 @@ BasicGame.GameLvl2.prototype = {
         this.p1Blue2.body.drag = new Phaser.Point(100,100);
         this.p1Blue2.name = "p1Blue2";
 
-        this.p1Blue3 = this.p1Blue_pieces_Lvl2.create(925,300,'BlueP1');
+        this.p1Blue3 = this.p1Blue_pieces_Lvl2.create(975,300,'BlueP1');
         this.p1Blue3.anchor.setTo(0.5,0.5);
         this.p1Blue3.body.velocity.x = 0;
         this.p1Blue3.body.velocity.y = 0;
@@ -1804,6 +1804,8 @@ BasicGame.GameLvl2.prototype = {
         var isGreenGunColliding = this.game.physics.arcade.collide(this.greenGun,[this.redGate,this.yellowGate,this.blueGate]);
         var isBlueGunColliding = this.game.physics.arcade.collide(this.blueGun,[this.redGate,this.yellowGate,this.greenGate]);
 
+        this.game.physics.arcade.overlap([this.p1Red_pieces_Lvl2, this.p1Yellow_pieces_Lvl2, this.p1Green_pieces_Lvl2, this.p1Blue_pieces_Lvl2, this.p2Red_pieces_Lvl2, this.p2Yellow_pieces_Lvl2, this.p2Green_pieces_Lvl2, this.p2Blue_pieces_Lvl2], [this.redGate,this.yellowGate,this.greenGate,this.blueGate], this.objAndGateOverlap, null, this);
+
 /*        
         var isRedPieceOverlapping = this.game.physics.arcade.overlap([this.p1Red_pieces_Lvl2,this.p2Red_pieces_Lvl2],[this.yellowGate,this.greenGate,this.blueGate]);
         var isYellowPieceOverlapping = this.game.physics.arcade.overlap([this.p1Yellow_pieces_Lvl2,this.p2Yellow_pieces_Lvl2],[this.redGate,this.greenGate,this.blueGate]);
@@ -2521,6 +2523,7 @@ BasicGame.GameLvl2.prototype = {
             // this.p1currItem.body.velocity.setTo(0,0);
             // this.p1currItem.body.acceleration.setTo(0,0);
             this.p1Possess = false;
+            this.itemThrowIsInitiated = false;
         }
     },
 
@@ -2539,10 +2542,19 @@ BasicGame.GameLvl2.prototype = {
     //  }
     // },
 
+    objAndGateOverlap: function() {
+        if (this.itemThrowIsInitiated === true) {
+            this.passThroughGateSound = this.add.audio('passThroughGateSound');
+            this.passThroughGateSound.play();
+        }
+    },
+
     pieceShip: function (ship, piece) {
         if (piece.player == ship.player) { // Checks if the piece is brought back to the correct ship
             if (piece == this.p1currItem) {this.p1Possess = false;}
             piece.kill();
+            this.pieceReachedShipSound = this.add.audio('pieceReachedShipSound');
+            this.pieceReachedShipSound.play();
             this.killPieceAndCheckRemaining_send(piece.name, piece.player, piece.color);
         }
         if ((this.p1Red_pieces_Lvl2.countLiving() == 0) && (this.p1Yellow_pieces_Lvl2.countLiving() == 0) && (this.p1Green_pieces_Lvl2.countLiving() == 0) && (this.p1Blue_pieces_Lvl2.countLiving() == 0) && (this.p2Red_pieces_Lvl2.countLiving() == 0) && (this.p2Yellow_pieces_Lvl2.countLiving() == 0) && (this.p2Green_pieces_Lvl2.countLiving() == 0) && (this.p2Blue_pieces_Lvl2.countLiving() == 0)) { // Ends the game once all pieces have been brought back
@@ -2608,6 +2620,9 @@ BasicGame.GameLvl2.prototype = {
             if (listToCheck.children[i].name === objName) { // Object found
 
                 listToCheck.children[i].kill();
+                this.pieceReachedShipSound = game.add.audio('pieceReachedShipSound');
+                this.pieceReachedShipSound.play();
+
                 break;
             }
         }
@@ -2695,6 +2710,8 @@ BasicGame.GameLvl2.prototype = {
                 }
             }
         }
+        this.rayGunSound = this.add.audio('rayGunSound');
+        this.rayGunSound.play();
 
     },
 

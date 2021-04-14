@@ -388,8 +388,8 @@ BasicGame.Game.prototype = {
 
 		this.timeSoFar = this.game.time.totalElapsedSeconds();
 
-        var bigTextStyle = { font: "30px Verdana", fill: "#FFFFFF", align: "center" };
-        this.levelTitle = this.game.add.text( this.game.world.width/2.0, this.game.world.height/2.0, 'Level 1', bigTextStyle);
+        var bigTextStyle = { font: "50px Verdana", fill: "#FFFFFF", align: "center" };
+        this.levelTitle = this.game.add.text( this.game.world.width/2.0, this.game.world.height/2.0, 'LEVEL 1', bigTextStyle);
         this.levelTitle.anchor.setTo(0.5,0.5);
         this.levelTitle.alpha = 1;
 
@@ -703,7 +703,7 @@ BasicGame.Game.prototype = {
         this.p1Blue2.body.drag = new Phaser.Point(100,100);
         this.p1Blue2.name = "p1Blue2";
 
-        this.p1Blue3 = this.p1Blue_pieces.create(925,300,'BlueP1');
+        this.p1Blue3 = this.p1Blue_pieces.create(975,300,'BlueP1');
         this.p1Blue3.anchor.setTo(0.5,0.5);
         this.p1Blue3.body.velocity.x = 0;
         this.p1Blue3.body.velocity.y = 0;
@@ -1753,6 +1753,7 @@ BasicGame.Game.prototype = {
         var isGreenGunColliding = this.game.physics.arcade.collide(this.greenGun,[this.redGate,this.yellowGate,this.blueGate]);
         var isBlueGunColliding = this.game.physics.arcade.collide(this.blueGun,[this.redGate,this.yellowGate,this.greenGate]);
 
+        this.game.physics.arcade.overlap([this.p1Red_pieces, this.p1Yellow_pieces, this.p1Green_pieces, this.p1Blue_pieces, this.p2Red_pieces, this.p2Yellow_pieces, this.p2Green_pieces, this.p2Blue_pieces], [this.redGate,this.yellowGate,this.greenGate,this.blueGate], this.objAndGateOverlap, null, this);
 /*        
         var isRedPieceOverlapping = this.game.physics.arcade.overlap([this.p1Red_pieces,this.p2Red_pieces],[this.yellowGate,this.greenGate,this.blueGate]);
         var isYellowPieceOverlapping = this.game.physics.arcade.overlap([this.p1Yellow_pieces,this.p2Yellow_pieces],[this.redGate,this.greenGate,this.blueGate]);
@@ -2470,6 +2471,7 @@ BasicGame.Game.prototype = {
             // this.p1currItem.body.velocity.setTo(0,0);
             // this.p1currItem.body.acceleration.setTo(0,0);
             this.p1Possess = false;
+            this.itemThrowIsInitiated = false;
         }
     },
 
@@ -2488,10 +2490,19 @@ BasicGame.Game.prototype = {
     // 	}
     // },
 
+    objAndGateOverlap: function() {
+        if (this.itemThrowIsInitiated === true) {
+            this.passThroughGateSound = this.add.audio('passThroughGateSound');
+            this.passThroughGateSound.play();
+        }
+    },
+
     pieceShip: function (ship, piece) {
         if (piece.player == ship.player) { // Checks if the piece is brought back to the correct ship
             if (piece == this.p1currItem) {this.p1Possess = false;}
             piece.kill();
+            this.pieceReachedShipSound = this.add.audio('pieceReachedShipSound');
+            this.pieceReachedShipSound.play();
             this.killPieceAndCheckRemaining_send(piece.name, piece.player, piece.color);
         }
         if ((this.p1Red_pieces.countLiving() == 0) && (this.p1Yellow_pieces.countLiving() == 0) && (this.p1Green_pieces.countLiving() == 0) && (this.p1Blue_pieces.countLiving() == 0) && (this.p2Red_pieces.countLiving() == 0) && (this.p2Yellow_pieces.countLiving() == 0) && (this.p2Green_pieces.countLiving() == 0) && (this.p2Blue_pieces.countLiving() == 0)) { // Ends the game once all pieces have been brought back
@@ -2557,6 +2568,9 @@ BasicGame.Game.prototype = {
             if (listToCheck.children[i].name === objName) { // Object found
 
                 listToCheck.children[i].kill();
+                this.pieceReachedShipSound = game.add.audio('pieceReachedShipSound');
+                this.pieceReachedShipSound.play();
+
                 break;
             }
         }
@@ -2644,6 +2658,8 @@ BasicGame.Game.prototype = {
                 }
             }
         }
+        this.rayGunSound = this.add.audio('rayGunSound');
+        this.rayGunSound.play();
 
     },
 
