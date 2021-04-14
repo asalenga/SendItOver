@@ -96,6 +96,9 @@ io.on('connection',function(socket){
 
 	}
 
+
+//////////////////////////////////////////////////////// For Game.js only!!! ///////////////////////////////////////////////////////////
+
 	// Tutorial: "Using the socket.on() method from the socket objects, it is possible to specify callbacks to handle different
 	// messages. Therefore each time a specific client sends a specific message through his socket, a specific callback will be
 	// called in reaction. In this case, we define a callback to react to the 'newplayer' message."
@@ -103,15 +106,18 @@ io.on('connection',function(socket){
 
     	var xPos = 0;
     	var yPos = 0;
+        var side = null;
     	if (socket === waitingPlayer) {
     		xPos = 300;
     		yPos = 300;
+            side = "left";
     	} else {
     		xPos = 900;
     		yPos = 300;
+            side = "right";
     	}
 
-		waitingPlayer = null;
+		// waitingPlayer = null;
 
     	// Tutorial: "First, we create a new custom object, used to represent a player, and store it in the socket object. As you can see,
     	// it's possible to add arbitrary client-specific properties to the socket object, making them convenient to access. In this object,
@@ -119,7 +125,8 @@ io.on('connection',function(socket){
         socket.player = {
             id: server.lastPlayerID++,
             x: xPos,//randomInt(100,400),
-            y: yPos//randomInt(100,400)
+            y: yPos,//randomInt(100,400)
+            playerSide: side
         };
 
         // socket.object = {
@@ -176,6 +183,11 @@ io.on('connection',function(socket){
             socket.broadcast.emit('killPiece',data);
         });
 
+        socket.on('sendPlayerMessage',function(data){
+            console.log("data.message: "+data.message);
+            socket.broadcast.emit('messageSent',data.message);
+        });
+
         socket.on('gameOverSignaled',function(data){
             socket.broadcast.emit('quitGame',data);
         });
@@ -200,17 +212,151 @@ io.on('connection',function(socket){
         // Note: "the 'disconnect' callback has to be registered within the 'newplayer' callback; if not, and 'disconnect' is somehow called before
         // 'newplayer', the server will crash!"
         socket.on('disconnect',function(){
+            console.log("The pLaYEr ha s DisconnectED");
             io.emit('remove',socket.player.id);
         });
 
-        socket.on('sendPlayerMessage',function(data){
-        	console.log("data.message: "+data.message);
-        	socket.broadcast.emit('messageSent',data.message);
+        socket.on('closePlayerSocket',function(){
+            socket.disconnect();
         });
+
 
     }); // end socket.on('newplayer')
 
+/////// End "For Game.js only!!!"
+
+
+//////////////////////////////////////////////////////// For GameLvl2.js only!!! ///////////////////////////////////////////////////////////
+
+    // Tutorial: "Using the socket.on() method from the socket objects, it is possible to specify callbacks to handle different
+    // messages. Therefore each time a specific client sends a specific message through his socket, a specific callback will be
+    // called in reaction. In this case, we define a callback to react to the 'newplayer' message."
+    socket.on('newplayer_Lvl2',function(){
+
+        var xPos = 0;
+        var yPos = 0;
+        var side = null;
+        if (socket === waitingPlayer) {
+            xPos = 450;
+            yPos = 300;
+            side = "left";
+        } else {
+            xPos = 750;
+            yPos = 300;
+            side = "right";
+        }
+
+        // waitingPlayer = null;
+
+        // Tutorial: "First, we create a new custom object, used to represent a player, and store it in the socket object. As you can see,
+        // it's possible to add arbitrary client-specific properties to the socket object, making them convenient to access. In this object,
+        // we give the player a unique id (that will be used on the client side), and we randomly determine the position of the sprite."
+        socket.player = {
+            id: server.lastPlayerID++,
+            x: xPos,//randomInt(100,400),
+            y: yPos,//randomInt(100,400)
+            playerSide: side
+        };
+
+        // socket.object = {
+        //     objName: "",
+        //     objPlayer: "",
+        //     objColor: "",
+        //     velocityX: 0,
+        //     velocityY: 0,
+        //     dragX: 0,
+        //     dragY: 0
+        // };
+
+        // Tutorial: "Then, we want to send to the new player the list of already connected players.
+        // Socket.emit() sends a message to one specific socket. Here, we send to the newly connected client a message labeled 'allplayers',
+        // and as a second argument, the output of Client.getAllPlayers() which will be an array of the currently connected players. This
+        // allows newly connected players to get up to date with the amount and positions of the already connected players."
+        socket.emit('allplayers_Lvl2',getAllPlayers());
+        // Tutorial: "The socket.emit.broadcast() sends a message to all connected sockets, *except* the socket who triggered the callback.
+        // It allows to broadcast events from a client to all other clients without echoing them back to the initiating client. Here, we
+        // broadcast the 'newplayer' message, and send as data the new player object."
+        socket.broadcast.emit('newplayer_Lvl2',socket.player);
+        socket.emit('myplayer_Lvl2',socket.player);
+
+        // This is called when the Client sends the message to update the player position
+        // Tutorial: "The x and y fields of the player property of the socket are updated with the new coordinates, and then immediately
+        // broadcast to everyone so they can see the change. Now the full socket.player object is sent, because the other clients need to
+        // know the id of the player who is moving, in order to move the proper sprite on-screen"
+        socket.on('playerPosUpdated_Lvl2',function(data){
+            // console.log('Player moved to '+data.x+', '+data.y);
+            socket.player.x = data.x;
+            socket.player.y = data.y;
+            socket.broadcast.emit('movePlayer_Lvl2',socket.player);
+        });
+
+        socket.on('objectMotionUpdated_Lvl2', function(data){ // data contains objName, objPlayer, objColor, velocityX, velocityY, dragX, and dragY
+
+            // socket.object.objName = data.objName;
+            // socket.object.objPlayer = data.objPlayer;
+            // socket.object.objColor = data.objColor;
+            // socket.object.velocityX = data.velocityX;
+            // socket.object.velocityY = data.velocityY;
+            // socket.object.dragX = data.dragX;
+            // socket.object.dragY = data.dragY;
+
+            // socket.broadcast.emit('moveObject',socket.object); // Remember: socket.broadcast.emit sends a message to all clients *except* the one who triggered this function
+            socket.broadcast.emit('moveObject_velocity_Lvl2',data); // Remember: socket.broadcast.emit sends a message to all clients *except* the one who triggered this function
+        });
+
+        socket.on('objectPosUpdated_Lvl2',function(data){
+            socket.broadcast.emit('moveObject_position_Lvl2',data);
+        });
+
+        socket.on('pieceKilled_Lvl2',function(data){
+            socket.broadcast.emit('killPiece_Lvl2',data);
+        });
+
+        socket.on('sendPlayerMessage_Lvl2',function(data){
+            console.log("data.message: "+data.message);
+            socket.broadcast.emit('messageSent_Lvl2',data.message);
+        });
+
+        socket.on('gameOverSignaled_Lvl2',function(data){
+            socket.broadcast.emit('quitGame_Lvl2',data);
+        });
+
+        socket.on('disconnecting_Lvl2', () => {
+
+            console.log("Socket (from Lvl2) is disconnecting. socket.rooms: " + socket.rooms);
+
+            // // Remove the other player that is in the same room, so that each game starts and ends only with the same pair of players
+            // for (const room of socket.rooms) { // Remove the client from all rooms that they are in
+            //     for () {
+            //         socket.to(room).emit();
+            //     }
+            // }
+
+
+        });
+
+        // Tutorial: "[process] the 'disconnect' message that the server automatically receives when a client actively disconnects or times out"
+        // "In reaction to the 'disconnect' message, we use io.emit(), which sends a message to all connected clients. We send the message 'remove',
+        // and send the id of the disconnected player to remove."
+        // Note: "the 'disconnect' callback has to be registered within the 'newplayer' callback; if not, and 'disconnect' is somehow called before
+        // 'newplayer', the server will crash!"
+        socket.on('disconnect_Lvl2',function(){
+            console.log("The pLaYEr ha s DisconnectED (from Lvl2)");
+            io.emit('remove_Lvl2',socket.player.id);
+        });
+
+        socket.on('closePlayerSocket_Lvl2',function(){
+            socket.disconnect();
+        });
+
+    }); // end socket.on('newplayer_Lvl2')
+
 }); // end io.on('connection')
+
+
+/////// End "For GameLvl2.js only!!!"
+
+
 
 // Tutorial: "io.sockets.connected is a Socket.io internal array of the sockets currently connected to the server. We can use it to iterate
 // over all sockets, get the player property we have added to them (if any), and push them to a list, effectively listing the connected players."
