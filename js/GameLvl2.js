@@ -35,7 +35,7 @@
 
 // Override the game.state.start method
 
-var GameLvl2 = {};
+let GameLvl2 = {};
 GameLvl2.playerMap = {};
 GameLvl2.enemyMap = {};
 
@@ -68,6 +68,11 @@ this.p2Green_pieces_Lvl2 = null;
 this.p2Blue_pieces_Lvl2 = null;
 
 this.enemies_Lvl2 = null;
+
+// Sounds
+this.passThroughGateSound_Lvl2 = null;
+this.pieceReachedShipSound_Lvl2 = null;
+this.rayGunSound_Lvl2 = null;
 
 BasicGame.GameLvl2 = function (game) {
 
@@ -136,7 +141,7 @@ BasicGame.GameLvl2 = function (game) {
     this.greenBulletTime = null;
     this.blueBulletTime = null;
 
-    this.enemySpawnCooldown = null;
+    this.enemySpawnCooldown2 = null;
 
     this.gameClock = null;
     this.playersWin = null; // Check if the players have won or lost
@@ -170,12 +175,13 @@ BasicGame.GameLvl2 = function (game) {
     this.bulletYVel = null;
 
     this.baseVelocityVal = 200;
+
 };
 
 /*
 class ShipPiece {
-    // var player;
-    // var color;
+    // let player;
+    // let color;
     // preload() {
     //     this.load.image( 'BlueP1', 'assets/BlueP1.png' );
     // }
@@ -223,42 +229,42 @@ BasicGame.GameLvl2.prototype = {
         // That script includes all the values, variables, and functions necessary for the calculations below.
 
 /*
-        var slimeBitmap = this.game.make.bitmapData(1200,600);
+        let slimeBitmap = this.game.make.bitmapData(1200,600);
         slimeBitmap.draw('moonSurface', 0, 0);
         slimeBitmap.update();
         slimeBitmap.addToWorld();
-        var moonBitmap = this.game.make.bitmapData(1200,600);
+        let moonBitmap = this.game.make.bitmapData(1200,600);
         moonBitmap.draw('moonSurface', 0, 0);
         moonBitmap.update();
         moonBitmap.addToWorld();
 
-        var color1 = slimeBitmap.getPixelRGB(100, 70);
-        var color2 = moonBitmap.getPixelRGB(100, 70);
+        let color1 = slimeBitmap.getPixelRGB(100, 70);
+        let color2 = moonBitmap.getPixelRGB(100, 70);
 */
-/*        var canvas = document.createElement('canvas');
+/*        let canvas = document.createElement('canvas');
         canvas.width = this.game.world.width;
         canvas.height = this.game.world.height;
-        var bitmap;
+        let bitmap;
 
-        var ctx = canvas.getContext('2d');
+        let ctx = canvas.getContext('2d');
 
-        var image = ctx.createImageData(canvas.width, canvas.height);
+        let image = ctx.createImageData(canvas.width, canvas.height);
         this.planetSurfaceData = image.data;
 
-        for (var x = 0; x < canvas.width; x++) {
+        for (let x = 0; x < canvas.width; x++) {
           //if (x % 100 == 0) {
           //  noise.seed(Math.random());
           //}
-          for (var y = 0; y < canvas.height; y++) {
-            var value = Math.abs(noise.perlin2(x / 100, y / 100));
+          for (let y = 0; y < canvas.height; y++) {
+            let value = Math.abs(noise.perlin2(x / 100, y / 100));
             value *= 256;
 
-            var cell = (x + y * canvas.width) * 4;
+            let cell = (x + y * canvas.width) * 4;
 
-            // var currSlimePixel = slimeBitmap.getPixelRGB(x,y);
-            // var currMoonPixel = moonBitmap.getPixelRGB(x,y);
+            // let currSlimePixel = slimeBitmap.getPixelRGB(x,y);
+            // let currMoonPixel = moonBitmap.getPixelRGB(x,y);
 
-            // var blendVal = ((value/256.0) * currMoonPixel) + ((1 - value/256.0) * currSlimePixel);
+            // let blendVal = ((value/256.0) * currMoonPixel) + ((1 - value/256.0) * currSlimePixel);
 
             this.planetSurfaceData[cell] = this.planetSurfaceData[cell + 1] = this.planetSurfaceData[cell + 2] = value;
             this.planetSurfaceData[cell + 1] += Math.max(0, (25 - value) * 8);
@@ -417,9 +423,9 @@ BasicGame.GameLvl2.prototype = {
 
         // Add some text using a CSS style.
         // Center it in X, and position its top 15 pixels from the top of the world.
-        var style = { font: "25px Verdana", fill: "#FFFFFF", align: "center" };
-        var subtitleTextStyle = { font: "18px Verdana", fill: "#FFFFFF", align: "center" };
-        // var text = this.game.add.text( this.game.world.centerX, 15, "Get your ship up and running!", style );
+        let style = { font: "25px Verdana", fill: "#FFFFFF", align: "center" };
+        let subtitleTextStyle = { font: "18px Verdana", fill: "#FFFFFF", align: "center" };
+        // let text = this.game.add.text( this.game.world.centerX, 15, "Get your ship up and running!", style );
         // text.anchor.setTo( 0.5, 0.0 );
 
         this.gameClock = this.game.add.text( 50, 15, 'Elapsed seconds: '+this.game.time.totalElapsedSeconds(), style );
@@ -427,7 +433,7 @@ BasicGame.GameLvl2.prototype = {
 
         this.timeSoFar = this.game.time.totalElapsedSeconds();
 
-        var bigTextStyle = { font: "50px Verdana", fill: "#FFFFFF", align: "center" };
+        let bigTextStyle = { font: "50px Verdana", fill: "#FFFFFF", align: "center" };
         this.levelTitle = this.game.add.text( this.game.world.width/2.0, this.game.world.height/2.0, 'LEVEL 2', bigTextStyle);
         this.levelTitle.anchor.setTo(0.5,0.5);
         this.levelTitle.alpha = 1;
@@ -514,8 +520,21 @@ BasicGame.GameLvl2.prototype = {
         // this.player1_Lvl2.x = x;
         // this.player1_Lvl2.y = y;
 
-        // var p1x = (x === 900) ? 300 : 900;
-        // var p1y = 300;
+        // let p1x = (x === 900) ? 300 : 900;
+        // let p1y = 300;
+
+
+// Initialize sound
+
+        this.passThroughGateSound_Lvl2 = game.add.audio('passThroughGateSound');
+        this.passThroughGateSound_Lvl2.volume = 0.3;
+
+        this.pieceReachedShipSound_Lvl2 = game.add.audio('pieceReachedShipSound');
+        this.pieceReachedShipSound_Lvl2.volume = 0.5;
+
+        this.rayGunSound_Lvl2 = game.add.audio('rayGunSound');
+        this.rayGunSound_Lvl2.volume = 0.3;
+
 
         // this.player1_Lvl2 = game.add.sprite( p1x, p1y, 'player1' );
         this.player1_Lvl2 = game.add.sprite( x, y, 'player1' );
@@ -523,12 +542,15 @@ BasicGame.GameLvl2.prototype = {
         this.player1_Lvl2.width = 75;
         this.player1_Lvl2.height = 75;
         this.player1_Lvl2.id = id;
+        console.log(`playerSide: ${playerSide}`);
+        this.player1_Lvl2.playerSide = playerSide;
+        console.log(`this.player1_Lvl2.playerSide: ${this.player1_Lvl2.playerSide}`);
 
         game.physics.enable( this.player1_Lvl2, Phaser.Physics.ARCADE );
 
         GameLvl2.playerMap[id] = this.player1_Lvl2;
 
-        var hintsTextStyle = { font: "15px Verdana", fill: "#FFFFFF", align: "center" };
+        let hintsTextStyle = { font: "15px Verdana", fill: "#FFFFFF", align: "center" };
 
         // Text above the player
         this.hintsText_Lvl2 = game.add.text( this.player1_Lvl2.x, this.player1_Lvl2.y - this.player1_Lvl2.body.height/2 - 50, 'Hints will go here!' , hintsTextStyle);
@@ -586,7 +608,7 @@ BasicGame.GameLvl2.prototype = {
         this.redBullets.enableBody = true;
         this.redBullets.physicsBodyType = Phaser.Physics.ARCADE;
 
-        for (var i = 0; i < 10; i++)
+        for (let i = 0; i < 10; i++)
         {
             this.redBullet = this.redBullets.create(0, 0, 'RedBullet');
             this.redBullet.width = 20;
@@ -603,7 +625,7 @@ BasicGame.GameLvl2.prototype = {
         this.yellowBullets.enableBody = true;
         this.yellowBullets.physicsBodyType = Phaser.Physics.ARCADE;
 
-        for (var i = 0; i < 10; i++)
+        for (let i = 0; i < 10; i++)
         {
             this.yellowBullet = this.yellowBullets.create(0, 0, 'YellowBullet');
             this.yellowBullet.width = 20;
@@ -620,7 +642,7 @@ BasicGame.GameLvl2.prototype = {
         this.greenBullets.enableBody = true;
         this.greenBullets.physicsBodyType = Phaser.Physics.ARCADE;
 
-        for (var i = 0; i < 10; i++)
+        for (let i = 0; i < 10; i++)
         {
             this.greenBullet = this.greenBullets.create(0, 0, 'GreenBullet');
             this.greenBullet.width = 20;
@@ -637,7 +659,7 @@ BasicGame.GameLvl2.prototype = {
         this.blueBullets.enableBody = true;
         this.blueBullets.physicsBodyType = Phaser.Physics.ARCADE;
 
-        for (var i = 0; i < 10; i++)
+        for (let i = 0; i < 10; i++)
         {
             this.blueBullet = this.blueBullets.create(0, 0, 'BlueBullet');
             this.blueBullet.width = 20;
@@ -1013,10 +1035,10 @@ BasicGame.GameLvl2.prototype = {
         this.enemies_Lvl2.enableBody = true;
         this.enemies_Lvl2.physicsBodyType = Phaser.Physics.ARCADE;
 
-        this.enemySpawnCooldown = 0;
+        this.enemySpawnCooldown2 = game.time.now;
 
 /*
-        for (var i = 0; i < 10; i++)
+        for (let i = 0; i < 10; i++)
         {
             this.redEnemy = this.enemies_Lvl2.create(-300, -300, 'RedEnemy'); // Just spawn it far away for now
             this.redEnemy.width = 60;
@@ -1030,7 +1052,7 @@ BasicGame.GameLvl2.prototype = {
             this.redEnemy.checkWorldBounds = false;
         }
 
-        for (var i = 0; i < 10; i++)
+        for (let i = 0; i < 10; i++)
         {
             this.yellowEnemy = this.enemies_Lvl2.create(-300, -300, 'YellowEnemy'); // Just spawn it far away for now
             this.yellowEnemy.width = 60;
@@ -1044,7 +1066,7 @@ BasicGame.GameLvl2.prototype = {
             this.yellowEnemy.checkWorldBounds = false;
         }
 
-        for (var i = 0; i < 10; i++)
+        for (let i = 0; i < 10; i++)
         {
             this.greenEnemy = this.enemies_Lvl2.create(-300, -300, 'GreenEnemy'); // Just spawn it far away for now
             this.greenEnemy.width = 60;
@@ -1058,7 +1080,7 @@ BasicGame.GameLvl2.prototype = {
             this.greenEnemy.checkWorldBounds = false;
         }
 
-        for (var i = 0; i < 10; i++)
+        for (let i = 0; i < 10; i++)
         {
             this.blueEnemy = this.enemies_Lvl2.create(-300, -300, 'BlueEnemy'); // Just spawn it far away for now
             this.blueEnemy.width = 60;
@@ -1362,20 +1384,26 @@ BasicGame.GameLvl2.prototype = {
 
     generateEnemyWave: function() {
 
-        var numEnemiesToSpawn = Math.floor(Math.random() * 4) + 2; // Generate 2 to 6 enemies per wave
+        let numEnemiesToSpawn = Math.floor(Math.random() * 2) + 1; // Generate 1 to 3 enemies per wave
 
-        for (var i = 0; i < numEnemiesToSpawn; i++) {
+        for (let i = 0; i < numEnemiesToSpawn; i++) {
 
+// Note: This is useful for generating enemies with random positions on both sides of the map.
+// However, to make things simple, let's just generate enemies on the side of the map that the player is on.
+/*
             // Generate a random int, either 0 or 1; this number will represent whether the enemy will spawn at the left or right half of the map
             // Note: Math.random returns a decimal number from 0 (inclusive) to 1 (exclusive)
-            var mapSide = Math.floor(Math.random() * 2); // 0 is left half, 1 is right half
+            let mapSide = Math.floor(Math.random() * 2); // 0 is left half, 1 is right half
+*/
+
+            let mapSide = (this.player1_Lvl2.playerSide === "left") ? 0 : 1; // 0 is left half, 1 is right half
 
             // Random int from 0 to 2 inclusive; this number will represent which part of the map half (top, middle, or bottom) the enemy will spawn at
-            var mapBorderSection = Math.floor(Math.random() * 3);
+            let mapBorderSection = Math.floor(Math.random() * 3);
             // game.rnd.integerInRange(0, 2); // Note: This does the same thing. game.rnd.integerInRange is useful if you want repeatable results because it already seeds the random number generator
 
-            var xCoord = -300;
-            var yCoord = -300;
+            let xCoord = -300;
+            let yCoord = -300;
 
             switch(mapSide) {
                 case 0: // Left half of map
@@ -1447,7 +1475,7 @@ BasicGame.GameLvl2.prototype = {
             }
     */
             // Random int from 0 to 3 inclusive; the generated number represents the color that the spawned enemy will be
-            var enemyColor = Math.floor(Math.random() * 4);
+            let enemyColor = Math.floor(Math.random() * 4);
 
             switch(enemyColor) {
                 case 0: // Enemy will be red
@@ -1524,7 +1552,7 @@ BasicGame.GameLvl2.prototype = {
 // Send messages from this player to the other player and receive messages from the other player to this player
 
     chatButtonClicked: function() {
-        var msg = "Hello, other player!";
+        let msg = "Hello, other player!";
 
         // Display the message above yourself
         this.hintsText_Lvl2.text = msg;
@@ -1589,7 +1617,7 @@ BasicGame.GameLvl2.prototype = {
         GameLvl2.playerMap[id].height = 75;//50;
         GameLvl2.playerMap[id].playerSide = playerSide;
 
-        var hintsTextStyle = { font: "15px Verdana", fill: "#FFFFFF", align: "center" };
+        let hintsTextStyle = { font: "15px Verdana", fill: "#FFFFFF", align: "center" };
         // Text above the other player
         this.otherPlayerHintsText_Lvl2 = game.add.text( x, y - GameLvl2.playerMap[id].height/2 - 50, 'The other player\'s hints will go here!' , hintsTextStyle);
         this.otherPlayerHintsText_Lvl2.anchor.setTo( 0.5, 0.5 );
@@ -1619,9 +1647,9 @@ BasicGame.GameLvl2.prototype = {
             this.otherPlayerHintsText_Lvl2.x = x;
             this.otherPlayerHintsText_Lvl2.y = y - GameLvl2.playerMap[id].height/2 - 50;
         }
-        // var distance = Phaser.Math.distance(player.x,player.y,x,y);
-        // var duration = distance;
-        // var tween = game.add.tween(player);
+        // let distance = Phaser.Math.distance(player.x,player.y,x,y);
+        // let duration = distance;
+        // let tween = game.add.tween(player);
         // tween.to({x:x,y:y}, 1.0);
         // tween.start();
         // player.x = x;
@@ -1639,7 +1667,7 @@ BasicGame.GameLvl2.prototype = {
     // From server; this function executes if the other player executed sendObjPosition
     moveObject_position: function(objName,objPlayer,objColor,positionX,positionY) {
 
-        var listToCheck = null;
+        let listToCheck = null;
 
         // Rather than search every list, find which list of pieces to search through, based on the object's assigned player and color; this should make things more efficient
         switch (objColor) {
@@ -1684,7 +1712,7 @@ BasicGame.GameLvl2.prototype = {
         // Search through the list for the object with the specific name, and set its position accordingly
         // Note: Since the pieces lists are Objects and not simple arrays, the same is true for listToCheck. It has a "children" property,
         // and THAT is a simple array that holds all the members of the group.
-        for (var i=0; i<listToCheck.children.length; i++) {
+        for (let i=0; i<listToCheck.children.length; i++) {
             if (listToCheck.children[i].name === objName) { // Object found
 
                 listToCheck.children[i].x = positionX;
@@ -1706,7 +1734,7 @@ BasicGame.GameLvl2.prototype = {
     // From server; this function executes if the other player executed sendObjMotion
     moveObject_velocity: function(objName,objPlayer,objColor,velocityX,velocityY,dragX,dragY) {
 
-        var listToCheck = null;
+        let listToCheck = null;
 
         // Rather than search every list, find which list of pieces to search through, based on the object's assigned player and color; this should make things more efficient
         switch (objColor) {
@@ -1751,7 +1779,7 @@ BasicGame.GameLvl2.prototype = {
         // Search through the list for the object with the specific name, and set its velocity and drag accordingly
         // Note: Since the pieces lists are Objects and not simple arrays, the same is true for listToCheck. It has a "children" property,
         // and THAT is a simple array that holds all the members of the group.
-        for (var i=0; i<listToCheck.children.length; i++) {
+        for (let i=0; i<listToCheck.children.length; i++) {
             if (listToCheck.children[i].name === objName) { // Object found
 
                 listToCheck.children[i].body.velocity.setTo(velocityX,velocityY);
@@ -1794,29 +1822,29 @@ BasicGame.GameLvl2.prototype = {
         this.game.physics.arcade.collide([this.p1Red_pieces_Lvl2, this.p1Yellow_pieces_Lvl2, this.p1Green_pieces_Lvl2, this.p1Blue_pieces_Lvl2, this.p2Red_pieces_Lvl2, this.p2Yellow_pieces_Lvl2, this.p2Green_pieces_Lvl2, this.p2Blue_pieces_Lvl2], [this.wall,this.wall2,this.leftWall,this.rightWall]);
         this.game.physics.arcade.collide([this.redGun,this.yellowGun,this.greenGun,this.blueGun],[this.wall,this.wall2,this.leftWall,this.rightWall]);
 
-        var isRedPieceColliding = this.game.physics.arcade.collide([this.p1Red_pieces_Lvl2,this.p2Red_pieces_Lvl2],[this.yellowGate,this.greenGate,this.blueGate]);
-        var isYellowPieceColliding = this.game.physics.arcade.collide([this.p1Yellow_pieces_Lvl2,this.p2Yellow_pieces_Lvl2],[this.redGate,this.greenGate,this.blueGate]);
-        var isGreenPieceColliding = this.game.physics.arcade.collide([this.p1Green_pieces_Lvl2,this.p2Green_pieces_Lvl2],[this.redGate,this.yellowGate,this.blueGate]);
-        var isBluePieceColliding = this.game.physics.arcade.collide([this.p1Blue_pieces_Lvl2,this.p2Blue_pieces_Lvl2],[this.redGate,this.yellowGate,this.greenGate]);
+        let isRedPieceColliding = this.game.physics.arcade.collide([this.p1Red_pieces_Lvl2,this.p2Red_pieces_Lvl2],[this.yellowGate,this.greenGate,this.blueGate]);
+        let isYellowPieceColliding = this.game.physics.arcade.collide([this.p1Yellow_pieces_Lvl2,this.p2Yellow_pieces_Lvl2],[this.redGate,this.greenGate,this.blueGate]);
+        let isGreenPieceColliding = this.game.physics.arcade.collide([this.p1Green_pieces_Lvl2,this.p2Green_pieces_Lvl2],[this.redGate,this.yellowGate,this.blueGate]);
+        let isBluePieceColliding = this.game.physics.arcade.collide([this.p1Blue_pieces_Lvl2,this.p2Blue_pieces_Lvl2],[this.redGate,this.yellowGate,this.greenGate]);
 
-        var isRedGunColliding = this.game.physics.arcade.collide(this.redGun,[this.yellowGate,this.greenGate,this.blueGate]);
-        var isYellowGunColliding = this.game.physics.arcade.collide(this.yellowGun,[this.redGate,this.greenGate,this.blueGate]);
-        var isGreenGunColliding = this.game.physics.arcade.collide(this.greenGun,[this.redGate,this.yellowGate,this.blueGate]);
-        var isBlueGunColliding = this.game.physics.arcade.collide(this.blueGun,[this.redGate,this.yellowGate,this.greenGate]);
+        let isRedGunColliding = this.game.physics.arcade.collide(this.redGun,[this.yellowGate,this.greenGate,this.blueGate]);
+        let isYellowGunColliding = this.game.physics.arcade.collide(this.yellowGun,[this.redGate,this.greenGate,this.blueGate]);
+        let isGreenGunColliding = this.game.physics.arcade.collide(this.greenGun,[this.redGate,this.yellowGate,this.blueGate]);
+        let isBlueGunColliding = this.game.physics.arcade.collide(this.blueGun,[this.redGate,this.yellowGate,this.greenGate]);
 
         this.game.physics.arcade.overlap([this.p1Red_pieces_Lvl2, this.p1Yellow_pieces_Lvl2, this.p1Green_pieces_Lvl2, this.p1Blue_pieces_Lvl2, this.p2Red_pieces_Lvl2, this.p2Yellow_pieces_Lvl2, this.p2Green_pieces_Lvl2, this.p2Blue_pieces_Lvl2], [this.redGate,this.yellowGate,this.greenGate,this.blueGate], this.objAndGateOverlap, null, this);
 
 /*        
-        var isRedPieceOverlapping = this.game.physics.arcade.overlap([this.p1Red_pieces_Lvl2,this.p2Red_pieces_Lvl2],[this.yellowGate,this.greenGate,this.blueGate]);
-        var isYellowPieceOverlapping = this.game.physics.arcade.overlap([this.p1Yellow_pieces_Lvl2,this.p2Yellow_pieces_Lvl2],[this.redGate,this.greenGate,this.blueGate]);
-        var isGreenPieceOverlapping = this.game.physics.arcade.overlap([this.p1Green_pieces_Lvl2,this.p2Green_pieces_Lvl2],[this.redGate,this.yellowGate,this.blueGate]);
-        var isBluePieceOverlapping = this.game.physics.arcade.overlap([this.p1Blue_pieces_Lvl2,this.p2Blue_pieces_Lvl2],[this.redGate,this.yellowGate,this.greenGate]);
+        let isRedPieceOverlapping = this.game.physics.arcade.overlap([this.p1Red_pieces_Lvl2,this.p2Red_pieces_Lvl2],[this.yellowGate,this.greenGate,this.blueGate]);
+        let isYellowPieceOverlapping = this.game.physics.arcade.overlap([this.p1Yellow_pieces_Lvl2,this.p2Yellow_pieces_Lvl2],[this.redGate,this.greenGate,this.blueGate]);
+        let isGreenPieceOverlapping = this.game.physics.arcade.overlap([this.p1Green_pieces_Lvl2,this.p2Green_pieces_Lvl2],[this.redGate,this.yellowGate,this.blueGate]);
+        let isBluePieceOverlapping = this.game.physics.arcade.overlap([this.p1Blue_pieces_Lvl2,this.p2Blue_pieces_Lvl2],[this.redGate,this.yellowGate,this.greenGate]);
 */
         // if (this.redBullet != null) {
      //     this.game.physics.arcade.collide(this.redBullet, this.redEnemy1);
         // }
-        if (this.game.time.now > this.enemySpawnCooldown) { // Spawn a new wave of enemies after a certain cooldown period
-            this.enemySpawnCooldown += 15000; // Cooldown is 15 seconds
+        if (game.time.now > this.enemySpawnCooldown2) { // Spawn a new wave of enemies after a certain cooldown period
+            this.enemySpawnCooldown2 += 15000; // Cooldown is 15 seconds
             this.generateEnemyWave();
         }
         // this.game.physics.arcade.overlap(this.enemies_Lvl2, this.bullets, this.killEnemy, null, this);
@@ -1917,7 +1945,7 @@ BasicGame.GameLvl2.prototype = {
 
 
             // Determine what type of item the player is holding
-            var itemType = "ray gun";
+            let itemType = "ray gun";
             if (this.p1currItem.player != null) { // Ray guns don't have assigned players, but ship pieces do. This check will determine if the player is holding a ray gun.
                 if (this.p1currItem.player == "p1") {
                     itemType = "P1 ship piece";
@@ -1936,18 +1964,18 @@ BasicGame.GameLvl2.prototype = {
 
         this.player1_Lvl2.body.velocity.set(0);
 /*
-        var currPlayerPos = this.player1_Lvl2.body.position;
+        let currPlayerPos = this.player1_Lvl2.body.position;
         // Movement will be affected by the terrain, generated by Perlin noise
-        var cellIndex = Math.abs(Math.round((this.player1_Lvl2.body.position.x + (this.player1_Lvl2.body.position.y * this.game.world.width)) * 4));
+        let cellIndex = Math.abs(Math.round((this.player1_Lvl2.body.position.x + (this.player1_Lvl2.body.position.y * this.game.world.width)) * 4));
         if (cellIndex < 0) {
             cellIndex = (this.planetSurfaceData.length%cellIndex) + this.planetSurfaceData.length;
-            // var currPerlinVal = (this.planetSurfaceData[this.planetSurfaceData.length-4] + this.planetSurfaceData[this.planetSurfaceData.length-3] + this.planetSurfaceData[this.planetSurfaceData.length-2])/3;
+            // let currPerlinVal = (this.planetSurfaceData[this.planetSurfaceData.length-4] + this.planetSurfaceData[this.planetSurfaceData.length-3] + this.planetSurfaceData[this.planetSurfaceData.length-2])/3;
         }
         else if (cellIndex > this.planetSurfaceData.length) {
             cellIndex = this.planetSurfaceData.length - (this.planetSurfaceData.length%cellIndex);
-            // var currPerlinVal = (this.planetSurfaceData[this.planetSurfaceData.length-4] + this.planetSurfaceData[this.planetSurfaceData.length-3] + this.planetSurfaceData[this.planetSurfaceData.length-2])/3;
+            // let currPerlinVal = (this.planetSurfaceData[this.planetSurfaceData.length-4] + this.planetSurfaceData[this.planetSurfaceData.length-3] + this.planetSurfaceData[this.planetSurfaceData.length-2])/3;
         }
-        var currPerlinVal = (this.planetSurfaceData[cellIndex] + this.planetSurfaceData[cellIndex + 1] + this.planetSurfaceData[cellIndex + 2])/3;
+        let currPerlinVal = (this.planetSurfaceData[cellIndex] + this.planetSurfaceData[cellIndex + 1] + this.planetSurfaceData[cellIndex + 2])/3;
 */
         if (this.aKey.isDown) {
             this.player1_Lvl2.body.velocity.x = -10 - 200;//*(currPerlinVal / 255.0); // Move left; currPerlinVal will be a value from 0 to 255
@@ -2063,18 +2091,18 @@ BasicGame.GameLvl2.prototype = {
         // If P2 is in possession of an item and that item isn't null, the item's velocity and position
         // are constantly updated to be equal to P2's velocity and position (to simulate the item following P2)
 
-        var currPlayerPos2 = this.player2.body.position;
+        let currPlayerPos2 = this.player2.body.position;
         // Movement will be affected by the terrain, generated by Perlin noise
-        var cellIndex2 = Math.abs(Math.round((this.player2.body.position.x + (this.player2.body.position.y * this.game.world.width)) * 4));
+        let cellIndex2 = Math.abs(Math.round((this.player2.body.position.x + (this.player2.body.position.y * this.game.world.width)) * 4));
         if (cellIndex2 < 0) {
             cellIndex2 = (this.planetSurfaceData.length%cellIndex2) + this.planetSurfaceData.length;
-            // var currPerlinVal = (this.planetSurfaceData[this.planetSurfaceData.length-4] + this.planetSurfaceData[this.planetSurfaceData.length-3] + this.planetSurfaceData[this.planetSurfaceData.length-2])/3;
+            // let currPerlinVal = (this.planetSurfaceData[this.planetSurfaceData.length-4] + this.planetSurfaceData[this.planetSurfaceData.length-3] + this.planetSurfaceData[this.planetSurfaceData.length-2])/3;
         }
         else if (cellIndex2 > this.planetSurfaceData.length) {
             cellIndex2 = this.planetSurfaceData.length - (this.planetSurfaceData.length%cellIndex2);
-            // var currPerlinVal = (this.planetSurfaceData[this.planetSurfaceData.length-4] + this.planetSurfaceData[this.planetSurfaceData.length-3] + this.planetSurfaceData[this.planetSurfaceData.length-2])/3;
+            // let currPerlinVal = (this.planetSurfaceData[this.planetSurfaceData.length-4] + this.planetSurfaceData[this.planetSurfaceData.length-3] + this.planetSurfaceData[this.planetSurfaceData.length-2])/3;
         }
-        var currPerlinVal2 = (this.planetSurfaceData[cellIndex2] + this.planetSurfaceData[cellIndex2 + 1] + this.planetSurfaceData[cellIndex2 + 2])/3;
+        let currPerlinVal2 = (this.planetSurfaceData[cellIndex2] + this.planetSurfaceData[cellIndex2 + 1] + this.planetSurfaceData[cellIndex2 + 2])/3;
 
         if (this.cursors.left.isDown) {
             this.player2.body.velocity.x = -10 - 200*(currPerlinVal2 / 255.0); // Move left; currPerlinVal will be a value from 0 to 255
@@ -2247,8 +2275,8 @@ BasicGame.GameLvl2.prototype = {
                         this.bulletYPos = (this.player1_Lvl2.height + this.p1currItem.height*0.7) * this.yDistToMousePointer_norm;
 
                         // Put the bullet at the proper spot, using the player's current position.
-                        var finalBulletXPos = this.player1_Lvl2.x + this.bulletXPos;
-                        var finalbulletYPos = this.player1_Lvl2.y + this.bulletYPos;
+                        let finalBulletXPos = this.player1_Lvl2.x + this.bulletXPos;
+                        let finalbulletYPos = this.player1_Lvl2.y + this.bulletYPos;
 
                         // Determine the bullet velocity
                         this.bulletXVel = this.xDistToMousePointer_norm*this.baseVelocityVal*2
@@ -2288,8 +2316,8 @@ BasicGame.GameLvl2.prototype = {
                     this.bulletYPos = (this.player1_Lvl2.height + this.p1currItem.height*0.7) * this.yDistToMousePointer_norm;
 
                     // Put the bullet at the proper spot, using the player's current position.
-                    var finalBulletXPos = this.player1_Lvl2.x + this.bulletXPos;
-                    var finalbulletYPos = this.player1_Lvl2.y + this.bulletYPos;
+                    let finalBulletXPos = this.player1_Lvl2.x + this.bulletXPos;
+                    let finalbulletYPos = this.player1_Lvl2.y + this.bulletYPos;
 
                     // Determine the bullet velocity
                     this.bulletXVel = this.xDistToMousePointer_norm*this.baseVelocityVal*2
@@ -2325,8 +2353,8 @@ BasicGame.GameLvl2.prototype = {
                     this.bulletYPos = (this.player1_Lvl2.height + this.p1currItem.height*0.7) * this.yDistToMousePointer_norm;
 
                     // Put the bullet at the proper spot, using the player's current position.
-                    var finalBulletXPos = this.player1_Lvl2.x + this.bulletXPos;
-                    var finalbulletYPos = this.player1_Lvl2.y + this.bulletYPos;
+                    let finalBulletXPos = this.player1_Lvl2.x + this.bulletXPos;
+                    let finalbulletYPos = this.player1_Lvl2.y + this.bulletYPos;
 
                     // Determine the bullet velocity
                     this.bulletXVel = this.xDistToMousePointer_norm*this.baseVelocityVal*2
@@ -2362,8 +2390,8 @@ BasicGame.GameLvl2.prototype = {
                     this.bulletYPos = (this.player1_Lvl2.height + this.p1currItem.height*0.7) * this.yDistToMousePointer_norm;
 
                     // Put the bullet at the proper spot, using the player's current position.
-                    var finalBulletXPos = this.player1_Lvl2.x + this.bulletXPos;
-                    var finalbulletYPos = this.player1_Lvl2.y + this.bulletYPos;
+                    let finalBulletXPos = this.player1_Lvl2.x + this.bulletXPos;
+                    let finalbulletYPos = this.player1_Lvl2.y + this.bulletYPos;
 
                     // Determine the bullet velocity
                     this.bulletXVel = this.xDistToMousePointer_norm*this.baseVelocityVal*2
@@ -2413,13 +2441,13 @@ BasicGame.GameLvl2.prototype = {
     //     // this.newTimer = new Phaser.TimerEvent(this.throwTimer1, 0, tick, repeatCount, true, slowDownObject, this, arguments);
 
     //     // slowDownValueX and slowDownValueY will be positive, and they will be added or subtracted to the item's current velocity to slow the item down
-    //     var newVelX = 0;
+    //     let newVelX = 0;
     //     if (this.p1currItem.body.velocity.x < 0) {
     //         newVelX = this.p1currItem.body.velocity.x + 100;
     //     } else if (this.p1currItem.body.velocity.x > 0) {
     //         newVelX = this.p1currItem.body.velocity.x - 100;
     //     }
-    //     var newVelY = 0;
+    //     let newVelY = 0;
     //     if (this.p1currItem.body.velocity.y < 0) {
     //         newVelY = this.p1currItem.body.velocity.y + 100;
     //     } else if (this.p1currItem.body.velocity.y > 0) {
@@ -2544,8 +2572,7 @@ BasicGame.GameLvl2.prototype = {
 
     objAndGateOverlap: function() {
         if (this.itemThrowIsInitiated === true) {
-            this.passThroughGateSound = this.add.audio('passThroughGateSound');
-            this.passThroughGateSound.play();
+            this.passThroughGateSound_Lvl2.play();
         }
     },
 
@@ -2553,8 +2580,7 @@ BasicGame.GameLvl2.prototype = {
         if (piece.player == ship.player) { // Checks if the piece is brought back to the correct ship
             if (piece == this.p1currItem) {this.p1Possess = false;}
             piece.kill();
-            this.pieceReachedShipSound = this.add.audio('pieceReachedShipSound');
-            this.pieceReachedShipSound.play();
+            this.pieceReachedShipSound_Lvl2.play();
             this.killPieceAndCheckRemaining_send(piece.name, piece.player, piece.color);
         }
         if ((this.p1Red_pieces_Lvl2.countLiving() == 0) && (this.p1Yellow_pieces_Lvl2.countLiving() == 0) && (this.p1Green_pieces_Lvl2.countLiving() == 0) && (this.p1Blue_pieces_Lvl2.countLiving() == 0) && (this.p2Red_pieces_Lvl2.countLiving() == 0) && (this.p2Yellow_pieces_Lvl2.countLiving() == 0) && (this.p2Green_pieces_Lvl2.countLiving() == 0) && (this.p2Blue_pieces_Lvl2.countLiving() == 0)) { // Ends the game once all pieces have been brought back
@@ -2578,7 +2604,7 @@ BasicGame.GameLvl2.prototype = {
     // Receive from server
     killPieceAndCheckRemaining_receive: function(objName,objPlayer,objColor) {
 
-        var listToCheck = null;
+        let listToCheck = null;
 
         // Rather than search every list, find which list of pieces to search through, based on the object's assigned player and color; this should make things more efficient
         // Note that we don't check for ray guns here because they should not be able to be killed.
@@ -2616,12 +2642,11 @@ BasicGame.GameLvl2.prototype = {
         // Search through the list for the object with the specific name, and set its position accordingly
         // Note: Since the pieces lists are Objects and not simple arrays, the same is true for listToCheck. It has a "children" property,
         // and THAT is a simple array that holds all the members of the group.
-        for (var i=0; i<listToCheck.children.length; i++) { // If the object isn't found, then it must have been killed already
+        for (let i=0; i<listToCheck.children.length; i++) { // If the object isn't found, then it must have been killed already
             if (listToCheck.children[i].name === objName) { // Object found
 
                 listToCheck.children[i].kill();
-                this.pieceReachedShipSound = game.add.audio('pieceReachedShipSound');
-                this.pieceReachedShipSound.play();
+                this.pieceReachedShipSound_Lvl2.play();
 
                 break;
             }
@@ -2710,8 +2735,7 @@ BasicGame.GameLvl2.prototype = {
                 }
             }
         }
-        this.rayGunSound = this.add.audio('rayGunSound');
-        this.rayGunSound.play();
+        this.rayGunSound_Lvl2.play();
 
     },
 
@@ -2748,7 +2772,7 @@ BasicGame.GameLvl2.prototype = {
                 }
             }
             // this.game.add.text();
-            // var style = { font: "25px Verdana", fill: "#FFFFFF", align: "center" };
+            // let style = { font: "25px Verdana", fill: "#FFFFFF", align: "center" };
             if (player == this.player1_Lvl2) {this.textPosX = this.game.world.width/4;}
             else {this.textPosX = 3 * this.game.world.width/4;}
             this.reviveText = this.game.add.text( this.textPosX, this.game.world.centerY, '10 seconds till revive', {font: "25px Verdana", fill: "#FFFFFF", align: "center"} );
@@ -2765,7 +2789,7 @@ BasicGame.GameLvl2.prototype = {
         //  if (this.game.time.now > this.player1_Lvl2.spawnBeginning) { // Allows the player to not be killable for a number of seconds
         //      this.player1_Lvl2.kill();
         //      // this.game.add.text();
-        //      // var style = { font: "25px Verdana", fill: "#FFFFFF", align: "center" };
+        //      // let style = { font: "25px Verdana", fill: "#FFFFFF", align: "center" };
         //      this.textPosX = this.game.world.width/4;
            //      this.reviveText = this.game.add.text( this.textPosX, this.game.world.centerY, '10 seconds till revive', {font: "25px Verdana", fill: "#FFFFFF", align: "center"} );
            //      this.reviveText.anchor.setTo(0.5,0.5);
@@ -2776,7 +2800,7 @@ BasicGame.GameLvl2.prototype = {
         //  if (this.game.time.now > this.player2.spawnBeginning) { // Allows the player to not be killable for a number of seconds
         //      this.player2.kill();
         //      // this.game.add.text();
-        //      // var style = { font: "25px Verdana", fill: "#FFFFFF", align: "center" };
+        //      // let style = { font: "25px Verdana", fill: "#FFFFFF", align: "center" };
         //      this.textPosX = 3 * this.game.world.width/4;
            //      this.reviveText = this.game.add.text( this.textPosX, this.game.world.centerY, '10 seconds till revive', {font: "25px Verdana", fill: "#FFFFFF", align: "center"} );
            //      this.reviveText.anchor.setTo(0.5,0.5);
@@ -2794,7 +2818,7 @@ BasicGame.GameLvl2.prototype = {
         // https://phaser.io/docs/2.4.4/Phaser.Tween.html
         this.player1_Lvl2.alpha = 1;
         // Fade player1 to alpha 0 over 1/2 of a second, abd back to 1 over 1/2 of a second
-        var tween = this.game.add.tween(this.player1_Lvl2).to( { alpha: 0 }, 500, "Linear", true, 0, -1);
+        let tween = this.game.add.tween(this.player1_Lvl2).to( { alpha: 0 }, 500, "Linear", true, 0, -1);
         tween.yoyo(true, 0);
         // Performs the blinking tween 3 times total (repeat twice after the first time)
         tween.repeat(2);
@@ -2804,8 +2828,8 @@ BasicGame.GameLvl2.prototype = {
 
         this.finalTime = game.time.totalElapsedSeconds()-this.timeSoFar;
 
-        var style = { font: "25px Verdana", fill: "#FFFFFF", align: "center" };
-        // var text = this.game.add.text( this.game.world.centerX, 15, "Get your ship up and running!", style );
+        let style = { font: "25px Verdana", fill: "#FFFFFF", align: "center" };
+        // let text = this.game.add.text( this.game.world.centerX, 15, "Get your ship up and running!", style );
         // text.anchor.setTo( 0.5, 0.0 );
 
 // TODO: this.endText does not display because either the WinScreen or LoseScreen begin immediately.
