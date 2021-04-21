@@ -39,6 +39,8 @@ let Game = {};
 Game.playerMap = {};
 Game.enemyMap = {};
 
+let numEnemiesForThisPlayer = 0;
+
 this.player1 = null;
 this.hintsText = null;
 this.otherPlayerHintsText = null;
@@ -1322,7 +1324,7 @@ BasicGame.Game.prototype = {
 
     generateEnemyWave: function() {
 
-        let numEnemiesToSpawn = Math.floor(Math.random() * 2) + 1; // Generate 1 to 3 enemies per wave
+        let numEnemiesToSpawn = Math.floor(Math.random() * 3) + 1; // Generate 1 to 3 enemies per wave
 
         for (let i = 0; i < numEnemiesToSpawn; i++) {
 
@@ -1427,6 +1429,10 @@ BasicGame.Game.prototype = {
                     // this.redEnemy.exists = false;
                     // this.redEnemy.visible = false;
                     this.redEnemy.checkWorldBounds = false;
+                    this.redEnemy.name = "redEnemy" + this.player1.playerSide + numEnemiesForThisPlayer; // Ex: "redEnemyleft1"
+                    
+                    Client.askNewEnemy(this.redEnemy.name,this.redEnemy.color,xCoord,yCoord); // Note: We will use the enemy name as the id
+                    
                     break;
                 case 1: // Enemy will be yellow
                     this.yellowEnemy = this.enemies.create(xCoord, yCoord, 'YellowEnemy'); // Just spawn it far away for now
@@ -1439,6 +1445,10 @@ BasicGame.Game.prototype = {
                     // this.yellowEnemy.exists = false;
                     // this.yellowEnemy.visible = false;
                     this.yellowEnemy.checkWorldBounds = false;
+                    this.yellowEnemy.name = "yellowEnemy" + this.player1.playerSide + numEnemiesForThisPlayer; // Ex: "yellowEnemyright2"
+                    
+                    Client.askNewEnemy(this.yellowEnemy.name,this.yellowEnemy.color,xCoord,yCoord); // Note: We will use the enemy name as the id
+                    
                     break;
                 case 2: // Enemy will be green
                     this.greenEnemy = this.enemies.create(xCoord, yCoord, 'GreenEnemy'); // Just spawn it far away for now
@@ -1451,6 +1461,10 @@ BasicGame.Game.prototype = {
                     // this.greenEnemy.exists = false;
                     // this.greenEnemy.visible = false;
                     this.greenEnemy.checkWorldBounds = false;
+                    this.greenEnemy.name = "greenEnemy" + this.player1.playerSide + numEnemiesForThisPlayer; // Ex: "greenEnemyright69"
+                    
+                    Client.askNewEnemy(this.greenEnemy.name,this.greenEnemy.color,xCoord,yCoord); // Note: We will use the enemy name as the id
+                    
                     break;
                 case 3: // Enemy will be blue
                     this.blueEnemy = this.enemies.create(xCoord, yCoord, 'BlueEnemy'); // Just spawn it far away for now
@@ -1463,24 +1477,89 @@ BasicGame.Game.prototype = {
                     // this.blueEnemy.exists = false;
                     // this.blueEnemy.visible = false;
                     this.blueEnemy.checkWorldBounds = false;
+                    this.blueEnemy.name = "blueEnemy" + this.player1.playerSide + numEnemiesForThisPlayer; // Ex: "blueEnemyleft420"
+                    
+                    Client.askNewEnemy(this.blueEnemy.name,this.blueEnemy.color,xCoord,yCoord); // Note: We will use the enemy name as the id
+                    
                     break;
             } // end switch(enemyColor)
 
-
+            numEnemiesForThisPlayer++;
 
         } // end for-loop
 
     }, // end generateEnemyWave function
 
+
+    addNewEnemy: function(id,color,x,y) {
+        console.log(`From addNewEnemy in Game.js... Enemy id: ${id}, color: ${color}, x: ${x}, y: ${y}`);
+
+        switch(color) {
+            case "red": // Enemy will be red
+                // if (Game.enemyMap[id] != null) {
+                    Game.enemyMap[id] = game.add.sprite(x,y,'RedEnemy');
+                    Game.enemyMap[id].width = 60;
+                    Game.enemyMap[id].height = 60;
+                    Game.enemyMap[id].anchor.setTo(0.5, 0.5);
+                    Game.enemyMap[id].color = color;
+                    // Game.enemyMap[id].body.velocity.x = 0;
+                    // Game.enemyMap[id].body.velocity.y = 0;
+                    Game.enemyMap[id].checkWorldBounds = false;
+                    Game.enemyMap[id].name = id;
+                // }
+                break;
+            case "yellow": // Enemy will be yellow
+                // if (Game.enemyMap[id] != null) {
+                    Game.enemyMap[id] = game.add.sprite(x,y,'YellowEnemy');
+                    Game.enemyMap[id].width = 60;
+                    Game.enemyMap[id].height = 60;
+                    Game.enemyMap[id].anchor.setTo(0.5, 0.5);
+                    Game.enemyMap[id].color = color;
+                    // Game.enemyMap[id].body.velocity.x = 0;
+                    // Game.enemyMap[id].body.velocity.y = 0;
+                    Game.enemyMap[id].checkWorldBounds = false;
+                    Game.enemyMap[id].name = id;
+                // }
+                break;
+            case "green": // Enemy will be green
+                // if (Game.enemyMap[id] != null) {
+                    Game.enemyMap[id] = game.add.sprite(x,y,'GreenEnemy');
+                    Game.enemyMap[id].width = 60;
+                    Game.enemyMap[id].height = 60;
+                    Game.enemyMap[id].anchor.setTo(0.5, 0.5);
+                    Game.enemyMap[id].color = color;
+                    // Game.enemyMap[id].body.velocity.x = 0;
+                    // Game.enemyMap[id].body.velocity.y = 0;
+                    Game.enemyMap[id].checkWorldBounds = false;
+                    Game.enemyMap[id].name = id;
+                // }
+                break;
+            case "blue": // Enemy will be blue
+                // if (Game.enemyMap[id] != null) {
+                    Game.enemyMap[id] = game.add.sprite(x,y,'BlueEnemy');
+                    Game.enemyMap[id].width = 60;
+                    Game.enemyMap[id].height = 60;
+                    Game.enemyMap[id].anchor.setTo(0.5, 0.5);
+                    Game.enemyMap[id].color = color;
+                    // Game.enemyMap[id].body.velocity.x = 0;
+                    // Game.enemyMap[id].body.velocity.y = 0;
+                    Game.enemyMap[id].checkWorldBounds = false;
+                    Game.enemyMap[id].name = id;
+                // }
+                break;
+        } // end switch(color)
+
+    },
+
 // Update enemies positions
 
     // This func is for sending the enemies' positions to the server, so that the other player sees when they move
-    sendEnemiesPos: function(x,y){
-        Client.updateEnemiesPos(x,y);
+    sendEnemyPos: function(id,x,y){
+        Client.updateEnemyPos(id,x,y);
     },
 
     // This func is for seeing the enemies move
-    moveEnemies: function(id,x,y){
+    moveEnemy: function(id,x,y){
         if (Game.enemyMap[id] != null) {
             Game.enemyMap[id].x = x;
             Game.enemyMap[id].y = y;
@@ -2617,6 +2696,7 @@ BasicGame.Game.prototype = {
     	} else if ((enemy.x >= (this.game.world.width/2.0)) && (this.player1.x >= this.game.world.width/2.0)) {
             this.game.physics.arcade.moveToObject(enemy, this.player1, 10);
         }
+        this.sendEnemyPos(enemy.name,enemy.x,enemy.y);
     	// else { // If the enemy is on the right half of the screen, follow player 2
     	// 	this.game.physics.arcade.moveToObject(enemy, this.player2, 10);
     	// }
@@ -2697,7 +2777,15 @@ BasicGame.Game.prototype = {
     	if (bullet.color == enemy.color) {
     		enemy.kill();
     		bullet.kill();
+            // Client.updateKilledEnemy(enemy.name);
     	}
+    },
+
+    killEnemyRemote: function(id) {
+        if (Game.enemyMap[id] != null) {
+            Game.enemyMap[id].destroy();
+            delete Game.enemyMap[id];
+        }
     },
 
     killPlayer: function (player, enemy) {

@@ -179,6 +179,18 @@ io.on('connection',function(socket){
             socket.broadcast.emit('moveObject_position',data);
         });
 
+        socket.on('newEnemy',function(data){
+            socket.broadcast.emit('addNewEnemy',data);
+        });
+
+        socket.on('enemyPosUpdated',function(data){
+            socket.broadcast.emit('moveEnemy',data);
+        });
+
+        socket.on('enemyKillUpdated',function(data){
+            socket.broadcast.emit('killEnemyRemote',data);
+        });
+
         socket.on('pieceKilled',function(data){
             socket.broadcast.emit('killPiece',data);
         });

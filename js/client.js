@@ -80,6 +80,40 @@ Client.connectToServer = function() {
 	    BasicGame.Game.prototype.movePlayer(data.id,data.x,data.y);
 	});
 
+// Creating a new enemy
+
+	// Send to server
+	Client.askNewEnemy = function(id,color,x,y) {
+		Client.socket.emit('newEnemy', {id:id, color:color, x:x, y:y});
+	}
+
+	// Receive from server
+	Client.socket.on('addNewEnemy',function(data){
+	    BasicGame.Game.prototype.addNewEnemy(data.id, data.color, data.x, data.y);
+	});
+
+// Updating enemy movement
+
+	// Send to server
+	Client.updateEnemyPos = function(id,x,y) {
+		Client.socket.emit('enemyPosUpdated', {id:id, x:x, y:y});
+	}
+
+	// Receive from server
+	Client.socket.on('moveEnemy',function(data){
+	    BasicGame.Game.prototype.moveEnemy(data.id, data.x, data.y);
+	});
+
+// Kill enemy
+
+    Client.updateKilledEnemy = function(id){
+    	Client.socket.emit('enemyKillUpdated', {id:id});
+    }
+
+    Client.socket.on('killEnemyRemote',function(data){
+    	BasicGame.Game.prototype.killEnemyRemote(data.id);
+    });
+
 // Updating object movement
 
 	// Send to server

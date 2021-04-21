@@ -1384,7 +1384,7 @@ BasicGame.GameLvl2.prototype = {
 
     generateEnemyWave: function() {
 
-        let numEnemiesToSpawn = Math.floor(Math.random() * 2) + 1; // Generate 1 to 3 enemies per wave
+        let numEnemiesToSpawn = Math.floor(Math.random() * 3) + 1; // Generate 1 to 3 enemies per wave
 
         for (let i = 0; i < numEnemiesToSpawn; i++) {
 
