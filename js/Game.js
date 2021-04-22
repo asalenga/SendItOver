@@ -1504,6 +1504,7 @@ BasicGame.Game.prototype = {
                     Game.enemyMap[id].height = 60;
                     Game.enemyMap[id].anchor.setTo(0.5, 0.5);
                     Game.enemyMap[id].color = color;
+                    Game.enemyMap[id].name = id;
 
                     game.physics.enable( Game.enemyMap[id], Phaser.Physics.ARCADE );
                     // Game.enemyMap[id].enableBody = true;
@@ -1511,7 +1512,6 @@ BasicGame.Game.prototype = {
                     Game.enemyMap[id].body.velocity.x = 0;
                     Game.enemyMap[id].body.velocity.y = 0;
                     Game.enemyMap[id].checkWorldBounds = false;
-                    Game.enemyMap[id].name = id;
                 // }
                 break;
             case "yellow": // Enemy will be yellow
@@ -1521,6 +1521,7 @@ BasicGame.Game.prototype = {
                     Game.enemyMap[id].height = 60;
                     Game.enemyMap[id].anchor.setTo(0.5, 0.5);
                     Game.enemyMap[id].color = color;
+                    Game.enemyMap[id].name = id;
 
                     game.physics.enable( Game.enemyMap[id], Phaser.Physics.ARCADE );
                     // Game.enemyMap[id].enableBody = true;
@@ -1528,7 +1529,6 @@ BasicGame.Game.prototype = {
                     Game.enemyMap[id].body.velocity.x = 0;
                     Game.enemyMap[id].body.velocity.y = 0;
                     Game.enemyMap[id].checkWorldBounds = false;
-                    Game.enemyMap[id].name = id;
                 // }
                 break;
             case "green": // Enemy will be green
@@ -1538,6 +1538,7 @@ BasicGame.Game.prototype = {
                     Game.enemyMap[id].height = 60;
                     Game.enemyMap[id].anchor.setTo(0.5, 0.5);
                     Game.enemyMap[id].color = color;
+                    Game.enemyMap[id].name = id;
 
                     game.physics.enable( Game.enemyMap[id], Phaser.Physics.ARCADE );
                     // Game.enemyMap[id].enableBody = true;
@@ -1545,7 +1546,6 @@ BasicGame.Game.prototype = {
                     Game.enemyMap[id].body.velocity.x = 0;
                     Game.enemyMap[id].body.velocity.y = 0;
                     Game.enemyMap[id].checkWorldBounds = false;
-                    Game.enemyMap[id].name = id;
                 // }
                 break;
             case "blue": // Enemy will be blue
@@ -1555,6 +1555,7 @@ BasicGame.Game.prototype = {
                     Game.enemyMap[id].height = 60;
                     Game.enemyMap[id].anchor.setTo(0.5, 0.5);
                     Game.enemyMap[id].color = color;
+                    Game.enemyMap[id].name = id;
 
                     game.physics.enable( Game.enemyMap[id], Phaser.Physics.ARCADE );
                     // Game.enemyMap[id].enableBody = true;
@@ -1562,7 +1563,6 @@ BasicGame.Game.prototype = {
                     Game.enemyMap[id].body.velocity.x = 0;
                     Game.enemyMap[id].body.velocity.y = 0;
                     Game.enemyMap[id].checkWorldBounds = false;
-                    Game.enemyMap[id].name = id;
                 // }
                 break;
         } // end switch(color)
@@ -2713,7 +2713,7 @@ BasicGame.Game.prototype = {
     	this.enemies.forEach(this.chasePlayer, this, null);
         // Game.enemyMap.forEach(this.chasePlayer, this, null);
         for (let currEnemy in Game.enemyMap) {
-            console.log("currEnemy x, y: " + Game.enemyMap[currEnemy].x + ", " + Game.enemyMap[currEnemy].y);
+            // console.log("currEnemy x, y: " + Game.enemyMap[currEnemy].x + ", " + Game.enemyMap[currEnemy].y);
             this.chasePlayer(Game.enemyMap[currEnemy]);
         }
     },
@@ -2810,11 +2810,14 @@ BasicGame.Game.prototype = {
     	}
     },
 
-    killEnemy: function (enemy, bullet) {
+    killEnemy: function (bullet, enemy) {
     	if (bullet.color == enemy.color) {
+            // We must do Client.updateKilledEnemy(enemy.name) BEFORE doing enemy.kill(), because .kill
+            // removes the object and its properties entirely, so we wouldn't have an enemy.name to send!
+            console.log("enemy.name: " + enemy.name);
+            Client.updateKilledEnemy(enemy.name);
     		enemy.kill();
     		bullet.kill();
-            // Client.updateKilledEnemy(enemy.name);
     	}
     },
 
