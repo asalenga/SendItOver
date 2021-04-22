@@ -396,17 +396,6 @@ BasicGame.Game.prototype = {
 
 		this.timeSoFar = this.game.time.totalElapsedSeconds();
 
-        let bigTextStyle = { font: "50px Verdana", fill: "#FFFFFF", align: "center" };
-        this.levelTitle = this.game.add.text( this.game.world.width/2.0, this.game.world.height/2.0, 'LEVEL 1', bigTextStyle);
-        this.levelTitle.anchor.setTo(0.5,0.5);
-        this.levelTitle.alpha = 1;
-
-        // Clear the text after some time. Note: I defined the callback function right here. Of course
-        // I could simply define a separate function entirely and call that, but this works too
-        this.levelTitleTimer = game.time.events.add(Phaser.Timer.SECOND * 3, () => {
-            this.levelTitle.alpha = 0;
-        });
-
         // this.spawnBeginning = 0;
 
         // Here are different ways to modify existing an text object!
@@ -449,6 +438,19 @@ BasicGame.Game.prototype = {
         // Note: See how it is at the end of the create() method; my theory is that it's so that
         // no more than one player executes the entire process of initializing everything above
         Client.askNewPlayer();
+
+        let bigTextStyle = { font: "50px Verdana", fill: "#FFFFFF", align: "center" };
+        this.levelTitle = this.game.add.text( this.game.world.width/2.0, this.game.world.height/2.0, 'LEVEL 1', bigTextStyle);
+        this.levelTitle.anchor.setTo(0.5,0.5);
+        this.levelTitle.alpha = 1;
+        // Make sure that the level title is shown on top of everything, after everything has been loaded
+        this.game.world.bringToTop(this.levelTitle);
+
+        // Clear the text after some time. Note: I defined the callback function right here. Of course
+        // I could simply define a separate function entirely and call that, but this works too
+        this.levelTitleTimer = game.time.events.add(Phaser.Timer.SECOND * 3, () => {
+            this.levelTitle.alpha = 0;
+        });
 
     },
 
@@ -1502,8 +1504,12 @@ BasicGame.Game.prototype = {
                     Game.enemyMap[id].height = 60;
                     Game.enemyMap[id].anchor.setTo(0.5, 0.5);
                     Game.enemyMap[id].color = color;
-                    // Game.enemyMap[id].body.velocity.x = 0;
-                    // Game.enemyMap[id].body.velocity.y = 0;
+
+                    game.physics.enable( Game.enemyMap[id], Phaser.Physics.ARCADE );
+                    // Game.enemyMap[id].enableBody = true;
+                    // Game.enemyMap[id].physicsBodyType = Phaser.Physics.ARCADE;
+                    Game.enemyMap[id].body.velocity.x = 0;
+                    Game.enemyMap[id].body.velocity.y = 0;
                     Game.enemyMap[id].checkWorldBounds = false;
                     Game.enemyMap[id].name = id;
                 // }
@@ -1515,8 +1521,12 @@ BasicGame.Game.prototype = {
                     Game.enemyMap[id].height = 60;
                     Game.enemyMap[id].anchor.setTo(0.5, 0.5);
                     Game.enemyMap[id].color = color;
-                    // Game.enemyMap[id].body.velocity.x = 0;
-                    // Game.enemyMap[id].body.velocity.y = 0;
+
+                    game.physics.enable( Game.enemyMap[id], Phaser.Physics.ARCADE );
+                    // Game.enemyMap[id].enableBody = true;
+                    // Game.enemyMap[id].physicsBodyType = Phaser.Physics.ARCADE;
+                    Game.enemyMap[id].body.velocity.x = 0;
+                    Game.enemyMap[id].body.velocity.y = 0;
                     Game.enemyMap[id].checkWorldBounds = false;
                     Game.enemyMap[id].name = id;
                 // }
@@ -1528,8 +1538,12 @@ BasicGame.Game.prototype = {
                     Game.enemyMap[id].height = 60;
                     Game.enemyMap[id].anchor.setTo(0.5, 0.5);
                     Game.enemyMap[id].color = color;
-                    // Game.enemyMap[id].body.velocity.x = 0;
-                    // Game.enemyMap[id].body.velocity.y = 0;
+
+                    game.physics.enable( Game.enemyMap[id], Phaser.Physics.ARCADE );
+                    // Game.enemyMap[id].enableBody = true;
+                    // Game.enemyMap[id].physicsBodyType = Phaser.Physics.ARCADE;
+                    Game.enemyMap[id].body.velocity.x = 0;
+                    Game.enemyMap[id].body.velocity.y = 0;
                     Game.enemyMap[id].checkWorldBounds = false;
                     Game.enemyMap[id].name = id;
                 // }
@@ -1541,8 +1555,12 @@ BasicGame.Game.prototype = {
                     Game.enemyMap[id].height = 60;
                     Game.enemyMap[id].anchor.setTo(0.5, 0.5);
                     Game.enemyMap[id].color = color;
-                    // Game.enemyMap[id].body.velocity.x = 0;
-                    // Game.enemyMap[id].body.velocity.y = 0;
+
+                    game.physics.enable( Game.enemyMap[id], Phaser.Physics.ARCADE );
+                    // Game.enemyMap[id].enableBody = true;
+                    // Game.enemyMap[id].physicsBodyType = Phaser.Physics.ARCADE;
+                    Game.enemyMap[id].body.velocity.x = 0;
+                    Game.enemyMap[id].body.velocity.y = 0;
                     Game.enemyMap[id].checkWorldBounds = false;
                     Game.enemyMap[id].name = id;
                 // }
@@ -1574,6 +1592,8 @@ BasicGame.Game.prototype = {
         // Display the message above yourself
         this.hintsText.text = msg;
         this.hintsText.alpha = 1;
+        // Make sure the hintsText is shown on top of everything so it's not obscured
+        game.world.bringToTop(this.hintsText);
 
         Client.sendMessageToOtherPlayer(msg);
 
@@ -1599,6 +1619,8 @@ BasicGame.Game.prototype = {
         // this.hintsText.alpha = 1;
         this.otherPlayerHintsText.text = message;
         this.otherPlayerHintsText.alpha = 1;
+        // Make sure the otherPlayerHintsText is shown on top of everything so it's not obscured
+        game.world.bringToTop(this.otherPlayerHintsText)
 
         if (this.otherPlayerHintsTimer != null) {
             game.time.events.remove(this.otherPlayerHintsTimer);
@@ -1874,7 +1896,9 @@ BasicGame.Game.prototype = {
     	// this.game.physics.arcade.overlap(this.enemies, this.bullets, this.killEnemy, null, this);
     	this.game.physics.arcade.overlap([this.redBullets,this.yellowBullets,this.greenBullets,this.blueBullets],this.enemies,this.killEnemy,null,this);
     	        // game.physics.arcade.overlap(bullets, enemies, enemyKill, null, this);
-    	this.game.time.events.add(Phaser.Timer.SECOND * 5, this.eachEnemy, this);
+        // Delay the first enemy wave by 5 seconds
+    	// this.game.time.events.add(Phaser.Timer.SECOND * 5, this.eachEnemy, this);
+        this.eachEnemy();
     	// this.enemies.forEach(this.chasePlayer, this, null);
 		this.game.physics.arcade.overlap(this.enemies, [this.player1/*,this.player2*/], this.killPlayer, null, this);
  //   	this.game.physics.arcade.moveToObject(this.redEnemy1, this.player1, 25);
@@ -2687,6 +2711,11 @@ BasicGame.Game.prototype = {
 
     eachEnemy: function () {
     	this.enemies.forEach(this.chasePlayer, this, null);
+        // Game.enemyMap.forEach(this.chasePlayer, this, null);
+        for (let currEnemy in Game.enemyMap) {
+            console.log("currEnemy x, y: " + Game.enemyMap[currEnemy].x + ", " + Game.enemyMap[currEnemy].y);
+            this.chasePlayer(Game.enemyMap[currEnemy]);
+        }
     },
 
     chasePlayer: function (enemy) {
@@ -2696,7 +2725,15 @@ BasicGame.Game.prototype = {
     	} else if ((enemy.x >= (this.game.world.width/2.0)) && (this.player1.x >= this.game.world.width/2.0)) {
             this.game.physics.arcade.moveToObject(enemy, this.player1, 10);
         }
-        this.sendEnemyPos(enemy.name,enemy.x,enemy.y);
+        // console.log("this.player2ID: " + this.player2ID);
+        if (this.player2ID != undefined) {
+            if ((enemy.x < (this.game.world.width/2.0)) && (Game.playerMap[this.player2ID].x < this.game.world.width/2.0)) {
+                this.game.physics.arcade.moveToObject(enemy, Game.playerMap[this.player2ID], 10);
+            } else if ((enemy.x >= (this.game.world.width/2.0)) && (Game.playerMap[this.player2ID].x >= this.game.world.width/2.0)) {
+                this.game.physics.arcade.moveToObject(enemy, Game.playerMap[this.player2ID], 10);
+            }
+        }
+        // this.sendEnemyPos(enemy.name,enemy.x,enemy.y);
     	// else { // If the enemy is on the right half of the screen, follow player 2
     	// 	this.game.physics.arcade.moveToObject(enemy, this.player2, 10);
     	// }
