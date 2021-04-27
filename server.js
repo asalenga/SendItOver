@@ -161,6 +161,14 @@ io.on('connection',function(socket){
             socket.broadcast.emit('movePlayer',socket.player);
         });
 
+        socket.on('playerKillUpdated',function(data){
+            socket.broadcast.emit('killPlayerRemote',data);
+        });
+
+        socket.on('playerRespawnUpdated',function(data){
+            socket.broadcast.emit('respawnPlayerRemote',data);
+        });
+
         socket.on('objectMotionUpdated', function(data){ // data contains objName, objPlayer, objColor, velocityX, velocityY, dragX, and dragY
 
             // socket.object.objName = data.objName;

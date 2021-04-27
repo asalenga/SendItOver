@@ -488,6 +488,7 @@ BasicGame.Game.prototype = {
         console.log(`playerSide: ${playerSide}`);
         this.player1.playerSide = playerSide;
         console.log(`this.player1.playerSide: ${this.player1.playerSide}`);
+        this.player1.spawnBeginning = 0;
 
         game.physics.enable( this.player1, Phaser.Physics.ARCADE );
 
@@ -2953,7 +2954,9 @@ BasicGame.Game.prototype = {
     },
 
     killPlayer: function (player, enemy) {
-        if (this.game.time.now > player.spawnBeginning) { // Allows the player to not be killable for a number of seconds
+        // Allow player to be killed only after spawnBeginning duration is over; the player is invulnerable for a number of seconds
+        if (this.game.time.now > player.spawnBeginning) {
+            Client.updateKilledPlayer(player.id);
             player.kill();
             if (player == this.player1) {
                 // this.p1currItem.body.velocity.setTo(0,0);
@@ -2970,13 +2973,20 @@ BasicGame.Game.prototype = {
             }
             // this.game.add.text();
             // let style = { font: "25px Verdana", fill: "#FFFFFF", align: "center" };
-            if (player == this.player1) {this.textPosX = this.game.world.width/4;}
+            if (this.player1.playerSide == "left") {this.textPosX = this.game.world.width/4;}
             else {this.textPosX = 3 * this.game.world.width/4;}
             this.reviveText = this.game.add.text( this.textPosX, this.game.world.centerY, '10 seconds till revive', {font: "25px Verdana", fill: "#FFFFFF", align: "center"} );
             this.reviveText.anchor.setTo(0.5,0.5);
+            // The respawn timer counts down and updates its displayed remaining time every second by decrementing the remaining seconds
+            // by 1, every 1 second, 10 times. Note: we could've specified a callback function, but we defined the function right here
+            let remainingSecs = 10;
+            this.game.time.events.repeat(Phaser.Timer.SECOND * 1, 10, () => {
+                remainingSecs--;
+                this.reviveText.text = `${remainingSecs} seconds till revive`
+            });
             this.game.time.events.add(Phaser.Timer.SECOND * 10, this.respawnPlayer, this, player);
         }
-        if (this.player1.alive == false) {
+        if ((this.player1.alive == false) && (Game.playerMap[this.player2ID].alive == false)) {
             // The players lose
             this.playersWin = false;
             this.quitGame(this.playersWin);
@@ -3006,9 +3016,38 @@ BasicGame.Game.prototype = {
 	    // }
     },
 
+    // Receive from server
+    killPlayerRemote: function (id) {
+        if (Game.playerMap[id] != null) {
+            Game.playerMap[id].kill();
+
+            if (Game.playerMap[id].playerSide == "left") {this.textPosX2 = game.world.width/4;}
+            else {this.textPosX2 = 3 * game.world.width/4;}
+            this.reviveText2 = game.add.text( this.textPosX2, game.world.centerY, '10 seconds till revive', {font: "25px Verdana", fill: "#FFFFFF", align: "center"} );
+            this.reviveText2.anchor.setTo(0.5,0.5);
+            // The respawn timer counts down and updates its displayed remaining time every second by decrementing the remaining seconds
+            // by 1, every 1 second, 10 times. Note: we could've specified a callback function, but we defined the function right here
+            let remainingSecs = 10;
+            game.time.events.repeat(Phaser.Timer.SECOND * 1, 10, () => {
+                remainingSecs--;
+                this.reviveText2.text = `${remainingSecs} seconds till revive`
+            });
+        }
+        if ((this.player1.alive == false) && (Game.playerMap[id].alive == false)) {
+            // The players lose
+            this.playersWin = false;
+            this.quitGame(this.playersWin);
+        }
+    },
+
     respawnPlayer: function (player) {
+        Client.updateRespawnPlayer(player.id);
         this.reviveText.kill();
-        player.reset((this.game.world.width/4), this.game.world.centerY);
+        if (player.playerSide == "left") {
+            player.reset((this.game.world.width/4), this.game.world.centerY);
+        } else {
+            player.reset(3 * this.game.world.width/4, this.game.world.centerY);
+        }
         this.player1.spawnBeginning = this.game.time.now+3000; // Invulnerable for 3 seconds
         
         // https://phaser.io/examples/v2/tweens/yoyo
@@ -3019,6 +3058,29 @@ BasicGame.Game.prototype = {
         tween.yoyo(true, 0);
         // Performs the blinking tween 3 times total (repeat twice after the first time)
         tween.repeat(2);
+    },
+
+    respawnPlayerRemote: function (id) {
+        if (Game.playerMap[id] != null) {
+            this.reviveText2.kill();
+
+            if (Game.playerMap[id].playerSide == "left") {
+                Game.playerMap[id].reset((game.world.width/4), game.world.centerY);
+            } else {
+                Game.playerMap[id].reset(3 * game.world.width/4, game.world.centerY);
+            }
+            // Game.playerMap[id].spawnBeginning = this.game.time.now+3000; // Invulnerable for 3 seconds
+            
+            // https://phaser.io/examples/v2/tweens/yoyo
+            // https://phaser.io/docs/2.4.4/Phaser.Tween.html
+            Game.playerMap[id].alpha = 1;
+            // Fade player1 to alpha 0 over 1/2 of a second, abd back to 1 over 1/2 of a second
+            let tween2 = game.add.tween(Game.playerMap[id]).to( { alpha: 0 }, 500, "Linear", true, 0, -1);
+            tween2.yoyo(true, 0);
+            // Performs the blinking tween 3 times total (repeat twice after the first time)
+            tween2.repeat(2);
+
+        }
     },
 
     quitGame: function (didPlayersWin) {

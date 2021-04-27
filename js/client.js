@@ -80,6 +80,26 @@ Client.connectToServer = function() {
 	    BasicGame.Game.prototype.movePlayer(data.id,data.x,data.y);
 	});
 
+// Kill player
+
+	Client.updateKilledPlayer = function(id) {
+		Client.socket.emit('playerKillUpdated',{id:id});
+	}
+
+	Client.socket.on('killPlayerRemote',function(data){
+		BasicGame.Game.prototype.killPlayerRemote(data.id);
+	});
+
+// Respawn player
+
+	Client.updateRespawnPlayer = function(id) {
+		Client.socket.emit('playerRespawnUpdated',{id:id});
+	}
+
+	Client.socket.on('respawnPlayerRemote',function(data){
+		BasicGame.Game.prototype.respawnPlayerRemote(data.id);
+	});
+
 // Creating a new enemy
 
 	// Send to server
