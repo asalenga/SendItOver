@@ -83,7 +83,7 @@ Client.connectToServer = function() {
 // Creating a new enemy
 
 	// Send to server
-	Client.askNewEnemy = function(id,color,x,y) {
+	Client.askNewEnemy = function(id,color,x,y) { // Note: id is the name of the enemy
 		Client.socket.emit('newEnemy', {id:id, color:color, x:x, y:y});
 	}
 
@@ -148,6 +148,36 @@ Client.connectToServer = function() {
 	// Receive from server
 	Client.socket.on('killPiece',function(data){
 	    BasicGame.Game.prototype.killPieceAndCheckRemaining_receive(data.objName, data.objPlayer, data.objColor);
+	});
+
+// Creating a bullet
+
+	Client.askNewBullet = function(id,color,x,y) { // Note: id is the name of the bullet
+		Client.socket.emit('newBullet',{id:id, color:color, x:x, y:y});
+	}
+
+	Client.socket.on('addNewBullet',function(data){
+		BasicGame.Game.prototype.addNewBullet(data.id, data.color, data.x, data.y);
+	});
+
+// Firing a bullet
+
+	Client.updateFiredBullet = function(id,xPos,yPos,xVel,yVel) {
+		Client.socket.emit('bulletFired',{id:id, xPos:xPos, yPos:yPos, xVel:xVel, yVel:yVel});
+	}
+
+	Client.socket.on('fireBulletRemote',function(data){
+		BasicGame.Game.prototype.fireBulletRemote(data.id, data.xPos, data.yPos, data.xVel, data.yVel);
+	});
+
+// Killing a bullet
+
+	Client.killFiredBullet = function(id) {
+		Client.socket.emit('bulletKilled',{id:id});
+	}
+
+	Client.socket.on('killBulletRemote',function(data){
+		BasicGame.Game.prototype.killBulletRemote(data.id);
 	});
 
 // Manually disconnect a player's socket (useful when one player leaves and we need to force the other one to leave too)

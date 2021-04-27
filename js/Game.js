@@ -38,6 +38,7 @@
 let Game = {};
 Game.playerMap = {};
 Game.enemyMap = {};
+Game.bulletMap = {};
 
 let numEnemiesForThisPlayer = 0;
 
@@ -561,6 +562,8 @@ BasicGame.Game.prototype = {
             this.redBullet.visible = false;
             this.redBullet.checkWorldBounds = true;
             this.redBullet.events.onOutOfBounds.add(this.killBullet, this);
+            this.redBullet.name = "redBullet" + playerSide + i; // Ex: redBulletleft0
+            Client.askNewBullet(this.redBullet.name,this.redBullet.color,this.redBullet.x,this.redBullet.y);
         }
 
         this.yellowBullets = game.add.group();
@@ -578,6 +581,8 @@ BasicGame.Game.prototype = {
             this.yellowBullet.visible = false;
             this.yellowBullet.checkWorldBounds = true;
             this.yellowBullet.events.onOutOfBounds.add(this.killBullet, this);
+            this.yellowBullet.name = "yellowBullet" + playerSide + i; // Ex: yellowBulletright0
+            Client.askNewBullet(this.yellowBullet.name,this.yellowBullet.color,this.yellowBullet.x,this.yellowBullet.y);
         }
 
         this.greenBullets = game.add.group();
@@ -595,6 +600,8 @@ BasicGame.Game.prototype = {
             this.greenBullet.visible = false;
             this.greenBullet.checkWorldBounds = true;
             this.greenBullet.events.onOutOfBounds.add(this.killBullet, this);
+            this.greenBullet.name = "greenBullet" + playerSide + i; // Ex: greenBulletright0
+            Client.askNewBullet(this.greenBullet.name,this.greenBullet.color,this.greenBullet.x,this.greenBullet.y);
         }
 
         this.blueBullets = game.add.group();
@@ -612,6 +619,8 @@ BasicGame.Game.prototype = {
             this.blueBullet.visible = false;
             this.blueBullet.checkWorldBounds = true;
             this.blueBullet.events.onOutOfBounds.add(this.killBullet, this);
+            this.blueBullet.name = "blueBullet" + playerSide + i; // Ex: blueBulletleft7
+            Client.askNewBullet(this.blueBullet.name,this.blueBullet.color,this.blueBullet.x,this.blueBullet.y);
         }
 
 
@@ -2752,6 +2761,41 @@ BasicGame.Game.prototype = {
     	piece.body.velocity.setTo(0,0);
     },
 
+    // Receive from server
+    addNewBullet: function (id,color,x,y) {
+        console.log(`From addNewBullet in Game.js... id: ${id}, color: ${color}, x: ${x}, y: ${y}`);
+
+        switch(color) {
+            case "red":
+                Game.bulletMap[id] = game.add.sprite(x,y,'RedBullet');
+                break;
+            case "yellow":
+                Game.bulletMap[id] = game.add.sprite(x,y,'YellowBullet');
+                break;
+            case "green":
+                Game.bulletMap[id] = game.add.sprite(x,y,'GreenBullet');
+                break;
+            case "blue":
+                Game.bulletMap[id] = game.add.sprite(x,y,'BlueBullet');
+                break;
+        }
+
+        Game.bulletMap[id].width = 20;
+        Game.bulletMap[id].height = 20;
+        Game.bulletMap[id].anchor.setTo(0.5,0.5);
+        Game.bulletMap[id].color = color;
+        Game.bulletMap[id].exists = false;
+        Game.bulletMap[id].visible = false;
+
+        game.physics.enable( Game.bulletMap[id], Phaser.Physics.ARCADE );
+
+        Game.bulletMap[id].checkWorldBounds = true;
+        Game.bulletMap[id].events.onOutOfBounds.add(this.killBullet, this);
+        Game.bulletMap[id].name = id;
+
+    },
+
+// Perform on this client and send to server to perform on other client
     fireBullet: function (bullet, xPos, yPos, xVel, yVel) {
         if (bullet.color == "red") {
             if (this.game.time.now > this.redBulletTime) {
@@ -2761,6 +2805,7 @@ BasicGame.Game.prototype = {
                     bullet.body.velocity.x = xVel;
                     bullet.body.velocity.y = yVel;
                     this.redBulletTime = this.game.time.now + 300;
+                    Client.updateFiredBullet(bullet.name,xPos,yPos,xVel,yVel);
                 }
             }
         }
@@ -2772,6 +2817,7 @@ BasicGame.Game.prototype = {
                     bullet.body.velocity.x = xVel;
                     bullet.body.velocity.y = yVel;
                     this.yellowBulletTime = this.game.time.now + 300;
+                    Client.updateFiredBullet(bullet.name,xPos,yPos,xVel,yVel);
                 }
             }
         }
@@ -2783,6 +2829,7 @@ BasicGame.Game.prototype = {
                     bullet.body.velocity.x = xVel;
                     bullet.body.velocity.y = yVel;
                     this.greenBulletTime = this.game.time.now + 300;
+                    Client.updateFiredBullet(bullet.name,xPos,yPos,xVel,yVel);
                 }
             }
         }
@@ -2794,6 +2841,7 @@ BasicGame.Game.prototype = {
                     bullet.body.velocity.x = xVel;
                     bullet.body.velocity.y = yVel;
                     this.blueBulletTime = this.game.time.now + 300;
+                    Client.updateFiredBullet(bullet.name,xPos,yPos,xVel,yVel);
                 }
             }
         }
@@ -2801,14 +2849,88 @@ BasicGame.Game.prototype = {
 
     },
 
+
+    // Receive from server
+    fireBulletRemote: function (id,xPos,yPos,xVel,yVel) {
+        // console.log(`From fireBulletRemote in Game.js... id: ${id}, xPos: ${xPos}, yPos: ${yPos}, xVel: ${xVel}, yVel: ${yVel}`);
+
+        Game.bulletMap[id].reset(xPos, yPos);
+        Game.bulletMap[id].body.velocity.x = xVel;
+        Game.bulletMap[id].body.velocity.y = yVel;
+
+/*
+        if (Game.bulletMap[id].color == "red") {
+            if (game.time.now > this.redBulletTime) {
+                bullet = this.redBullets.getFirstExists(false);
+                if (bullet) {
+                    bullet.reset(xPos, yPos);
+                    bullet.body.velocity.x = xVel;
+                    bullet.body.velocity.y = yVel;
+                    this.redBulletTime = this.game.time.now + 300;
+                    Client.updateFiredBullet(bullet.name,xPos,yPos,xVel,yVel);
+                }
+            }
+        }
+        else if (Game.bulletMap[id].color == "yellow") {
+            if (game.time.now > this.yellowBulletTime) {
+                bullet = this.yellowBullets.getFirstExists(false);
+                if (bullet) {
+                    bullet.reset(xPos, yPos);
+                    bullet.body.velocity.x = xVel;
+                    bullet.body.velocity.y = yVel;
+                    this.yellowBulletTime = this.game.time.now + 300;
+                }
+            }
+        }
+        else if (Game.bulletMap[id].color == "green") {
+            if (game.time.now > this.greenBulletTime) {
+                bullet = this.greenBullets.getFirstExists(false);
+                if (bullet) {
+                    bullet.reset(xPos, yPos);
+                    bullet.body.velocity.x = xVel;
+                    bullet.body.velocity.y = yVel;
+                    this.greenBulletTime = this.game.time.now + 300;
+                }
+            }
+        }
+        else if (Game.bulletMap[id].color == "blue") {
+            if (game.time.now > this.blueBulletTime) {
+                bullet = this.blueBullets.getFirstExists(false);
+                if (bullet) {
+                    bullet.reset(xPos, yPos);
+                    bullet.body.velocity.x = xVel;
+                    bullet.body.velocity.y = yVel;
+                    this.blueBulletTime = this.game.time.now + 300;
+                }
+            }
+        }
+*/
+        this.rayGunSound.play();
+    },
+
+
+// Perform on this client and send to server to perform on other client
+
     killBullet: function (bullet2, bullet1) {
     	if (bullet1 != null) {
     		bullet1.kill();
+            Client.killFiredBullet(bullet1.name);
     	}
     	else {
     		bullet2.kill();
+            Client.killFiredBullet(bullet2.name);
     	}
     },
+
+    // Receive from server
+    killBulletRemote: function(id) {
+        if (Game.bulletMap[id] != null) {
+            Game.bulletMap[id].kill();
+        }
+    },
+    
+
+// Perform on this client and send to server to perform on other client
 
     killEnemy: function (bullet, enemy) {
     	if (bullet.color == enemy.color) {
@@ -2817,10 +2939,12 @@ BasicGame.Game.prototype = {
             console.log("enemy.name: " + enemy.name);
             Client.updateKilledEnemy(enemy.name);
     		enemy.kill();
-    		bullet.kill();
+    		// bullet.kill();
+            this.killBullet(bullet);
     	}
     },
 
+    // Receive from server
     killEnemyRemote: function(id) {
         if (Game.enemyMap[id] != null) {
             Game.enemyMap[id].destroy();

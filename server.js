@@ -195,6 +195,18 @@ io.on('connection',function(socket){
             socket.broadcast.emit('killPiece',data);
         });
 
+        socket.on('newBullet',function(data){
+            socket.broadcast.emit('addNewBullet',data);
+        });
+
+        socket.on('bulletFired',function(data){
+            socket.broadcast.emit('fireBulletRemote',data);
+        });
+
+        socket.on('bulletKilled',function(data){
+            socket.broadcast.emit('killBulletRemote',data);
+        });
+
         socket.on('sendPlayerMessage',function(data){
             console.log("data.message: "+data.message);
             socket.broadcast.emit('messageSent',data.message);
