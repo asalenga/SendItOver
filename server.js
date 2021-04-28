@@ -108,12 +108,36 @@ io.on('connection',function(socket){
     	var yPos = 0;
         var side = null;
     	if (socket === waitingPlayer) {
-    		xPos = 300;
-    		yPos = 300;
+            switch(currGameState) {
+                case "Game":
+                    xPos = 300;
+                    yPos = 300;
+                    break;
+                case "GameLvl2":
+                    xPos = 450;
+                    yPos = 300;
+                    break;
+                case "GameLvl3":
+                    xPos = 450;
+                    yPos = 300;
+                    break;
+            }
             side = "left";
     	} else {
-    		xPos = 900;
-    		yPos = 300;
+            switch(currGameState) {
+                case "Game":
+                    xPos = 900;
+                    yPos = 300;
+                    break;
+                case "GameLvl2":
+                    xPos = 750;
+                    yPos = 300;
+                    break;
+                case "GameLvl3":
+                    xPos = 750;
+                    yPos = 300;
+                    break;
+            }
             side = "right";
     	}
 

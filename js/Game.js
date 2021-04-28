@@ -64,6 +64,7 @@ this.p2Blue_pieces = null;
 this.enemies = null;
 
 // Sounds
+this.alienAlarm = null;
 this.passThroughGateSound = null;
 this.pieceReachedShipSound = null;
 this.rayGunSound = null;
@@ -471,14 +472,18 @@ BasicGame.Game.prototype = {
 
 // Initialize sound
 
+        this.alienAlarm = game.add.audio('backgroundNoise_alarm');
+        this.alienAlarm.volume = 0.1;
+        this.alienAlarm.play();
+
         this.passThroughGateSound = game.add.audio('passThroughGateSound');
-        this.passThroughGateSound.volume = 0.3;
+        this.passThroughGateSound.volume = 0.15;
 
         this.pieceReachedShipSound = game.add.audio('pieceReachedShipSound');
-        this.pieceReachedShipSound.volume = 0.5;
+        this.pieceReachedShipSound.volume = 0.25;
 
         this.rayGunSound = game.add.audio('rayGunSound');
-        this.rayGunSound.volume = 0.3;
+        this.rayGunSound.volume = 0.15;
 
 
         // this.player1 = game.add.sprite( p1x, p1y, 'player1' );
@@ -1912,7 +1917,7 @@ BasicGame.Game.prototype = {
     	// this.game.time.events.add(Phaser.Timer.SECOND * 5, this.eachEnemy, this);
         this.eachEnemy();
     	// this.enemies.forEach(this.chasePlayer, this, null);
-		// this.game.physics.arcade.overlap(this.enemies, [this.player1/*,this.player2*/], this.killPlayer, null, this);
+		this.game.physics.arcade.overlap(this.enemies, [this.player1/*,this.player2*/], this.killPlayer, null, this);
  //   	this.game.physics.arcade.moveToObject(this.redEnemy1, this.player1, 25);
 
         this.hintsText.x = this.player1.x;
@@ -3166,7 +3171,7 @@ BasicGame.Game.prototype = {
 
         if (didPlayersWin == true) {
         	// game.state.start('WinScreen');
-            game.state.start('GameLvl2', true, false, {'id':this.player1.id, 'playerSide':this.player1.playerSide, 'player2ID':this.player2ID}); // Pass the player side as an argument
+            game.state.start('WinScreen');//'GameLvl2', true, false, {'id':this.player1.id, 'playerSide':this.player1.playerSide, 'player2ID':this.player2ID}); // Pass the player side as an argument
         }
         else if (didPlayersWin == false) {
         	game.state.start('LoseScreen');

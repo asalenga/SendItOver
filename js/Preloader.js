@@ -36,6 +36,8 @@ BasicGame.Preloader.prototype = {
 		this.load.audio('pieceReachedShipSound', 'assets/sound/MAGMisc_Futuristic Fantasy Wizard Spell Ding Magic_PSE_GEN_45EB497F.mp3');
 		this.load.audio('passThroughGateSound', 'assets/sound/MAGMisc_Energy Magic Spell Energy Electricity_PSE_GEN_E972F902 - combined with other sounds.mp3');
 
+		this.load.audio('backgroundNoise_alarm', 'assets/sound/TelemetryDeepSpace_S011SF.893.mp3');
+
 		this.load.image('titleText', 'assets/SendItOver!Title3.png'); // Source: https://fontmeme.com/pixel-fonts/
 
 		//	+ lots of other required assets here

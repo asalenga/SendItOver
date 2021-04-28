@@ -38,6 +38,9 @@
 let GameLvl2 = {};
 GameLvl2.playerMap = {};
 GameLvl2.enemyMap = {};
+GameLvl2.bulletMap = {};
+
+let numEnemiesForThisPlayer_Lvl2 = 0;
 
 this.player1_Lvl2 = null;
 
@@ -288,6 +291,13 @@ BasicGame.GameLvl2.prototype = {
         this.planetSurfaceSprite.y = this.game.world.centerY - this.planetSurfaceSprite.height / 2;
 */
 
+        console.log(`this.game: ${this.game}`);
+        console.log(`game: ${game}`);
+        this.stateName = this.game.state.getCurrentState().key; // Return the key (the name you specified when you added the state) of the current state
+        console.log(`this.game.state.getCurrentState(): ${this.stateName}`);
+        this.stateName2 = game.state.getCurrentState().key;
+        console.log(`game.state.getCurrentState(): ${this.stateName2}`);
+
 // Create the central walls
 
         // Create a sprite using the 'wall' image.
@@ -433,17 +443,6 @@ BasicGame.GameLvl2.prototype = {
 
         this.timeSoFar = this.game.time.totalElapsedSeconds();
 
-        let bigTextStyle = { font: "50px Verdana", fill: "#FFFFFF", align: "center" };
-        this.levelTitle = this.game.add.text( this.game.world.width/2.0, this.game.world.height/2.0, 'LEVEL 2', bigTextStyle);
-        this.levelTitle.anchor.setTo(0.5,0.5);
-        this.levelTitle.alpha = 1;
-
-        // Clear the text after some time. Note: I defined the callback function right here. Of course
-        // I could simply define a separate function entirely and call that, but this works too
-        this.levelTitleTimer = game.time.events.add(Phaser.Timer.SECOND * 3, () => {
-            this.levelTitle.alpha = 0;
-        });
-
         // this.spawnBeginning = 0;
 
         // Here are different ways to modify existing an text object!
@@ -485,7 +484,21 @@ BasicGame.GameLvl2.prototype = {
         // Tutorial: "the client will notify the server that a new player should be created"
         // Note: See how it is at the end of the create() method; my theory is that it's so that
         // no more than one player executes the entire process of initializing everything above
-        Client.askNewPlayer_Lvl2();
+        Client.askNewPlayer(""+game.state.getCurrentState().key);
+
+
+        let bigTextStyle = { font: "50px Verdana", fill: "#FFFFFF", align: "center" };
+        this.levelTitle = this.game.add.text( this.game.world.width/2.0, this.game.world.height/2.0, 'LEVEL 2', bigTextStyle);
+        this.levelTitle.anchor.setTo(0.5,0.5);
+        this.levelTitle.alpha = 1;
+        // Make sure that the level title is shown on top of everything, after everything has been loaded
+        this.game.world.bringToTop(this.levelTitle);
+
+        // Clear the text after some time. Note: I defined the callback function right here. Of course
+        // I could simply define a separate function entirely and call that, but this works too
+        this.levelTitleTimer = game.time.events.add(Phaser.Timer.SECOND * 3, () => {
+            this.levelTitle.alpha = 0;
+        });
 
 /*        if (this.playerSide_Lvl2 === "left") {
             this.playerXPos_Lvl2 = 450;
@@ -527,13 +540,13 @@ BasicGame.GameLvl2.prototype = {
 // Initialize sound
 
         this.passThroughGateSound_Lvl2 = game.add.audio('passThroughGateSound');
-        this.passThroughGateSound_Lvl2.volume = 0.3;
+        this.passThroughGateSound_Lvl2.volume = 0.15;
 
         this.pieceReachedShipSound_Lvl2 = game.add.audio('pieceReachedShipSound');
-        this.pieceReachedShipSound_Lvl2.volume = 0.5;
+        this.pieceReachedShipSound_Lvl2.volume = 0.25;
 
         this.rayGunSound_Lvl2 = game.add.audio('rayGunSound');
-        this.rayGunSound_Lvl2.volume = 0.3;
+        this.rayGunSound_Lvl2.volume = 0.15;
 
 
         // this.player1_Lvl2 = game.add.sprite( p1x, p1y, 'player1' );
@@ -545,6 +558,7 @@ BasicGame.GameLvl2.prototype = {
         console.log(`playerSide: ${playerSide}`);
         this.player1_Lvl2.playerSide = playerSide;
         console.log(`this.player1_Lvl2.playerSide: ${this.player1_Lvl2.playerSide}`);
+        this.player1_Lvl2.spawnBeginning = 0;
 
         game.physics.enable( this.player1_Lvl2, Phaser.Physics.ARCADE );
 
@@ -619,6 +633,7 @@ BasicGame.GameLvl2.prototype = {
             this.redBullet.visible = false;
             this.redBullet.checkWorldBounds = true;
             this.redBullet.events.onOutOfBounds.add(this.killBullet, this);
+            Client.askNewBullet(game.state.getCurrentState().key,this.redBullet.name,this.redBullet.color,this.redBullet.x,this.redBullet.y);
         }
 
         this.yellowBullets = game.add.group();
@@ -636,6 +651,7 @@ BasicGame.GameLvl2.prototype = {
             this.yellowBullet.visible = false;
             this.yellowBullet.checkWorldBounds = true;
             this.yellowBullet.events.onOutOfBounds.add(this.killBullet, this);
+            Client.askNewBullet(game.state.getCurrentState().key,this.yellowBullet.name,this.yellowBullet.color,this.yellowBullet.x,this.yellowBullet.y);
         }
 
         this.greenBullets = game.add.group();
@@ -653,6 +669,7 @@ BasicGame.GameLvl2.prototype = {
             this.greenBullet.visible = false;
             this.greenBullet.checkWorldBounds = true;
             this.greenBullet.events.onOutOfBounds.add(this.killBullet, this);
+            Client.askNewBullet(game.state.getCurrentState().key,this.greenBullet.name,this.greenBullet.color,this.greenBullet.x,this.greenBullet.y);
         }
 
         this.blueBullets = game.add.group();
@@ -670,6 +687,7 @@ BasicGame.GameLvl2.prototype = {
             this.blueBullet.visible = false;
             this.blueBullet.checkWorldBounds = true;
             this.blueBullet.events.onOutOfBounds.add(this.killBullet, this);
+            Client.askNewBullet(game.state.getCurrentState().key,this.blueBullet.name,this.blueBullet.color,this.blueBullet.x,this.blueBullet.y);
         }
 
 
@@ -1489,6 +1507,10 @@ BasicGame.GameLvl2.prototype = {
                     // this.redEnemy.exists = false;
                     // this.redEnemy.visible = false;
                     this.redEnemy.checkWorldBounds = false;
+                    this.redEnemy.name = "redEnemy" + this.player1_Lvl2.playerSide + numEnemiesForThisPlayer_Lvl2; // Ex: "redEnemyleft1"
+
+                    Client.askNewEnemy(game.state.getCurrentState().key,this.redEnemy.name,this.redEnemy.color,xCoord,yCoord); // Note: We will use the enemy name as the id
+
                     break;
                 case 1: // Enemy will be yellow
                     this.yellowEnemy = this.enemies_Lvl2.create(xCoord, yCoord, 'YellowEnemy'); // Just spawn it far away for now
@@ -1501,6 +1523,10 @@ BasicGame.GameLvl2.prototype = {
                     // this.yellowEnemy.exists = false;
                     // this.yellowEnemy.visible = false;
                     this.yellowEnemy.checkWorldBounds = false;
+                    this.yellowEnemy.name = "yellowEnemy" + this.player1_Lvl2.playerSide + numEnemiesForThisPlayer_Lvl2; // Ex: "yellowEnemyright2"
+                    
+                    Client.askNewEnemy(game.state.getCurrentState().key,this.yellowEnemy.name,this.yellowEnemy.color,xCoord,yCoord); // Note: We will use the enemy name as the id
+                    
                     break;
                 case 2: // Enemy will be green
                     this.greenEnemy = this.enemies_Lvl2.create(xCoord, yCoord, 'GreenEnemy'); // Just spawn it far away for now
@@ -1513,6 +1539,10 @@ BasicGame.GameLvl2.prototype = {
                     // this.greenEnemy.exists = false;
                     // this.greenEnemy.visible = false;
                     this.greenEnemy.checkWorldBounds = false;
+                    this.greenEnemy.name = "greenEnemy" + this.player1_Lvl2.playerSide + numEnemiesForThisPlayer_Lvl2; // Ex: "greenEnemyright69"
+                    
+                    Client.askNewEnemy(game.state.getCurrentState().key,this.greenEnemy.name,this.greenEnemy.color,xCoord,yCoord); // Note: We will use the enemy name as the id
+                    
                     break;
                 case 3: // Enemy will be blue
                     this.blueEnemy = this.enemies_Lvl2.create(xCoord, yCoord, 'BlueEnemy'); // Just spawn it far away for now
@@ -1525,20 +1555,101 @@ BasicGame.GameLvl2.prototype = {
                     // this.blueEnemy.exists = false;
                     // this.blueEnemy.visible = false;
                     this.blueEnemy.checkWorldBounds = false;
+                    this.blueEnemy.name = "blueEnemy" + this.player1_Lvl2.playerSide + numEnemiesForThisPlayer_Lvl2; // Ex: "blueEnemyleft420"
+                    
+                    Client.askNewEnemy(game.state.getCurrentState().key,this.blueEnemy.name,this.blueEnemy.color,xCoord,yCoord); // Note: We will use the enemy name as the id
+                    
                     break;
             } // end switch(enemyColor)
 
-
+            numEnemiesForThisPlayer_Lvl2++;
 
         } // end for-loop
 
     }, // end generateEnemyWave function
 
+
+    addNewEnemy: function(id,color,x,y) {
+        console.log(`From addNewEnemy in GameLvl2.js... Enemy id: ${id}, color: ${color}, x: ${x}, y: ${y}`);
+
+        switch(color) {
+            case "red": // Enemy will be red
+                // if (Game.enemyMap[id] != null) {
+                    GameLvl2.enemyMap[id] = game.add.sprite(x,y,'RedEnemy');
+                    GameLvl2.enemyMap[id].width = 60;
+                    GameLvl2.enemyMap[id].height = 60;
+                    GameLvl2.enemyMap[id].anchor.setTo(0.5, 0.5);
+                    GameLvl2.enemyMap[id].color = color;
+                    GameLvl2.enemyMap[id].name = id;
+
+                    game.physics.enable( GameLvl2.enemyMap[id], Phaser.Physics.ARCADE );
+                    // Game.enemyMap[id].enableBody = true;
+                    // Game.enemyMap[id].physicsBodyType = Phaser.Physics.ARCADE;
+                    GameLvl2.enemyMap[id].body.velocity.x = 0;
+                    GameLvl2.enemyMap[id].body.velocity.y = 0;
+                    GameLvl2.enemyMap[id].checkWorldBounds = false;
+                // }
+                break;
+            case "yellow": // Enemy will be yellow
+                // if (Game.enemyMap[id] != null) {
+                    GameLvl2.enemyMap[id] = game.add.sprite(x,y,'YellowEnemy');
+                    GameLvl2.enemyMap[id].width = 60;
+                    GameLvl2.enemyMap[id].height = 60;
+                    GameLvl2.enemyMap[id].anchor.setTo(0.5, 0.5);
+                    GameLvl2.enemyMap[id].color = color;
+                    GameLvl2.enemyMap[id].name = id;
+
+                    game.physics.enable( GameLvl2.enemyMap[id], Phaser.Physics.ARCADE );
+                    // Game.enemyMap[id].enableBody = true;
+                    // Game.enemyMap[id].physicsBodyType = Phaser.Physics.ARCADE;
+                    GameLvl2.enemyMap[id].body.velocity.x = 0;
+                    GameLvl2.enemyMap[id].body.velocity.y = 0;
+                    GameLvl2.enemyMap[id].checkWorldBounds = false;
+                // }
+                break;
+            case "green": // Enemy will be green
+                // if (Game.enemyMap[id] != null) {
+                    GameLvl2.enemyMap[id] = game.add.sprite(x,y,'GreenEnemy');
+                    GameLvl2.enemyMap[id].width = 60;
+                    GameLvl2.enemyMap[id].height = 60;
+                    GameLvl2.enemyMap[id].anchor.setTo(0.5, 0.5);
+                    GameLvl2.enemyMap[id].color = color;
+                    GameLvl2.enemyMap[id].name = id;
+
+                    game.physics.enable( GameLvl2.enemyMap[id], Phaser.Physics.ARCADE );
+                    // Game.enemyMap[id].enableBody = true;
+                    // Game.enemyMap[id].physicsBodyType = Phaser.Physics.ARCADE;
+                    GameLvl2.enemyMap[id].body.velocity.x = 0;
+                    GameLvl2.enemyMap[id].body.velocity.y = 0;
+                    GameLvl2.enemyMap[id].checkWorldBounds = false;
+                // }
+                break;
+            case "blue": // Enemy will be blue
+                // if (Game.enemyMap[id] != null) {
+                    GameLvl2.enemyMap[id] = game.add.sprite(x,y,'BlueEnemy');
+                    GameLvl2.enemyMap[id].width = 60;
+                    GameLvl2.enemyMap[id].height = 60;
+                    GameLvl2.enemyMap[id].anchor.setTo(0.5, 0.5);
+                    GameLvl2.enemyMap[id].color = color;
+                    GameLvl2.enemyMap[id].name = id;
+
+                    game.physics.enable( GameLvl2.enemyMap[id], Phaser.Physics.ARCADE );
+                    // Game.enemyMap[id].enableBody = true;
+                    // Game.enemyMap[id].physicsBodyType = Phaser.Physics.ARCADE;
+                    GameLvl2.enemyMap[id].body.velocity.x = 0;
+                    GameLvl2.enemyMap[id].body.velocity.y = 0;
+                    GameLvl2.enemyMap[id].checkWorldBounds = false;
+                // }
+                break;
+        } // end switch(color)
+
+    },
+
 // Update enemies positions
 
     // This func is for sending the enemies' positions to the server, so that the other player sees when they move
     sendEnemiesPos: function(x,y){
-        Client.updateEnemiesPos_Lvl2(x,y);
+        Client.updateEnemyPos(game.state.getCurrentState().key,id,x,y);
     },
 
     // This func is for seeing the enemies move
@@ -1557,8 +1668,10 @@ BasicGame.GameLvl2.prototype = {
         // Display the message above yourself
         this.hintsText_Lvl2.text = msg;
         this.hintsText_Lvl2.alpha = 1;
+        // Make sure the hintsText is shown on top of everything so it's not obscured
+        game.world.bringToTop(this.hintsText_Lvl2);
 
-        Client.sendMessageToOtherPlayer_Lvl2(msg);
+        Client.sendMessageToOtherPlayer(game.state.getCurrentState().key,msg);
 
         if (this.hintsTimer_Lvl2 != null) {
             game.time.events.remove(this.hintsTimer_Lvl2);
@@ -1582,6 +1695,8 @@ BasicGame.GameLvl2.prototype = {
         // this.hintsText_Lvl2.alpha = 1;
         this.otherPlayerHintsText_Lvl2.text = message;
         this.otherPlayerHintsText_Lvl2.alpha = 1;
+        // Make sure the otherPlayerHintsText is shown on top of everything so it's not obscured
+        game.world.bringToTop(this.otherPlayerHintsText_Lvl2)
 
         if (this.otherPlayerHintsTimer_Lvl2 != null) {
             game.time.events.remove(this.otherPlayerHintsTimer_Lvl2);
@@ -1617,6 +1732,8 @@ BasicGame.GameLvl2.prototype = {
         GameLvl2.playerMap[id].height = 75;//50;
         GameLvl2.playerMap[id].playerSide = playerSide;
 
+        this.player2ID_Lvl2 = id;
+
         let hintsTextStyle = { font: "15px Verdana", fill: "#FFFFFF", align: "center" };
         // Text above the other player
         this.otherPlayerHintsText_Lvl2 = game.add.text( x, y - GameLvl2.playerMap[id].height/2 - 50, 'The other player\'s hints will go here!' , hintsTextStyle);
@@ -1629,13 +1746,19 @@ BasicGame.GameLvl2.prototype = {
     removePlayer: function(id){
         GameLvl2.playerMap[id].destroy();
         delete GameLvl2.playerMap[id];
+        GameLvl2.playerMap[this.player1_Lvl2.id].destroy();
+        delete GameLvl2.playerMap[this.player1_Lvl2.id];
+        
+        // Client.manuallyDisconnect();
+        Client.socket.disconnect();
+        this.exitToMainMenu();
     },
 
 // Update player motion
 
     // This func is for sending the player's position to the server, so that the other player sees when they move
     sendPlayerPos: function(x,y){
-        Client.updatePlayerPos_Lvl2(x,y);
+        Client.updatePlayerPos(game.state.getCurrentState().key,x,y);
     },
 
     // This func is for seeing the other player (with the specified id) move
@@ -1661,7 +1784,7 @@ BasicGame.GameLvl2.prototype = {
     // Send to server so the other client can see the object changing position
     // Note: This is for when there is a change in the object's position, i.e. it is being carried and moved by a player
     sendObjPosition: function(objName,objPlayer,objColor,positionX,positionY) {
-        Client.updateObjPosition_Lvl2(objName,objPlayer,objColor,positionX,positionY);
+        Client.updateObjPosition(game.state.getCurrentState().key,objName,objPlayer,objColor,positionX,positionY);
     },
 
     // From server; this function executes if the other player executed sendObjPosition
@@ -1728,7 +1851,7 @@ BasicGame.GameLvl2.prototype = {
     // Send to server so the other client can see the object in motion
     // Note: This is for when there is a change in the object's velocity, i.e. it is thrown by a player
     sendObjMotion: function(objName,objPlayer,objColor,velocityX,velocityY,dragX,dragY) {
-        Client.updateObjMotion_Lvl2(objName,objPlayer,objColor,velocityX,velocityY,dragX,dragY);
+        Client.updateObjMotion(game.state.getCurrentState().key,objName,objPlayer,objColor,velocityX,velocityY,dragX,dragY);
     },
 
     // From server; this function executes if the other player executed sendObjMotion
@@ -1850,8 +1973,8 @@ BasicGame.GameLvl2.prototype = {
         // this.game.physics.arcade.overlap(this.enemies_Lvl2, this.bullets, this.killEnemy, null, this);
         this.game.physics.arcade.overlap([this.redBullets,this.yellowBullets,this.greenBullets,this.blueBullets],this.enemies_Lvl2,this.killEnemy,null,this);
                 // game.physics.arcade.overlap(bullets, enemies, enemyKill, null, this);
-        this.game.time.events.add(Phaser.Timer.SECOND * 5, this.eachEnemy, this);
-        // this.enemies_Lvl2.forEach(this.chasePlayer, this, null);
+        // this.game.time.events.add(Phaser.Timer.SECOND * 5, this.eachEnemy, this);
+        this.eachEnemy();
         this.game.physics.arcade.overlap(this.enemies_Lvl2, [this.player1_Lvl2/*,this.player2*/], this.killPlayer, null, this);
  //     this.game.physics.arcade.moveToObject(this.redEnemy1, this.player1_Lvl2, 25);
 
@@ -2593,12 +2716,12 @@ BasicGame.GameLvl2.prototype = {
 
     // Send to server
     signalGameOver: function(didPlayersWin) {
-        Client.updateGameOverStatus_Lvl2(didPlayersWin);
+        Client.updateGameOverStatus(game.state.getCurrentState().key,didPlayersWin);
     },
 
     // Send to server
     killPieceAndCheckRemaining_send: function(objName,objPlayer,objColor) {
-        Client.updateKilledPiece_Lvl2(objName,objPlayer,objColor);
+        Client.updateKilledPiece(game.state.getCurrentState().key,objName,objPlayer,objColor);
     },
 
     // Receive from server
@@ -2663,14 +2786,28 @@ BasicGame.GameLvl2.prototype = {
 
     eachEnemy: function () {
         this.enemies_Lvl2.forEach(this.chasePlayer, this, null);
+        // Game.enemyMap.forEach(this.chasePlayer, this, null);
+        for (let currEnemy in GameLvl2.enemyMap) {
+            // console.log("currEnemy x, y: " + Game.enemyMap[currEnemy].x + ", " + Game.enemyMap[currEnemy].y);
+            this.chasePlayer(GameLvl2.enemyMap[currEnemy]);
+        }
     },
 
     chasePlayer: function (enemy) {
+        // An enemy should follow player 1 if both of them are on the same half of the screen
         // An enemy should follow player 1 if both of them are on the same half of the screen
         if ((enemy.x < (this.game.world.width/2.0)) && (this.player1_Lvl2.x < this.game.world.width/2.0)) {
             this.game.physics.arcade.moveToObject(enemy, this.player1_Lvl2, 10);
         } else if ((enemy.x >= (this.game.world.width/2.0)) && (this.player1_Lvl2.x >= this.game.world.width/2.0)) {
             this.game.physics.arcade.moveToObject(enemy, this.player1_Lvl2, 10);
+        }
+        // console.log("this.player2ID: " + this.player2ID);
+        if (this.player2ID_Lvl2 != undefined) {
+            if ((enemy.x < (this.game.world.width/2.0)) && (GameLvl2.playerMap[this.player2ID_Lvl2].x < this.game.world.width/2.0)) {
+                this.game.physics.arcade.moveToObject(enemy, GameLvl2.playerMap[this.player2ID_Lvl2], 10);
+            } else if ((enemy.x >= (this.game.world.width/2.0)) && (GameLvl2.playerMap[this.player2ID_Lvl2].x >= this.game.world.width/2.0)) {
+                this.game.physics.arcade.moveToObject(enemy, GameLvl2.playerMap[this.player2ID_Lvl2], 10);
+            }
         }
         // else { // If the enemy is on the right half of the screen, follow player 2
         //  this.game.physics.arcade.moveToObject(enemy, this.player2, 10);
@@ -2690,6 +2827,40 @@ BasicGame.GameLvl2.prototype = {
         piece.body.velocity.setTo(0,0);
     },
 
+    // Receive from server
+    addNewBullet: function (id,color,x,y) {
+        console.log(`From addNewBullet in GameLvl2.js... id: ${id}, color: ${color}, x: ${x}, y: ${y}`);
+
+        switch(color) {
+            case "red":
+                GameLvl2.bulletMap[id] = game.add.sprite(x,y,'RedBullet');
+                break;
+            case "yellow":
+                GameLvl2.bulletMap[id] = game.add.sprite(x,y,'YellowBullet');
+                break;
+            case "green":
+                GameLvl2.bulletMap[id] = game.add.sprite(x,y,'GreenBullet');
+                break;
+            case "blue":
+                GameLvl2.bulletMap[id] = game.add.sprite(x,y,'BlueBullet');
+                break;
+        }
+
+        GameLvl2.bulletMap[id].width = 20;
+        GameLvl2.bulletMap[id].height = 20;
+        GameLvl2.bulletMap[id].anchor.setTo(0.5,0.5);
+        GameLvl2.bulletMap[id].color = color;
+        GameLvl2.bulletMap[id].exists = false;
+        GameLvl2.bulletMap[id].visible = false;
+
+        game.physics.enable( GameLvl2.bulletMap[id], Phaser.Physics.ARCADE );
+
+        GameLvl2.bulletMap[id].checkWorldBounds = true;
+        GameLvl2.bulletMap[id].events.onOutOfBounds.add(this.killBullet, this);
+        GameLvl2.bulletMap[id].name = id;
+
+    },
+
     fireBullet: function (bullet, xPos, yPos, xVel, yVel) {
         if (bullet.color == "red") {
             if (this.game.time.now > this.redBulletTime) {
@@ -2699,6 +2870,7 @@ BasicGame.GameLvl2.prototype = {
                     bullet.body.velocity.x = xVel;
                     bullet.body.velocity.y = yVel;
                     this.redBulletTime = this.game.time.now + 300;
+                    Client.updateFiredBullet(game.state.getCurrentState().key,bullet.name,xPos,yPos,xVel,yVel);
                 }
             }
         }
@@ -2710,6 +2882,7 @@ BasicGame.GameLvl2.prototype = {
                     bullet.body.velocity.x = xVel;
                     bullet.body.velocity.y = yVel;
                     this.yellowBulletTime = this.game.time.now + 300;
+                    Client.updateFiredBullet(game.state.getCurrentState().key,bullet.name,xPos,yPos,xVel,yVel);
                 }
             }
         }
@@ -2721,6 +2894,7 @@ BasicGame.GameLvl2.prototype = {
                     bullet.body.velocity.x = xVel;
                     bullet.body.velocity.y = yVel;
                     this.greenBulletTime = this.game.time.now + 300;
+                    Client.updateFiredBullet(game.state.getCurrentState().key,bullet.name,xPos,yPos,xVel,yVel);
                 }
             }
         }
@@ -2732,6 +2906,7 @@ BasicGame.GameLvl2.prototype = {
                     bullet.body.velocity.x = xVel;
                     bullet.body.velocity.y = yVel;
                     this.blueBulletTime = this.game.time.now + 300;
+                    Client.updateFiredBullet(game.state.getCurrentState().key,bullet.name,xPos,yPos,xVel,yVel);
                 }
             }
         }
@@ -2739,24 +2914,114 @@ BasicGame.GameLvl2.prototype = {
 
     },
 
+    // Receive from server
+    fireBulletRemote: function (id,xPos,yPos,xVel,yVel) {
+        // console.log(`From fireBulletRemote in Game.js... id: ${id}, xPos: ${xPos}, yPos: ${yPos}, xVel: ${xVel}, yVel: ${yVel}`);
+
+        GameLvl2.bulletMap[id].reset(xPos, yPos);
+        GameLvl2.bulletMap[id].body.velocity.x = xVel;
+        GameLvl2.bulletMap[id].body.velocity.y = yVel;
+
+/*
+        if (Game.bulletMap[id].color == "red") {
+            if (game.time.now > this.redBulletTime) {
+                bullet = this.redBullets.getFirstExists(false);
+                if (bullet) {
+                    bullet.reset(xPos, yPos);
+                    bullet.body.velocity.x = xVel;
+                    bullet.body.velocity.y = yVel;
+                    this.redBulletTime = this.game.time.now + 300;
+                    Client.updateFiredBullet(bullet.name,xPos,yPos,xVel,yVel);
+                }
+            }
+        }
+        else if (Game.bulletMap[id].color == "yellow") {
+            if (game.time.now > this.yellowBulletTime) {
+                bullet = this.yellowBullets.getFirstExists(false);
+                if (bullet) {
+                    bullet.reset(xPos, yPos);
+                    bullet.body.velocity.x = xVel;
+                    bullet.body.velocity.y = yVel;
+                    this.yellowBulletTime = this.game.time.now + 300;
+                }
+            }
+        }
+        else if (Game.bulletMap[id].color == "green") {
+            if (game.time.now > this.greenBulletTime) {
+                bullet = this.greenBullets.getFirstExists(false);
+                if (bullet) {
+                    bullet.reset(xPos, yPos);
+                    bullet.body.velocity.x = xVel;
+                    bullet.body.velocity.y = yVel;
+                    this.greenBulletTime = this.game.time.now + 300;
+                }
+            }
+        }
+        else if (Game.bulletMap[id].color == "blue") {
+            if (game.time.now > this.blueBulletTime) {
+                bullet = this.blueBullets.getFirstExists(false);
+                if (bullet) {
+                    bullet.reset(xPos, yPos);
+                    bullet.body.velocity.x = xVel;
+                    bullet.body.velocity.y = yVel;
+                    this.blueBulletTime = this.game.time.now + 300;
+                }
+            }
+        }
+*/
+        this.rayGunSound_Lvl2.play();
+    },
+
+
     killBullet: function (bullet2, bullet1) {
         if (bullet1 != null) {
-            bullet1.kill();
-        }
+            bullet1.kill
+            Client.killFiredBullet(game.state.getCurrentState().key,bullet1.name);        }
         else {
             bullet2.kill();
+            Client.killFiredBullet(game.state.getCurrentState().key,bullet2.name);
         }
     },
 
-    killEnemy: function (enemy, bullet) {
+    // Receive from server
+    killBulletRemote: function(id) {
+        if (GameLvl2.bulletMap[id] != null) {
+            GameLvl2.bulletMap[id].kill();
+        }
+    },
+
+// Kill an enemy
+// Perform on this client and send to server to perform on other client
+
+    // Send to server
+    killEnemy: function (bullet, enemy) {
         if (bullet.color == enemy.color) {
+            // We must do Client.updateKilledEnemy(enemy.name) BEFORE doing enemy.kill(), because .kill
+            // removes the object and its properties entirely, so we wouldn't have an enemy.name to send!
+            console.log("enemy.name: " + enemy.name);
+            Client.updateKilledEnemy(game.state.getCurrentState().key,enemy.name);
             enemy.kill();
-            bullet.kill();
+            // bullet.kill();
+            this.killBullet(bullet);
         }
     },
 
+    // Receive from server
+    killEnemyRemote: function(id) {
+        if (GameLvl2.enemyMap[id] != null) {
+            GameLvl2.enemyMap[id].destroy();
+            delete GameLvl2.enemyMap[id];
+        }
+    },
+
+// Kill this player
+// Perform on this client and send to server to perform on other client
+
+    // Send to server
     killPlayer: function (player, enemy) {
-        if (this.game.time.now > player.spawnBeginning) { // Allows the player to not be killable for a number of seconds
+        // Allow player to be killed only after spawnBeginning duration is over; the player is invulnerable for a number of seconds
+        if (this.game.time.now > player.spawnBeginning) {
+            Client.updateKilledPlayer(game.state.getCurrentState().key,player.id);
             player.kill();
             if (player == this.player1_Lvl2) {
                 // this.p1currItem.body.velocity.setTo(0,0);
@@ -2773,27 +3038,39 @@ BasicGame.GameLvl2.prototype = {
             }
             // this.game.add.text();
             // let style = { font: "25px Verdana", fill: "#FFFFFF", align: "center" };
-            if (player == this.player1_Lvl2) {this.textPosX = this.game.world.width/4;}
+            if (this.player1_Lvl2.playerSide == "left") {this.textPosX = this.game.world.width/4;}
             else {this.textPosX = 3 * this.game.world.width/4;}
-            this.reviveText = this.game.add.text( this.textPosX, this.game.world.centerY, '10 seconds till revive', {font: "25px Verdana", fill: "#FFFFFF", align: "center"} );
-            this.reviveText.anchor.setTo(0.5,0.5);
+            let remainingSecs = 10;
+            if (this.reviveText === undefined) {
+                this.reviveText = this.game.add.text( this.textPosX, this.game.world.centerY, `${remainingSecs} seconds till revive`, {font: "25px Verdana", fill: "#FFFFFF", align: "center"} );
+                this.reviveText.anchor.setTo(0.5,0.5);
+            } else {
+                this.reviveText.reset(this.textPosX, this.game.world.centerY);
+                this.reviveText.text = `${remainingSecs} seconds till revive`;
+            }
+            // The respawn timer counts down and updates its displayed remaining time every second by decrementing the remaining seconds
+            // by 1, every 1 second, 10 times. Note: we could've specified a callback function, but we defined the function right here
+            this.game.time.events.repeat(Phaser.Timer.SECOND * 1, 10, () => {
+                remainingSecs--;
+                this.reviveText.text = `${remainingSecs} seconds till revive`
+            });
             this.game.time.events.add(Phaser.Timer.SECOND * 10, this.respawnPlayer, this, player);
         }
-        if (this.player1_Lvl2.alive == false) {
+        if ((this.player1_Lvl2.alive == false) && (GameLvl2.playerMap[this.player2ID_Lvl2].alive == false)) {
             // The players lose
             this.playersWin = false;
             this.quitGame(this.playersWin);
         }
 
-        // if (player == this.player1_Lvl2) {
-        //  if (this.game.time.now > this.player1_Lvl2.spawnBeginning) { // Allows the player to not be killable for a number of seconds
-        //      this.player1_Lvl2.kill();
+        // if (player == this.player1) {
+        //  if (this.game.time.now > this.player1.spawnBeginning) { // Allows the player to not be killable for a number of seconds
+        //      this.player1.kill();
         //      // this.game.add.text();
         //      // let style = { font: "25px Verdana", fill: "#FFFFFF", align: "center" };
         //      this.textPosX = this.game.world.width/4;
            //      this.reviveText = this.game.add.text( this.textPosX, this.game.world.centerY, '10 seconds till revive', {font: "25px Verdana", fill: "#FFFFFF", align: "center"} );
            //      this.reviveText.anchor.setTo(0.5,0.5);
-        //      this.game.time.events.add(Phaser.Timer.SECOND * 10, this.respawnPlayer, this, this.player1_Lvl2);
+        //      this.game.time.events.add(Phaser.Timer.SECOND * 10, this.respawnPlayer, this, this.player1);
         //  }
         // }
         // else if (player == this.player2) {
@@ -2809,9 +3086,43 @@ BasicGame.GameLvl2.prototype = {
         // }
     },
 
+    // Receive from server
+    killPlayerRemote: function (id) {
+        if (GameLvl2.playerMap[id] != null) {
+            GameLvl2.playerMap[id].kill();
+
+            if (GameLvl2.playerMap[id].playerSide == "left") {this.textPosX2 = game.world.width/4;}
+            else {this.textPosX2 = 3 * game.world.width/4;}
+            let remainingSecs = 10;
+            if (this.reviveText2 === undefined) {
+                this.reviveText2 = game.add.text( this.textPosX2, game.world.centerY, `${remainingSecs} seconds till revive`, {font: "25px Verdana", fill: "#FFFFFF", align: "center"} );
+                this.reviveText2.anchor.setTo(0.5,0.5);
+            } else {
+                this.reviveText2.reset(this.textPosX2, game.world.centerY);
+                this.reviveText2.text = `${remainingSecs} seconds till revive`;
+            }
+            // The respawn timer counts down and updates its displayed remaining time every second by decrementing the remaining seconds
+            // by 1, every 1 second, 10 times. Note: we could've specified a callback function, but we defined the function right here
+            game.time.events.repeat(Phaser.Timer.SECOND * 1, 10, () => {
+                remainingSecs--;
+                this.reviveText2.text = `${remainingSecs} seconds till revive`
+            });
+        }
+        if ((this.player1_Lvl2.alive == false) && (GameLvl2.playerMap[id].alive == false)) {
+            // The players lose
+            this.playersWin = false;
+            this.quitGame(this.playersWin);
+        }
+    },
+
     respawnPlayer: function (player) {
+        Client.updateRespawnPlayer(game.state.getCurrentState().key,player.id);
         this.reviveText.kill();
-        player.reset((this.game.world.width/4), this.game.world.centerY);
+        if (player.playerSide == "left") {
+            player.reset((this.game.world.width/4), this.game.world.centerY);
+        } else {
+            player.reset(3 * this.game.world.width/4, this.game.world.centerY);
+        }
         this.player1_Lvl2.spawnBeginning = this.game.time.now+3000; // Invulnerable for 3 seconds
         
         // https://phaser.io/examples/v2/tweens/yoyo
@@ -2822,6 +3133,31 @@ BasicGame.GameLvl2.prototype = {
         tween.yoyo(true, 0);
         // Performs the blinking tween 3 times total (repeat twice after the first time)
         tween.repeat(2);
+    },
+
+    // Receive from server
+    respawnPlayerRemote: function (id) {
+        if (GameLvl2.playerMap[id] != null) {
+            // Remember: When respawnPlayerRemote executes, we're in the context of the other client, so it should remove its own reviveText
+            this.reviveText2.kill();
+
+            if (GameLvl2.playerMap[id].playerSide == "left") {
+                GameLvl2.playerMap[id].reset((game.world.width/4), game.world.centerY);
+            } else {
+                GameLvl2.playerMap[id].reset(3 * game.world.width/4, game.world.centerY);
+            }
+            // Game.playerMap[id].spawnBeginning = this.game.time.now+3000; // Invulnerable for 3 seconds
+            
+            // https://phaser.io/examples/v2/tweens/yoyo
+            // https://phaser.io/docs/2.4.4/Phaser.Tween.html
+            GameLvl2.playerMap[id].alpha = 1;
+            // Fade player1 to alpha 0 over 1/2 of a second, abd back to 1 over 1/2 of a second
+            let tween2 = game.add.tween(GameLvl2.playerMap[id]).to( { alpha: 0 }, 500, "Linear", true, 0, -1);
+            tween2.yoyo(true, 0);
+            // Performs the blinking tween 3 times total (repeat twice after the first time)
+            tween2.repeat(2);
+
+        }
     },
 
     quitGame: function (didPlayersWin) {
@@ -2839,7 +3175,7 @@ BasicGame.GameLvl2.prototype = {
         // this.endText = game.add.text( game.world.centerX, game.world.centerY, 'Your time: '+Phaser.Math.roundTo(this.finalTime,-2), style );
         // this.endText.anchor.setTo(0.5,0.5);
 
-        GameLvl2.playerMap = {};
+        // GameLvl2.playerMap = {};
 
         if (didPlayersWin == true) {
             game.state.start('WinScreen');
@@ -2849,6 +3185,10 @@ BasicGame.GameLvl2.prototype = {
             game.state.start('LoseScreen');
         }
 
+    },
+    
+    exitToMainMenu: function () {
+        game.state.start('Boot');
     }
 
 };
