@@ -274,8 +274,8 @@ BasicGame.Game.prototype = {
 
         console.log(`this.game: ${this.game}`);
         console.log(`game: ${game}`);
-        this.state = this.game.state.getCurrentState();
-        console.log(`this.game.state.getCurrentState(): ${this.state}`);
+        this.stateName = this.game.state.getCurrentState().key; // Return the key (the name you specified when you added the state) of the current state
+        console.log(`this.game.state.getCurrentState(): ${this.stateName}`);
 
 // Create the central walls
 
@@ -1900,7 +1900,7 @@ BasicGame.Game.prototype = {
      //    	this.game.physics.arcade.collide(this.redBullet, this.redEnemy1);
     	// }
         if (game.time.now > this.enemySpawnCooldown) { // Spawn a new wave of enemies after a certain cooldown period
-            this.enemySpawnCooldown += 15000; // Cooldown is 15 seconds
+            this.enemySpawnCooldown = game.time.now + 15000; // Cooldown is 15 seconds
             this.generateEnemyWave();
         }
     	// this.game.physics.arcade.overlap(this.enemies, this.bullets, this.killEnemy, null, this);
@@ -1910,7 +1910,7 @@ BasicGame.Game.prototype = {
     	// this.game.time.events.add(Phaser.Timer.SECOND * 5, this.eachEnemy, this);
         this.eachEnemy();
     	// this.enemies.forEach(this.chasePlayer, this, null);
-		this.game.physics.arcade.overlap(this.enemies, [this.player1/*,this.player2*/], this.killPlayer, null, this);
+		// this.game.physics.arcade.overlap(this.enemies, [this.player1/*,this.player2*/], this.killPlayer, null, this);
  //   	this.game.physics.arcade.moveToObject(this.redEnemy1, this.player1, 25);
 
         this.hintsText.x = this.player1.x;
@@ -2796,7 +2796,10 @@ BasicGame.Game.prototype = {
 
     },
 
+// Fire a bullet
 // Perform on this client and send to server to perform on other client
+
+    // Send to server
     fireBullet: function (bullet, xPos, yPos, xVel, yVel) {
         if (bullet.color == "red") {
             if (this.game.time.now > this.redBulletTime) {
@@ -2849,7 +2852,6 @@ BasicGame.Game.prototype = {
         this.rayGunSound.play();
 
     },
-
 
     // Receive from server
     fireBulletRemote: function (id,xPos,yPos,xVel,yVel) {
@@ -2909,9 +2911,10 @@ BasicGame.Game.prototype = {
         this.rayGunSound.play();
     },
 
-
+// Kill a bullet
 // Perform on this client and send to server to perform on other client
 
+    // Send to server
     killBullet: function (bullet2, bullet1) {
     	if (bullet1 != null) {
     		bullet1.kill();
@@ -2930,9 +2933,10 @@ BasicGame.Game.prototype = {
         }
     },
     
-
+// Kill an enemy
 // Perform on this client and send to server to perform on other client
 
+    // Send to server
     killEnemy: function (bullet, enemy) {
     	if (bullet.color == enemy.color) {
             // We must do Client.updateKilledEnemy(enemy.name) BEFORE doing enemy.kill(), because .kill
@@ -2953,6 +2957,10 @@ BasicGame.Game.prototype = {
         }
     },
 
+// Kill this player
+// Perform on this client and send to server to perform on other client
+
+    // Send to server
     killPlayer: function (player, enemy) {
         // Allow player to be killed only after spawnBeginning duration is over; the player is invulnerable for a number of seconds
         if (this.game.time.now > player.spawnBeginning) {
@@ -2975,8 +2983,12 @@ BasicGame.Game.prototype = {
             // let style = { font: "25px Verdana", fill: "#FFFFFF", align: "center" };
             if (this.player1.playerSide == "left") {this.textPosX = this.game.world.width/4;}
             else {this.textPosX = 3 * this.game.world.width/4;}
-            this.reviveText = this.game.add.text( this.textPosX, this.game.world.centerY, '10 seconds till revive', {font: "25px Verdana", fill: "#FFFFFF", align: "center"} );
-            this.reviveText.anchor.setTo(0.5,0.5);
+            if (this.reviveText === undefined) {
+                this.reviveText = this.game.add.text( this.textPosX, this.game.world.centerY, '10 seconds till revive', {font: "25px Verdana", fill: "#FFFFFF", align: "center"} );
+                this.reviveText.anchor.setTo(0.5,0.5);
+            } else {
+                this.reviveText.reset(this.textPosX, this.game.world.centerY);
+            }
             // The respawn timer counts down and updates its displayed remaining time every second by decrementing the remaining seconds
             // by 1, every 1 second, 10 times. Note: we could've specified a callback function, but we defined the function right here
             let remainingSecs = 10;
@@ -3023,8 +3035,12 @@ BasicGame.Game.prototype = {
 
             if (Game.playerMap[id].playerSide == "left") {this.textPosX2 = game.world.width/4;}
             else {this.textPosX2 = 3 * game.world.width/4;}
-            this.reviveText2 = game.add.text( this.textPosX2, game.world.centerY, '10 seconds till revive', {font: "25px Verdana", fill: "#FFFFFF", align: "center"} );
-            this.reviveText2.anchor.setTo(0.5,0.5);
+            if (this.reviveText2 === undefined) {
+                this.reviveText2 = game.add.text( this.textPosX2, game.world.centerY, '10 seconds till revive', {font: "25px Verdana", fill: "#FFFFFF", align: "center"} );
+                this.reviveText2.anchor.setTo(0.5,0.5);
+            } else {
+                this.reviveText2.reset(this.textPosX2, game.world.centerY);
+            }
             // The respawn timer counts down and updates its displayed remaining time every second by decrementing the remaining seconds
             // by 1, every 1 second, 10 times. Note: we could've specified a callback function, but we defined the function right here
             let remainingSecs = 10;
@@ -3040,6 +3056,10 @@ BasicGame.Game.prototype = {
         }
     },
 
+// Respawn this player
+// Perform on this client and send to server to perform on other client
+
+    // Send to server
     respawnPlayer: function (player) {
         Client.updateRespawnPlayer(player.id);
         this.reviveText.kill();
@@ -3060,8 +3080,10 @@ BasicGame.Game.prototype = {
         tween.repeat(2);
     },
 
+    // Receive from server
     respawnPlayerRemote: function (id) {
         if (Game.playerMap[id] != null) {
+            // Remember: When respawnPlayerRemote executes, we're in the context of the other client, so it should remove its own reviveText
             this.reviveText2.kill();
 
             if (Game.playerMap[id].playerSide == "left") {
@@ -3083,6 +3105,9 @@ BasicGame.Game.prototype = {
         }
     },
 
+// Quit game; start the next level if players won, or display the lose screen if players lost
+// Same function is executed by this client and the other client
+
     quitGame: function (didPlayersWin) {
 
     	this.finalTime = game.time.totalElapsedSeconds()-this.timeSoFar;
@@ -3098,7 +3123,42 @@ BasicGame.Game.prototype = {
         // this.endText = game.add.text( game.world.centerX, game.world.centerY, 'Your time: '+Phaser.Math.roundTo(this.finalTime,-2), style );
         // this.endText.anchor.setTo(0.5,0.5);
 
+
+        // Reset everything
+/*
         Game.playerMap = {};
+        Game.enemyMap = {};
+        Game.bulletMap = {};
+
+
+        let numEnemiesForThisPlayer = 0;
+
+        this.player1 = null;
+        this.hintsText = null;
+        this.otherPlayerHintsText = null;
+        this.hintsTimer = null;
+        this.otherPlayerHintsTimer = null;
+
+        this.player2ID = null;
+
+        this.rayGuns = null;
+
+        this.p1Red_pieces = null;
+        this.p1Yellow_pieces = null;
+        this.p1Green_pieces = null;
+        this.p1Blue_pieces = null;
+        this.p2Red_pieces = null;
+        this.p2Yellow_pieces = null;
+        this.p2Green_pieces = null;
+        this.p2Blue_pieces = null;
+
+        this.enemies = null;
+
+        // Sounds
+        this.passThroughGateSound = null;
+        this.pieceReachedShipSound = null;
+        this.rayGunSound = null;
+*/
 
         if (didPlayersWin == true) {
         	// game.state.start('WinScreen');

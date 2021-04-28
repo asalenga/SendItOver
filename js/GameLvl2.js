@@ -1844,7 +1844,7 @@ BasicGame.GameLvl2.prototype = {
      //     this.game.physics.arcade.collide(this.redBullet, this.redEnemy1);
         // }
         if (game.time.now > this.enemySpawnCooldown2) { // Spawn a new wave of enemies after a certain cooldown period
-            this.enemySpawnCooldown2 += 15000; // Cooldown is 15 seconds
+            this.enemySpawnCooldown2 = game.time.now + 15000; // Cooldown is 15 seconds
             this.generateEnemyWave();
         }
         // this.game.physics.arcade.overlap(this.enemies_Lvl2, this.bullets, this.killEnemy, null, this);
