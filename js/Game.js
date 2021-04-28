@@ -276,6 +276,8 @@ BasicGame.Game.prototype = {
         console.log(`game: ${game}`);
         this.stateName = this.game.state.getCurrentState().key; // Return the key (the name you specified when you added the state) of the current state
         console.log(`this.game.state.getCurrentState(): ${this.stateName}`);
+        this.stateName2 = game.state.getCurrentState().key;
+        console.log(`game.state.getCurrentState(): ${this.stateName2}`);
 
 // Create the central walls
 
@@ -1910,7 +1912,7 @@ BasicGame.Game.prototype = {
     	// this.game.time.events.add(Phaser.Timer.SECOND * 5, this.eachEnemy, this);
         this.eachEnemy();
     	// this.enemies.forEach(this.chasePlayer, this, null);
-		// this.game.physics.arcade.overlap(this.enemies, [this.player1/*,this.player2*/], this.killPlayer, null, this);
+		this.game.physics.arcade.overlap(this.enemies, [this.player1/*,this.player2*/], this.killPlayer, null, this);
  //   	this.game.physics.arcade.moveToObject(this.redEnemy1, this.player1, 25);
 
         this.hintsText.x = this.player1.x;
@@ -2983,15 +2985,16 @@ BasicGame.Game.prototype = {
             // let style = { font: "25px Verdana", fill: "#FFFFFF", align: "center" };
             if (this.player1.playerSide == "left") {this.textPosX = this.game.world.width/4;}
             else {this.textPosX = 3 * this.game.world.width/4;}
+            let remainingSecs = 10;
             if (this.reviveText === undefined) {
-                this.reviveText = this.game.add.text( this.textPosX, this.game.world.centerY, '10 seconds till revive', {font: "25px Verdana", fill: "#FFFFFF", align: "center"} );
+                this.reviveText = this.game.add.text( this.textPosX, this.game.world.centerY, `${remainingSecs} seconds till revive`, {font: "25px Verdana", fill: "#FFFFFF", align: "center"} );
                 this.reviveText.anchor.setTo(0.5,0.5);
             } else {
                 this.reviveText.reset(this.textPosX, this.game.world.centerY);
+                this.reviveText.text = `${remainingSecs} seconds till revive`;
             }
             // The respawn timer counts down and updates its displayed remaining time every second by decrementing the remaining seconds
             // by 1, every 1 second, 10 times. Note: we could've specified a callback function, but we defined the function right here
-            let remainingSecs = 10;
             this.game.time.events.repeat(Phaser.Timer.SECOND * 1, 10, () => {
                 remainingSecs--;
                 this.reviveText.text = `${remainingSecs} seconds till revive`
@@ -3035,15 +3038,16 @@ BasicGame.Game.prototype = {
 
             if (Game.playerMap[id].playerSide == "left") {this.textPosX2 = game.world.width/4;}
             else {this.textPosX2 = 3 * game.world.width/4;}
+            let remainingSecs = 10;
             if (this.reviveText2 === undefined) {
-                this.reviveText2 = game.add.text( this.textPosX2, game.world.centerY, '10 seconds till revive', {font: "25px Verdana", fill: "#FFFFFF", align: "center"} );
+                this.reviveText2 = game.add.text( this.textPosX2, game.world.centerY, `${remainingSecs} seconds till revive`, {font: "25px Verdana", fill: "#FFFFFF", align: "center"} );
                 this.reviveText2.anchor.setTo(0.5,0.5);
             } else {
                 this.reviveText2.reset(this.textPosX2, game.world.centerY);
+                this.reviveText2.text = `${remainingSecs} seconds till revive`;
             }
             // The respawn timer counts down and updates its displayed remaining time every second by decrementing the remaining seconds
             // by 1, every 1 second, 10 times. Note: we could've specified a callback function, but we defined the function right here
-            let remainingSecs = 10;
             game.time.events.repeat(Phaser.Timer.SECOND * 1, 10, () => {
                 remainingSecs--;
                 this.reviveText2.text = `${remainingSecs} seconds till revive`
