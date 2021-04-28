@@ -102,7 +102,7 @@ io.on('connection',function(socket){
 	// Tutorial: "Using the socket.on() method from the socket objects, it is possible to specify callbacks to handle different
 	// messages. Therefore each time a specific client sends a specific message through his socket, a specific callback will be
 	// called in reaction. In this case, we define a callback to react to the 'newplayer' message."
-    socket.on('newplayer',function(){
+    socket.on('newplayer',function(currGameState){
 
     	var xPos = 0;
     	var yPos = 0;
@@ -123,6 +123,7 @@ io.on('connection',function(socket){
     	// it's possible to add arbitrary client-specific properties to the socket object, making them convenient to access. In this object,
     	// we give the player a unique id (that will be used on the client side), and we randomly determine the position of the sprite."
         socket.player = {
+            currGameState: currGameState, // currLevel and level indicate what game level the player should spawn into / is currently in (i.e. LEVEL1, LEVEL2, etc.)
             id: server.lastPlayerID++,
             x: xPos,//randomInt(100,400),
             y: yPos,//randomInt(100,400)
@@ -143,7 +144,7 @@ io.on('connection',function(socket){
         // Socket.emit() sends a message to one specific socket. Here, we send to the newly connected client a message labeled 'allplayers',
         // and as a second argument, the output of Client.getAllPlayers() which will be an array of the currently connected players. This
         // allows newly connected players to get up to date with the amount and positions of the already connected players."
-        socket.emit('allplayers',getAllPlayers());
+//        socket.emit('allplayers',getAllPlayers());
         // Tutorial: "The socket.emit.broadcast() sends a message to all connected sockets, *except* the socket who triggered the callback.
         // It allows to broadcast events from a client to all other clients without echoing them back to the initiating client. Here, we
         // broadcast the 'newplayer' message, and send as data the new player object."
@@ -217,7 +218,7 @@ io.on('connection',function(socket){
 
         socket.on('sendPlayerMessage',function(data){
             console.log("data.message: "+data.message);
-            socket.broadcast.emit('messageSent',data.message);
+            socket.broadcast.emit('messageSent',data);
         });
 
         socket.on('gameOverSignaled',function(data){
@@ -245,7 +246,7 @@ io.on('connection',function(socket){
         // 'newplayer', the server will crash!"
         socket.on('disconnect',function(){
             console.log("The pLaYEr ha s DisconnectED");
-            io.emit('remove',socket.player.id);
+            io.emit('remove',{currGameState:currGameState, id:socket.player.id});
         });
 
         socket.on('closePlayerSocket',function(){
@@ -257,7 +258,7 @@ io.on('connection',function(socket){
 
 /////// End "For Game.js only!!!"
 
-
+/*
 //////////////////////////////////////////////////////// For GameLvl2.js only!!! ///////////////////////////////////////////////////////////
 
     // Tutorial: "Using the socket.on() method from the socket objects, it is possible to specify callbacks to handle different
@@ -382,6 +383,7 @@ io.on('connection',function(socket){
         });
 
     }); // end socket.on('newplayer_Lvl2')
+*/
 
 }); // end io.on('connection')
 

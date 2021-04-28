@@ -440,7 +440,7 @@ BasicGame.Game.prototype = {
         // Tutorial: "the client will notify the server that a new player should be created"
         // Note: See how it is at the end of the create() method; my theory is that it's so that
         // no more than one player executes the entire process of initializing everything above
-        Client.askNewPlayer();
+        Client.askNewPlayer(""+game.state.getCurrentState().key); // game.state.getCurrentState().key is "Game" in this case
 
         let bigTextStyle = { font: "50px Verdana", fill: "#FFFFFF", align: "center" };
         this.levelTitle = this.game.add.text( this.game.world.width/2.0, this.game.world.height/2.0, 'LEVEL 1', bigTextStyle);
@@ -566,7 +566,7 @@ BasicGame.Game.prototype = {
             this.redBullet.checkWorldBounds = true;
             this.redBullet.events.onOutOfBounds.add(this.killBullet, this);
             this.redBullet.name = "redBullet" + playerSide + i; // Ex: redBulletleft0
-            Client.askNewBullet(this.redBullet.name,this.redBullet.color,this.redBullet.x,this.redBullet.y);
+            Client.askNewBullet(game.state.getCurrentState().key,this.redBullet.name,this.redBullet.color,this.redBullet.x,this.redBullet.y);
         }
 
         this.yellowBullets = game.add.group();
@@ -585,7 +585,7 @@ BasicGame.Game.prototype = {
             this.yellowBullet.checkWorldBounds = true;
             this.yellowBullet.events.onOutOfBounds.add(this.killBullet, this);
             this.yellowBullet.name = "yellowBullet" + playerSide + i; // Ex: yellowBulletright0
-            Client.askNewBullet(this.yellowBullet.name,this.yellowBullet.color,this.yellowBullet.x,this.yellowBullet.y);
+            Client.askNewBullet(game.state.getCurrentState().key,this.yellowBullet.name,this.yellowBullet.color,this.yellowBullet.x,this.yellowBullet.y);
         }
 
         this.greenBullets = game.add.group();
@@ -604,7 +604,7 @@ BasicGame.Game.prototype = {
             this.greenBullet.checkWorldBounds = true;
             this.greenBullet.events.onOutOfBounds.add(this.killBullet, this);
             this.greenBullet.name = "greenBullet" + playerSide + i; // Ex: greenBulletright0
-            Client.askNewBullet(this.greenBullet.name,this.greenBullet.color,this.greenBullet.x,this.greenBullet.y);
+            Client.askNewBullet(game.state.getCurrentState().key,this.greenBullet.name,this.greenBullet.color,this.greenBullet.x,this.greenBullet.y);
         }
 
         this.blueBullets = game.add.group();
@@ -623,7 +623,7 @@ BasicGame.Game.prototype = {
             this.blueBullet.checkWorldBounds = true;
             this.blueBullet.events.onOutOfBounds.add(this.killBullet, this);
             this.blueBullet.name = "blueBullet" + playerSide + i; // Ex: blueBulletleft7
-            Client.askNewBullet(this.blueBullet.name,this.blueBullet.color,this.blueBullet.x,this.blueBullet.y);
+            Client.askNewBullet(game.state.getCurrentState().key,this.blueBullet.name,this.blueBullet.color,this.blueBullet.x,this.blueBullet.y);
         }
 
 
@@ -1445,7 +1445,7 @@ BasicGame.Game.prototype = {
                     this.redEnemy.checkWorldBounds = false;
                     this.redEnemy.name = "redEnemy" + this.player1.playerSide + numEnemiesForThisPlayer; // Ex: "redEnemyleft1"
                     
-                    Client.askNewEnemy(this.redEnemy.name,this.redEnemy.color,xCoord,yCoord); // Note: We will use the enemy name as the id
+                    Client.askNewEnemy(game.state.getCurrentState().key,this.redEnemy.name,this.redEnemy.color,xCoord,yCoord); // Note: We will use the enemy name as the id
                     
                     break;
                 case 1: // Enemy will be yellow
@@ -1461,7 +1461,7 @@ BasicGame.Game.prototype = {
                     this.yellowEnemy.checkWorldBounds = false;
                     this.yellowEnemy.name = "yellowEnemy" + this.player1.playerSide + numEnemiesForThisPlayer; // Ex: "yellowEnemyright2"
                     
-                    Client.askNewEnemy(this.yellowEnemy.name,this.yellowEnemy.color,xCoord,yCoord); // Note: We will use the enemy name as the id
+                    Client.askNewEnemy(game.state.getCurrentState().key,this.yellowEnemy.name,this.yellowEnemy.color,xCoord,yCoord); // Note: We will use the enemy name as the id
                     
                     break;
                 case 2: // Enemy will be green
@@ -1477,7 +1477,7 @@ BasicGame.Game.prototype = {
                     this.greenEnemy.checkWorldBounds = false;
                     this.greenEnemy.name = "greenEnemy" + this.player1.playerSide + numEnemiesForThisPlayer; // Ex: "greenEnemyright69"
                     
-                    Client.askNewEnemy(this.greenEnemy.name,this.greenEnemy.color,xCoord,yCoord); // Note: We will use the enemy name as the id
+                    Client.askNewEnemy(game.state.getCurrentState().key,this.greenEnemy.name,this.greenEnemy.color,xCoord,yCoord); // Note: We will use the enemy name as the id
                     
                     break;
                 case 3: // Enemy will be blue
@@ -1493,7 +1493,7 @@ BasicGame.Game.prototype = {
                     this.blueEnemy.checkWorldBounds = false;
                     this.blueEnemy.name = "blueEnemy" + this.player1.playerSide + numEnemiesForThisPlayer; // Ex: "blueEnemyleft420"
                     
-                    Client.askNewEnemy(this.blueEnemy.name,this.blueEnemy.color,xCoord,yCoord); // Note: We will use the enemy name as the id
+                    Client.askNewEnemy(game.state.getCurrentState().key,this.blueEnemy.name,this.blueEnemy.color,xCoord,yCoord); // Note: We will use the enemy name as the id
                     
                     break;
             } // end switch(enemyColor)
@@ -1585,7 +1585,7 @@ BasicGame.Game.prototype = {
 
     // This func is for sending the enemies' positions to the server, so that the other player sees when they move
     sendEnemyPos: function(id,x,y){
-        Client.updateEnemyPos(id,x,y);
+        Client.updateEnemyPos(game.state.getCurrentState().key,id,x,y);
     },
 
     // This func is for seeing the enemies move
@@ -1607,7 +1607,7 @@ BasicGame.Game.prototype = {
         // Make sure the hintsText is shown on top of everything so it's not obscured
         game.world.bringToTop(this.hintsText);
 
-        Client.sendMessageToOtherPlayer(msg);
+        Client.sendMessageToOtherPlayer(game.state.getCurrentState().key,msg);
 
         if (this.hintsTimer != null) {
             game.time.events.remove(this.hintsTimer);
@@ -1694,7 +1694,7 @@ BasicGame.Game.prototype = {
 
     // This func is for sending the player's position to the server, so that the other player sees when they move
     sendPlayerPos: function(x,y){
-        Client.updatePlayerPos(x,y);
+        Client.updatePlayerPos(game.state.getCurrentState().key,x,y);
     },
 
     // This func is for seeing the other player (with the specified id) move
@@ -1720,7 +1720,7 @@ BasicGame.Game.prototype = {
     // Send to server so the other client can see the object changing position
     // Note: This is for when there is a change in the object's position, i.e. it is being carried and moved by a player
     sendObjPosition: function(objName,objPlayer,objColor,positionX,positionY) {
-        Client.updateObjPosition(objName,objPlayer,objColor,positionX,positionY);
+        Client.updateObjPosition(game.state.getCurrentState().key,objName,objPlayer,objColor,positionX,positionY);
     },
 
     // From server; this function executes if the other player executed sendObjPosition
@@ -1787,7 +1787,7 @@ BasicGame.Game.prototype = {
     // Send to server so the other client can see the object in motion
     // Note: This is for when there is a change in the object's velocity, i.e. it is thrown by a player
     sendObjMotion: function(objName,objPlayer,objColor,velocityX,velocityY,dragX,dragY) {
-        Client.updateObjMotion(objName,objPlayer,objColor,velocityX,velocityY,dragX,dragY);
+        Client.updateObjMotion(game.state.getCurrentState().key,objName,objPlayer,objColor,velocityX,velocityY,dragX,dragY);
     },
 
     // From server; this function executes if the other player executed sendObjMotion
@@ -1912,7 +1912,7 @@ BasicGame.Game.prototype = {
     	// this.game.time.events.add(Phaser.Timer.SECOND * 5, this.eachEnemy, this);
         this.eachEnemy();
     	// this.enemies.forEach(this.chasePlayer, this, null);
-		this.game.physics.arcade.overlap(this.enemies, [this.player1/*,this.player2*/], this.killPlayer, null, this);
+		// this.game.physics.arcade.overlap(this.enemies, [this.player1/*,this.player2*/], this.killPlayer, null, this);
  //   	this.game.physics.arcade.moveToObject(this.redEnemy1, this.player1, 25);
 
         this.hintsText.x = this.player1.x;
@@ -2653,12 +2653,12 @@ BasicGame.Game.prototype = {
 
     // Send to server
     signalGameOver: function(didPlayersWin) {
-        Client.updateGameOverStatus(didPlayersWin);
+        Client.updateGameOverStatus(game.state.getCurrentState().key,didPlayersWin);
     },
 
     // Send to server
     killPieceAndCheckRemaining_send: function(objName,objPlayer,objColor) {
-        Client.updateKilledPiece(objName,objPlayer,objColor);
+        Client.updateKilledPiece(game.state.getCurrentState().key,objName,objPlayer,objColor);
     },
 
     // Receive from server
@@ -2811,7 +2811,7 @@ BasicGame.Game.prototype = {
                     bullet.body.velocity.x = xVel;
                     bullet.body.velocity.y = yVel;
                     this.redBulletTime = this.game.time.now + 300;
-                    Client.updateFiredBullet(bullet.name,xPos,yPos,xVel,yVel);
+                    Client.updateFiredBullet(game.state.getCurrentState().key,bullet.name,xPos,yPos,xVel,yVel);
                 }
             }
         }
@@ -2823,7 +2823,7 @@ BasicGame.Game.prototype = {
                     bullet.body.velocity.x = xVel;
                     bullet.body.velocity.y = yVel;
                     this.yellowBulletTime = this.game.time.now + 300;
-                    Client.updateFiredBullet(bullet.name,xPos,yPos,xVel,yVel);
+                    Client.updateFiredBullet(game.state.getCurrentState().key,bullet.name,xPos,yPos,xVel,yVel);
                 }
             }
         }
@@ -2835,7 +2835,7 @@ BasicGame.Game.prototype = {
                     bullet.body.velocity.x = xVel;
                     bullet.body.velocity.y = yVel;
                     this.greenBulletTime = this.game.time.now + 300;
-                    Client.updateFiredBullet(bullet.name,xPos,yPos,xVel,yVel);
+                    Client.updateFiredBullet(game.state.getCurrentState().key,bullet.name,xPos,yPos,xVel,yVel);
                 }
             }
         }
@@ -2847,7 +2847,7 @@ BasicGame.Game.prototype = {
                     bullet.body.velocity.x = xVel;
                     bullet.body.velocity.y = yVel;
                     this.blueBulletTime = this.game.time.now + 300;
-                    Client.updateFiredBullet(bullet.name,xPos,yPos,xVel,yVel);
+                    Client.updateFiredBullet(game.state.getCurrentState().key,bullet.name,xPos,yPos,xVel,yVel);
                 }
             }
         }
@@ -2920,11 +2920,11 @@ BasicGame.Game.prototype = {
     killBullet: function (bullet2, bullet1) {
     	if (bullet1 != null) {
     		bullet1.kill();
-            Client.killFiredBullet(bullet1.name);
+            Client.killFiredBullet(game.state.getCurrentState().key,bullet1.name);
     	}
     	else {
     		bullet2.kill();
-            Client.killFiredBullet(bullet2.name);
+            Client.killFiredBullet(game.state.getCurrentState().key,bullet2.name);
     	}
     },
 
@@ -2944,7 +2944,7 @@ BasicGame.Game.prototype = {
             // We must do Client.updateKilledEnemy(enemy.name) BEFORE doing enemy.kill(), because .kill
             // removes the object and its properties entirely, so we wouldn't have an enemy.name to send!
             console.log("enemy.name: " + enemy.name);
-            Client.updateKilledEnemy(enemy.name);
+            Client.updateKilledEnemy(game.state.getCurrentState().key,enemy.name);
     		enemy.kill();
     		// bullet.kill();
             this.killBullet(bullet);
@@ -2966,7 +2966,7 @@ BasicGame.Game.prototype = {
     killPlayer: function (player, enemy) {
         // Allow player to be killed only after spawnBeginning duration is over; the player is invulnerable for a number of seconds
         if (this.game.time.now > player.spawnBeginning) {
-            Client.updateKilledPlayer(player.id);
+            Client.updateKilledPlayer(game.state.getCurrentState().key,player.id);
             player.kill();
             if (player == this.player1) {
                 // this.p1currItem.body.velocity.setTo(0,0);
@@ -3065,7 +3065,7 @@ BasicGame.Game.prototype = {
 
     // Send to server
     respawnPlayer: function (player) {
-        Client.updateRespawnPlayer(player.id);
+        Client.updateRespawnPlayer(game.state.getCurrentState().key,player.id);
         this.reviveText.kill();
         if (player.playerSide == "left") {
             player.reset((this.game.world.width/4), this.game.world.centerY);
