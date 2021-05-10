@@ -217,7 +217,7 @@ BasicGame.GameLvl2.prototype = {
     init: function(data) {
         this.playerID_Lvl2 = data['id'];
         this.playerSide_Lvl2 = data['playerSide'];
-        this.player2ID_Lvl2 = data['player2ID'];
+        // this.player2ID_Lvl2 = data['player2ID'];
     },
 
     create: function () {
@@ -633,6 +633,7 @@ BasicGame.GameLvl2.prototype = {
             this.redBullet.visible = false;
             this.redBullet.checkWorldBounds = true;
             this.redBullet.events.onOutOfBounds.add(this.killBullet, this);
+            this.redBullet.name = "redBullet" + playerSide + i; // Ex: redBulletleft0
             Client.askNewBullet(game.state.getCurrentState().key,this.redBullet.name,this.redBullet.color,this.redBullet.x,this.redBullet.y);
         }
 
@@ -651,6 +652,7 @@ BasicGame.GameLvl2.prototype = {
             this.yellowBullet.visible = false;
             this.yellowBullet.checkWorldBounds = true;
             this.yellowBullet.events.onOutOfBounds.add(this.killBullet, this);
+            this.yellowBullet.name = "yellowBullet" + playerSide + i; // Ex: yellowBulletright0
             Client.askNewBullet(game.state.getCurrentState().key,this.yellowBullet.name,this.yellowBullet.color,this.yellowBullet.x,this.yellowBullet.y);
         }
 
@@ -669,6 +671,7 @@ BasicGame.GameLvl2.prototype = {
             this.greenBullet.visible = false;
             this.greenBullet.checkWorldBounds = true;
             this.greenBullet.events.onOutOfBounds.add(this.killBullet, this);
+            this.greenBullet.name = "greenBullet" + playerSide + i; // Ex: greenBulletright0
             Client.askNewBullet(game.state.getCurrentState().key,this.greenBullet.name,this.greenBullet.color,this.greenBullet.x,this.greenBullet.y);
         }
 
@@ -687,6 +690,7 @@ BasicGame.GameLvl2.prototype = {
             this.blueBullet.visible = false;
             this.blueBullet.checkWorldBounds = true;
             this.blueBullet.events.onOutOfBounds.add(this.killBullet, this);
+            this.blueBullet.name = "blueBullet" + playerSide + i; // Ex: blueBulletleft7
             Client.askNewBullet(game.state.getCurrentState().key,this.blueBullet.name,this.blueBullet.color,this.blueBullet.x,this.blueBullet.y);
         }
 
@@ -1732,6 +1736,8 @@ BasicGame.GameLvl2.prototype = {
         GameLvl2.playerMap[id].height = 75;//50;
         GameLvl2.playerMap[id].playerSide = playerSide;
 
+        // We set the player2ID_Lvl2 here instead of passing it from the previous level because this
+        // level has an entirely new playerMap, meaning the old player2ID value is no longer valid
         this.player2ID_Lvl2 = id;
 
         let hintsTextStyle = { font: "15px Verdana", fill: "#FFFFFF", align: "center" };
@@ -1972,10 +1978,13 @@ BasicGame.GameLvl2.prototype = {
         }
         // this.game.physics.arcade.overlap(this.enemies_Lvl2, this.bullets, this.killEnemy, null, this);
         this.game.physics.arcade.overlap([this.redBullets,this.yellowBullets,this.greenBullets,this.blueBullets],this.enemies_Lvl2,this.killEnemy,null,this);
+
+        this.game.physics.arcade.collide([GameLvl2.enemyMap,this.enemies_Lvl2],[this.leftWall,this.rightWall]);
+
                 // game.physics.arcade.overlap(bullets, enemies, enemyKill, null, this);
         // this.game.time.events.add(Phaser.Timer.SECOND * 5, this.eachEnemy, this);
         this.eachEnemy();
-        this.game.physics.arcade.overlap(this.enemies_Lvl2, [this.player1_Lvl2/*,this.player2*/], this.killPlayer, null, this);
+//        this.game.physics.arcade.overlap(this.enemies_Lvl2, [this.player1_Lvl2/*,this.player2*/], this.killPlayer, null, this);
  //     this.game.physics.arcade.moveToObject(this.redEnemy1, this.player1_Lvl2, 25);
 
         this.hintsText_Lvl2.x = this.player1_Lvl2.x;
@@ -2916,7 +2925,7 @@ BasicGame.GameLvl2.prototype = {
 
     // Receive from server
     fireBulletRemote: function (id,xPos,yPos,xVel,yVel) {
-        // console.log(`From fireBulletRemote in Game.js... id: ${id}, xPos: ${xPos}, yPos: ${yPos}, xVel: ${xVel}, yVel: ${yVel}`);
+        // console.log(`From fireBulletRemote in GameLvl2.js... id: ${id}, xPos: ${xPos}, yPos: ${yPos}, xVel: ${xVel}, yVel: ${yVel}`);
 
         GameLvl2.bulletMap[id].reset(xPos, yPos);
         GameLvl2.bulletMap[id].body.velocity.x = xVel;
@@ -2975,8 +2984,9 @@ BasicGame.GameLvl2.prototype = {
 
     killBullet: function (bullet2, bullet1) {
         if (bullet1 != null) {
-            bullet1.kill
-            Client.killFiredBullet(game.state.getCurrentState().key,bullet1.name);        }
+            bullet1.kill();
+            Client.killFiredBullet(game.state.getCurrentState().key,bullet1.name);
+        }
         else {
             bullet2.kill();
             Client.killFiredBullet(game.state.getCurrentState().key,bullet2.name);
@@ -3119,9 +3129,9 @@ BasicGame.GameLvl2.prototype = {
         Client.updateRespawnPlayer(game.state.getCurrentState().key,player.id);
         this.reviveText.kill();
         if (player.playerSide == "left") {
-            player.reset((this.game.world.width/4), this.game.world.centerY);
+            player.reset(450, this.game.world.centerY);
         } else {
-            player.reset(3 * this.game.world.width/4, this.game.world.centerY);
+            player.reset(750, this.game.world.centerY);
         }
         this.player1_Lvl2.spawnBeginning = this.game.time.now+3000; // Invulnerable for 3 seconds
         
@@ -3186,7 +3196,7 @@ BasicGame.GameLvl2.prototype = {
         }
 
     },
-    
+
     exitToMainMenu: function () {
         game.state.start('Boot');
     }

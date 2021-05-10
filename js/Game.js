@@ -1917,7 +1917,7 @@ BasicGame.Game.prototype = {
     	// this.game.time.events.add(Phaser.Timer.SECOND * 5, this.eachEnemy, this);
         this.eachEnemy();
     	// this.enemies.forEach(this.chasePlayer, this, null);
-		this.game.physics.arcade.overlap(this.enemies, [this.player1/*,this.player2*/], this.killPlayer, null, this);
+//		this.game.physics.arcade.overlap(this.enemies, [this.player1/*,this.player2*/], this.killPlayer, null, this);
  //   	this.game.physics.arcade.moveToObject(this.redEnemy1, this.player1, 25);
 
         this.hintsText.x = this.player1.x;
@@ -3171,7 +3171,7 @@ BasicGame.Game.prototype = {
 
         if (didPlayersWin == true) {
         	// game.state.start('WinScreen');
-            game.state.start('WinScreen');//'GameLvl2', true, false, {'id':this.player1.id, 'playerSide':this.player1.playerSide, 'player2ID':this.player2ID}); // Pass the player side as an argument
+            game.state.start('GameLvl2', true, false, {'id':this.player1.id, 'playerSide':this.player1.playerSide, 'player2ID':this.player2ID}); // Pass the player side as an argument
         }
         else if (didPlayersWin == false) {
         	game.state.start('LoseScreen');
