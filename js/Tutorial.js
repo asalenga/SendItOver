@@ -704,8 +704,18 @@ BasicGame.Tutorial.prototype = {
 
         // this.spawnBeginning = 0;
 
+        this.returnToMenuButton = game.add.button( game.world.centerX, -1, 'playButton', this.returnToMenuButtonClicked, this);
+        this.returnToMenuButton.anchor.setTo(0.5,0.5);
+        this.returnToMenuButton.width = 170;
+        this.returnToMenuButton.height = 70;
+
+        // Text for the return to menu button
+        this.returnToMenuButton_text = this.game.add.text( this.returnToMenuButton.x, 5, 'Return to Main Menu' , hintsTextStyle);
+        this.returnToMenuButton_text.anchor.setTo(0.5, 0);
+        this.returnToMenuButton_text.alpha = 1;
+
         // The Tutorial Mode Title
-        this.tutorialModeTitle = this.game.add.text( this.game.world.centerX, 30, 'Tutorial Mode', style );
+        this.tutorialModeTitle = this.game.add.text( this.game.world.centerX, 60, 'Tutorial Mode', style );
         this.tutorialModeTitle.anchor.setTo( 0.5, 0.5 );
 
         // Instructions right below the title
@@ -1587,6 +1597,10 @@ BasicGame.Tutorial.prototype = {
 	    tween.yoyo(true, 0);
 	    // Performs the blinking tween 3 times total (repeat twice after the first time)
 	    tween.repeat(2);
+    },
+
+    returnToMenuButtonClicked: function() {
+        this.state.start('MainMenu');
     },
 
     quitGame: function () {
