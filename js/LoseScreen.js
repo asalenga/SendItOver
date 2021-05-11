@@ -16,7 +16,7 @@ BasicGame.LoseScreen.prototype = {
 		let returnToMenuButtonLabel_style = { font: "25px DIN Alternate", fill: "#FFFFFF", align: "center" };
 
 		// Create the "Return to Main Menu" button
-        this.returnToMenuButton = game.add.button( game.world.centerX, this.winMessage.y + this.winMessage.height/2 + 70, 'playButton', this.returnToMenuButtonClicked, this);
+        this.returnToMenuButton = game.add.button( game.world.centerX, this.loseMessage.y + this.loseMessage.height/2 + 70, 'playButton', this.returnToMenuButtonClicked, this);
         this.returnToMenuButton.anchor.setTo(0.5,0.5);
         this.returnToMenuButton.width = 235;
         this.returnToMenuButton.height = 80;
