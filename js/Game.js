@@ -3346,6 +3346,14 @@ BasicGame.Game.prototype = {
             game.state.start('GameLvl2', true, false, {'id':this.player1.id, 'playerSide':this.player1.playerSide, 'player2ID':this.player2ID}); // Pass the player side as an argument
         }
         else if (didPlayersWin == false) {
+
+            // Game.playerMap[this.player1.id].destroy();
+            // delete Game.playerMap[this.player1.id];
+            // Game.playerMap[this.player2ID].destroy();
+            // delete Game.playerMap[this.player2ID];
+            
+            // Client.socket.disconnect();
+            
         	game.state.start('LoseScreen');
         }
 

@@ -269,7 +269,7 @@ io.on('connection',function(socket){
         // Note: "the 'disconnect' callback has to be registered within the 'newplayer' callback; if not, and 'disconnect' is somehow called before
         // 'newplayer', the server will crash!"
         socket.on('disconnect',function(){
-            console.log("The pLaYEr ha s DisconnectED");
+            console.log("The player has disconnected");
             io.emit('remove',{currGameState:currGameState, id:socket.player.id});
         });
 
