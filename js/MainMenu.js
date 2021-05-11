@@ -21,20 +21,21 @@ BasicGame.MainMenu.prototype = {
 
 		// this.add.sprite(0, 0, 'titlePage');
 
-		this.titleText = this.add.sprite(this.world.centerX, 370, 'titleText');
+		this.titleText = this.add.sprite(this.world.centerX, 150, 'titleText');
 		// this.titleText = this.add.text(this.world.centerX, 350, 'Send It Over!', {font: "30px Verdana", fill: "#00FF00", align: "center"});
-		this.titleText.height = 50;
+		this.titleText.height = 75;
+		this.titleText.width = 600;
 		this.titleText.anchor.setTo(0.5,0.5);
 		// this.game.physics.enable( this.titleText, Phaser.Physics.ARCADE );
 
-		this.p1text = this.add.text(this.world.width/5, this.world.height-200, 'Player 1:\nW A S D keys to move\n1 key to throw a held item\n2 key to fire (if holding a weapon)', {font: "20px Verdana", fill: "#FFFFFF", align: "center"});
+		this.p1text = this.add.text(this.world.width/2, this.world.height-300, 'CONTROLS\nW A S D keys to move\nIf held item is a ship piece: left-click or right-click to throw\nIf held item is a ray gun: left-click to fire, right-click to throw', {font: "20px Verdana", fill: "#FFFFFF", align: "center"});
 		this.p1text.anchor.setTo(0.5,0.5);
-		this.p2text = this.add.text(4 * this.world.width/5, this.world.height-200, 'Player 2:\narrow keys to move\nh key to throw a held item\nj key to fire (if holding a weapon)', {font: "20px Verdana", fill: "#FFFFFF", align: "center"});
-		this.p2text.anchor.setTo(0.5,0.5);
+		// this.p2text = this.add.text(4 * this.world.width/5, this.world.height-200, 'Player 2:\narrow keys to move\nh key to throw a held item\nj key to fire (if holding a weapon)', {font: "20px Verdana", fill: "#FFFFFF", align: "center"});
+		// this.p2text.anchor.setTo(0.5,0.5);
 
-		this.storyText = this.add.text(this.world.centerX, 50, "Two astronauts (you) have been stranded on an alien planet. Your ships have been severely\ndamaged, and the pieces of your ships have been scattered throughout the map. You must\ngather these pieces (they are labeled either P1 or P2; also, notice their shape) and bring\nthem back to your respective ships to rebuild, and escape! But, that's easier said than done.\nSomehow you've been (conveniently) separated from each other by a wall spanning the\nlength of the terrain. What's strange though, is that the wall appears to have different\ncolored gates. You can't pass through the wall or gates, but what about items?\nYou see 4 rayguns on the ground, and you soon find out what they're for...", {font: "20px Verdana", fill: "#FFFFFF", align: "center"});
+		// this.storyText = this.add.text(this.world.centerX, 50, "Two astronauts (you) have been stranded on an alien planet. Your ships have been severely\ndamaged, and the pieces of your ships have been scattered throughout the map. You must\ngather these pieces (they are labeled either P1 or P2; also, notice their shape) and bring\nthem back to your respective ships to rebuild, and escape! But, that's easier said than done.\nSomehow you've been (conveniently) separated from each other by a wall spanning the\nlength of the terrain. What's strange though, is that the wall appears to have different\ncolored gates. You can't pass through the wall or gates, but what about items?\nYou see 4 rayguns on the ground, and you soon find out what they're for...", {font: "20px Verdana", fill: "#FFFFFF", align: "center"});
 		// \nTo get off this planet, you must work together and...
-		this.storyText.anchor.setTo(0.5,0);
+		// this.storyText.anchor.setTo(0.5,0);
 
 		this.playButton = this.add.button( this.world.centerX, this.world.height-150, 'playButton', this.initiateClientConnection, this, 'over', 'out', 'down'); // 'Start', 'Play Game', 'Start' // the last 3 params correspond to 'over', 'out', 'down'
 		this.playButton.anchor.setTo(0.5,0.5);
