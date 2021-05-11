@@ -37,11 +37,30 @@ BasicGame.MainMenu.prototype = {
 		// \nTo get off this planet, you must work together and...
 		// this.storyText.anchor.setTo(0.5,0);
 
+/* // Only useful if you have an atlas, which can change images depending on what the mouse cursor is doing
 		this.playButton = this.add.button( this.world.centerX, this.world.height-150, 'playButton', this.initiateClientConnection, this, 'over', 'out', 'down'); // 'Start', 'Play Game', 'Start' // the last 3 params correspond to 'over', 'out', 'down'
 		this.playButton.anchor.setTo(0.5,0.5);
 
 		this.startTutorialButton = this.add.button( this.world.centerX, this.world.height-75, 'playButton', this.startTutorial, this, 'over', 'out', 'down'); // the last 3 params correspond to 'over', 'out', 'down'
 		this.startTutorialButton.anchor.setTo(0.5,0.5);
+*/
+
+		this.playButton = this.add.button( this.world.centerX, this.world.height-150, 'playButton', this.initiateClientConnection, this); // 'Start', 'Play Game', 'Start' // the last 3 params correspond to 'over', 'out', 'down'
+		this.playButton.anchor.setTo(0.5,0.5);
+		this.playButton.width = 190;
+		this.playButton.height = 65;
+
+		this.startTutorialButton = this.add.button( this.world.centerX, this.world.height-75, 'playButton', this.startTutorial, this); // the last 3 params correspond to 'over', 'out', 'down'
+		this.startTutorialButton.anchor.setTo(0.5,0.5);
+		this.startTutorialButton.width = 190;
+		this.startTutorialButton.height = 65;
+
+		let menuButtonLabel_style = { font: "25px DIN Alternate", fill: "#FFFFFF", align: "center" };
+
+		this.playButtonLabel = game.add.text( this.playButton.x, this.playButton.y, 'PLAY GAME', menuButtonLabel_style);
+		this.playButtonLabel.anchor.setTo(0.5,0.5);
+		this.tutorialButtonLabel = game.add.text( this.startTutorialButton.x, this.startTutorialButton.y, 'TUTORIAL', menuButtonLabel_style);
+		this.tutorialButtonLabel.anchor.setTo(0.5,0.5);
 
 		// this.val = 50;
 

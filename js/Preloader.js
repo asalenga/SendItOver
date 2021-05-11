@@ -29,7 +29,9 @@ BasicGame.Preloader.prototype = {
 		//	Here we load the rest of the assets our game needs.
 		//	As this is just a Project Template I've not provided these assets, swap them for your own.
 		this.load.image('titlePage', 'assets/title.jpg');
-		this.load.atlas('playButton', 'assets/play_button.png', 'assets/play_button.json');
+		// this.load.atlas('playButton', 'assets/play_button.png', 'assets/play_button.json');
+		// this.load.image('playButton', 'assets/playButton1.png');
+		this.load.image('playButton', 'assets/playButton2.png');
 
 		// this.load.audio('titleMusic', ['assets/Poppers and Prosecco.mp3']);
 		this.load.audio('rayGunSound', 'assets/sound/LASRGun_Laser Gun Firing Single Shots_PSE_GEN_FA695DB3 - TRIMMED.mp3');
