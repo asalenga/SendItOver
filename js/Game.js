@@ -2089,7 +2089,7 @@ BasicGame.Game.prototype = {
     	// this.game.time.events.add(Phaser.Timer.SECOND * 5, this.eachEnemy, this);
         this.eachEnemy();
     	// this.enemies.forEach(this.chasePlayer, this, null);
-//		this.game.physics.arcade.overlap(this.enemies, [this.player1/*,this.player2*/], this.killPlayer, null, this);
+		this.game.physics.arcade.overlap(this.enemies, [this.player1/*,this.player2*/], this.killPlayer, null, this);
  //   	this.game.physics.arcade.moveToObject(this.redEnemy1, this.player1, 25);
 
         this.hintsText.x = this.player1.x;

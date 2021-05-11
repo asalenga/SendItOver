@@ -2156,7 +2156,7 @@ BasicGame.GameLvl2.prototype = {
                 // game.physics.arcade.overlap(bullets, enemies, enemyKill, null, this);
         // this.game.time.events.add(Phaser.Timer.SECOND * 5, this.eachEnemy, this);
         this.eachEnemy();
-//        this.game.physics.arcade.overlap(this.enemies_Lvl2, [this.player1_Lvl2/*,this.player2*/], this.killPlayer, null, this);
+       this.game.physics.arcade.overlap(this.enemies_Lvl2, [this.player1_Lvl2/*,this.player2*/], this.killPlayer, null, this);
  //     this.game.physics.arcade.moveToObject(this.redEnemy1, this.player1_Lvl2, 25);
 
         this.hintsText_Lvl2.x = this.player1_Lvl2.x;
