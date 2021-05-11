@@ -76,33 +76,84 @@ body {
 <li><strong>Team members:</strong>
 Aaron Salenga
 </li>
-
-<li><strong>Provide an overview of your game (give a short description about the game, i.e., core mechanics, game plot, objective, etc.):</strong>
-The game follows two player-controlled astronauts who have crash-landed on an alien planet and find themselves stranded. With both of their spaceships crashed, pieces of the ships are scattered throughout the map. They must gather these pieces and bring them back to their respective ships to reassemble them and escape the planet with their lives.
-
-However, the two astronauts have been (conveniently) separated by a central barrier that runs along the entire length of the map, preventing them from directly reaching each other and all of the scattered ship parts. Each ship piece is designated to go to either astronaut 1’s or astronaut 2’s ship, so both players must find a way to get these pieces to each other and back to their ships, despite the fact that the barrier prevents them from crossing over to each other’s side of the map.
-
-Each ship piece is of a different color, and the central barrier happens to have a series of different colored gates. These gates only allow the passage of same-colored ship pieces, so players must communicate and coordinate their efforts to throw ship pieces across to each other through the gates.
-
-While gathering ship parts, the astronauts must also defend themselves, as the hostile aliens of the planet—which are also color-coded—are closing in on them. The astronauts die if an alien manages to come in contact with them. The astronauts are not defenseless, however, as there happen to be ray guns of different colors among the scattered ship parts. Each alien is vulnerable only to ray gun blasts of the same color, so the players must use the ray guns to shoot at the aliens. The ray guns may also be thrown through the central gates, in the event that the player on the other side needs a specific-colored ray gun to defend themselves.
-
-As such, the game’s core mechanic is the act of picking up and throwing objects (whether it be ship parts or ray guns) across the central barrier.  The objective of the game is to get all ship pieces (which are indicated as belonging to player 1’s ship or player 2’s ship) to their respective ships, before they are killed by the oncoming alien enemies.
+<li><strong>Team name:</strong>
+ASTROVISION STUDIOS
 </li>
 
-<li><strong>What will be the main technical components (game AI, motion planning, physics, procedural content generation) that your game will focus on?</strong>
-The primary technical components of the game will include motion planning, physics, and procedural content generation. Motion planning will be implemented for the enemies to find a path to the players; physics will be necessary to determine velocity and acceleration of moving agents and thrown objects; and procedural content generation in the form of perlin noise will be used to generate terrain that will affect the movement of the agents.
+<li><strong>Game Overview</strong>
+Two astronauts have crash-landed on a hostile alien planet and are now stranded. With both of their spaceships reduced to debris, pieces of the ships are scattered throughout the map. They must collaborate to gather these pieces and bring them back to their own spaceships to reassemble them and escape the planet with their lives. But there’s a catch!
+
+The two astronauts have been (conveniently) separated by a central barrier that runs along the entire length of the map, preventing the astronauts from directly reaching each other and all of the scattered ship pieces. Each ship piece is designated to only go to either astronaut 1’s or astronaut 2’s ship, and to make matters more challenging, some of player 1's ship pieces are on player 2's side and vice versa. So, both players must find a way to get these pieces to each other and back to their ships, despite the fact that the barrier prevents them from crossing over to each other’s side of the map.
+
+To do this, they must take advantage of an interesting property: color. Each ship piece is of a different color, and the central barrier happens to have a series of different colored gates. Each gate only allows the passage of same-colored ship pieces, so players must communicate and coordinate their efforts to throw ship pieces across to each other through the gates.
+
+Simple enough, right? Well, there's another catch... the astronauts are not alone!
+
+While gathering ship parts, the astronauts must also defend themselves from the planet's hostile indigenous population--aliens!--which are closing in on them, fast! And these aliens are deadly! One touch from an alien will kill an astronaut. Fortunately, the astronauts are not defenseless, as there happen to be ray guns of different colors among the scattered ship parts. This is important to keep in mind because the aliens are also color-coded. Each alien is vulnerable only to ray gun blasts of the same color, so the players must use the ray guns to shoot at the aliens. However, there are only 4 ray guns total--one of each color--so the astronauts must also share the guns and throw them through the central gates when the player on the other side needs a gun with a specific color to defend themselves.
+
+The astronauts will need to communicate with one another to get what they need--whether it be a ship piece or a ray gun. As such, the in-game chat will be very valuable! Use it often, and make sure you're watching out for messages from the other astronaut!
+
+You, as one of the astronauts, must stay vigilant at all times!
+Watch out for the enemy aliens! Communicate constantly! And get your ships back in operational shape, so you can get off the planet and get back home!
+
+-----
+
+<strong>Recap:</strong>
+Your mission is to get all ship pieces (which are indicated as belonging to player 1’s ship or player 2’s ship) back to their respective ships, before you are killed by the oncoming alien enemies. You will need to send items over through the gates.
+
+-----
 </li>
 
-<li><strong>What game engine/tools/libraries will your game use?</strong>
-The game I’m creating will be using Phaser as the physics engine. Consequently, I will code the game using JavaScript.
+<li><strong>Main Features</strong>
+"Send It Over!" is interesting because it utilizes color-based gameplay.
+The game is unique because of its collaborative nature and reliance on using unique object properties.
 </li>
 
-<li><strong>Why do you think your game is interesting/exciting?</strong>
-I think my game is interesting because it revolves around color-based gameplay; nearly everything in the game—the spaceship pieces, the ray guns, the enemies, the central gates—takes into consideration the color of objects that are interacting. Additionally, my game will require players to cooperate effectively in order to succeed, so the amount of chemistry (or lack thereof) that players have with each other adds to the unpredictability of the gameplay.
+<li><strong>Gameplay</strong>
+Characters:
+- 2 Astronauts (player 1 & player 2)
+- Alien enemies
+
+Resources:
+- 2 Ships 
+- Ship pieces (4 colors; designated player 1 & player 2)
+- 4 gates (each a different color)
+- Walls
 </li>
 
-<li><strong>How would you divide the tasks among your team members (if more than one)?</strong>
-I am working on this game by myself, so I will be handling all tasks to finish this game.
+<li><strong>User Interface & Controls</strong>
+User Interface:
+- In-game chat (Clickable preset messages)
+- Game clock / timer
+
+Controls:
+- W A S D keys: astronaut movement
+- Mouse:
+	- If current item is ship piece:
+		- Left-click: Throw ship piece
+		- Right-click: Throw ship piece
+	- If current item is ray gun:
+		- Left-click: Fire ray gun
+		- Right-click: Throw ray gun
+</li>
+
+<li><strong>Main difficulties/challenges</strong>
+- Networking capabilities:
+It was my first time experimenting with a client-server architecture. Writing functions for sending and receiving messages to and from the server more than doubled the time it took to implement the code. Also, it was a significant challenge to debug the game because of its online nature.
+- Revisiting and repurposing old code:
+This game was based on a game I had already created in the past, but that initial version of the game was completely different. So, in many ways, starting from scratch would’ve been easier because the previous iteration of the game was not at all intended to be an online game. Many of the shortcuts I took back then came back to haunt me, and I had to address them when I reformatted the game this semester. As part of that reformatting process, I had to revamp all of the controls and physics to get it to work in this new architecture. In addition, because it had been a while since I had looked at the code for the game, I forgot that it was written using the Phaser 2 game engine and not Phaser 3. Because of this oversight, I ended up looking at the wrong documentation (I was looking through Phaser 3 docs instead of Phaser 2 docs) for the first month of coding the game. Since Phaser 3 is completely different from Phaser 2, this caused much frustration.
+- The pandemic:
+Making consistent, weekly updates to the game proved challenging because the game was coded during a semester in the midst of the COVID-19 pandemic.
+</li>
+
+<li><strong>Future Plans</strong>
+I plan on updating all of the visuals and sounds of the game. The game currently uses some assets that are merely placeholders for better, more detailed assets. For example, the astronauts could use a spritesheet that adjusts as the astronauts move, and the gates could be replaced with portal structures with stronger visual effects. I also would like to update the various screens, such as the main menu screen, win and lose screens, and waiting room screens.
+</li>
+
+<li><strong>Improvements after the final demo</strong>
+- Chat functionality fully implemented
+- Levels 1 & 2 fully implemented
+- Assets updated
 </li>
 
 </ul>
