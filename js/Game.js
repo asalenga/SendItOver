@@ -143,7 +143,7 @@ BasicGame.Game = function (game) {
     // this.hintsText = null;
     this.hintsText2 = null;
 
-    this.chatButton = null;
+    this.chatMenuButton = null;
 
     this.mousePointer = null;
     this.mouseText = null;
@@ -432,18 +432,12 @@ BasicGame.Game.prototype = {
 //        this.itemInitVelocity = 200;
         // this.slowDownValue = 0;
 
-        this.chatButton = this.add.button( this.game.world.centerX, 30, 'chatButton', this.chatButtonClicked, this);
-        this.chatButton.anchor.setTo(0.5,0.5);
-        this.chatButton.width = 55;
-        this.chatButton.height = 55;
-
-
         // Tutorial: "the client will notify the server that a new player should be created"
         // Note: See how it is at the end of the create() method; my theory is that it's so that
         // no more than one player executes the entire process of initializing everything above
         Client.askNewPlayer(""+game.state.getCurrentState().key); // game.state.getCurrentState().key is "Game" in this case
 
-        let bigTextStyle = { font: "50px Verdana", fill: "#FFFFFF", align: "center" };
+        let bigTextStyle = { font: "50px DIN Alternate", fill: "#FFFFFF", align: "center" };
         this.levelTitle = this.game.add.text( this.game.world.width/2.0, this.game.world.height/2.0, 'LEVEL 1', bigTextStyle);
         this.levelTitle.anchor.setTo(0.5,0.5);
         this.levelTitle.alpha = 1;
@@ -501,7 +495,7 @@ BasicGame.Game.prototype = {
 
         Game.playerMap[id] = this.player1;
 
-        let hintsTextStyle = { font: "15px Verdana", fill: "#FFFFFF", align: "center" };
+        let hintsTextStyle = { font: "22px DIN Alternate", fill: "#FFFFFF", align: "center" };
 
         // Text above the player
         this.hintsText = game.add.text( this.player1.x, this.player1.y - this.player1.body.height/2 - 50, 'Hints will go here!' , hintsTextStyle);
@@ -1339,6 +1333,160 @@ BasicGame.Game.prototype = {
         this.redEnemy5.color = "red";
 */
 
+    // game.world.bringToTop(this.chatMenuButton);
+    // game.world.bringToTop(this.chatMenuButtonLabel);
+    // game.world.bringToTop(this.chatMenuBubble);
+    // game.world.bringToTop(this.sayHelloButton);
+    // game.world.bringToTop(this.levelTitle);
+    // game.world.bringToTop(this.gameClock);
+
+
+        this.chatMenuButton = game.add.button( game.world.centerX, -1, 'chatButton', this.chatMenuButtonClicked, this);
+        this.chatMenuButton.anchor.setTo(0.5,0);
+        this.chatMenuButton.width = 120;
+        this.chatMenuButton.height = 30;
+
+        let chatMenuButtonLabel_style = { font: "18px DIN Alternate", fill: "#000000", align: "center" };
+
+        this.chatMenuButtonLabel = game.add.text( game.world.centerX, (this.chatMenuButton.y + this.chatMenuButton.height/2), 'CHAT', chatMenuButtonLabel_style);
+        this.chatMenuButtonLabel.anchor.setTo(0.5,0.5);
+        this.chatMenuButtonLabel.alpha = 1;
+
+        this.chatMenuBubble = game.add.sprite( game.world.centerX, (this.chatMenuButton.y + this.chatMenuButton.height + 5), 'chatMenuBubble');
+        this.chatMenuBubble.anchor.setTo(0.5,0);
+        this.chatMenuBubble.width = 240;
+        this.chatMenuBubble.height = 208;
+        this.chatMenuBubble.visible = false; // Hide for now
+
+    // The "Hello" button
+
+        this.sayHelloButton = game.add.button( game.world.centerX, (this.chatMenuBubble.y + 10), 'sayHelloButton');
+        this.sayHelloButton.messageToSend = "Hello there!";
+        this.sayHelloButton.events.onInputDown.add(this.chatMenuItemClicked, this);
+        this.sayHelloButton.anchor.setTo(0.5,0);
+        this.sayHelloButton.width = 200;
+        this.sayHelloButton.height = 40;
+        this.sayHelloButton.visible = false; // Hide for now
+
+    // The item buttons
+
+        let itemButtonWidth = 25;
+        let itemButtonHeight = 25;
+
+        let itemButtonsLabel_style = { font: "20px DIN Alternate", fill: "#FFFFFF", align: "center" };
+
+        this.itemButtonsLabel = game.add.text( game.world.centerX, (this.sayHelloButton.y + this.sayHelloButton.height + 15), 'I need...', itemButtonsLabel_style);
+        this.itemButtonsLabel.anchor.setTo(0.5,0);
+        this.itemButtonsLabel.visible = false;
+
+        // The gun buttons
+
+        this.askForRedGunButton = game.add.button( (game.world.centerX - this.chatMenuBubble.width/2 + (this.chatMenuBubble.width/5)), (this.itemButtonsLabel.y + this.itemButtonsLabel.height + 10), 'RedGun');
+        this.askForRedGunButton.messageToSend = "I need the RED GUN.\nSend it over!";
+        this.askForRedGunButton.inputEnabled = true;
+        this.askForRedGunButton.events.onInputDown.add(this.chatMenuItemClicked, this);
+        this.askForRedGunButton.anchor.setTo(0.5,0);
+        this.askForRedGunButton.width = itemButtonWidth+10;
+        this.askForRedGunButton.height = itemButtonHeight+10;
+        this.askForRedGunButton.visible = false; // Hide for now
+
+        this.askForYellowGunButton = game.add.button( (game.world.centerX - this.chatMenuBubble.width/2 + 2*(this.chatMenuBubble.width/5)), (this.itemButtonsLabel.y + this.itemButtonsLabel.height + 10), 'YellowGun');
+        this.askForYellowGunButton.messageToSend = "I need the YELLOW GUN.\nSend it over!";
+        this.askForYellowGunButton.events.onInputDown.add(this.chatMenuItemClicked, this);
+        this.askForYellowGunButton.anchor.setTo(0.5,0);
+        this.askForYellowGunButton.width = itemButtonWidth+10;
+        this.askForYellowGunButton.height = itemButtonHeight+10;
+        this.askForYellowGunButton.visible = false; // Hide for now
+
+        this.askForGreenGunButton = game.add.button( (game.world.centerX - this.chatMenuBubble.width/2 + 3*(this.chatMenuBubble.width/5)), (this.itemButtonsLabel.y + this.itemButtonsLabel.height + 10), 'GreenGun');
+        this.askForGreenGunButton.messageToSend = "I need the GREEN GUN.\nSend it over!";
+        this.askForGreenGunButton.events.onInputDown.add(this.chatMenuItemClicked, this);
+        this.askForGreenGunButton.anchor.setTo(0.5,0);
+        this.askForGreenGunButton.width = itemButtonWidth+10;
+        this.askForGreenGunButton.height = itemButtonHeight+10;
+        this.askForGreenGunButton.visible = false; // Hide for now
+
+        this.askForBlueGunButton = game.add.button( (game.world.centerX - this.chatMenuBubble.width/2 + 4*(this.chatMenuBubble.width/5)), (this.itemButtonsLabel.y + this.itemButtonsLabel.height + 10), 'BlueGun');
+        this.askForBlueGunButton.messageToSend = "I need the BLUE GUN.\nSend it over!";
+        this.askForBlueGunButton.events.onInputDown.add(this.chatMenuItemClicked, this);
+        this.askForBlueGunButton.anchor.setTo(0.5,0);
+        this.askForBlueGunButton.width = itemButtonWidth+10;
+        this.askForBlueGunButton.height = itemButtonHeight+10;
+        this.askForBlueGunButton.visible = false; // Hide for now
+
+        // The ship piece buttons
+
+        if (playerSide == "left") {
+
+            this.askForRedPieceButton = game.add.button( (game.world.centerX - this.chatMenuBubble.width/2 + (this.chatMenuBubble.width/5)), (this.itemButtonsLabel.y + this.itemButtonsLabel.height + 10 + this.askForRedGunButton.height + 10), 'RedP1');
+            this.askForRedPieceButton.messageToSend = "You have a RED P1 SHIP PIECE that I need.\nSend it over!";
+            this.askForRedPieceButton.events.onInputDown.add(this.chatMenuItemClicked, this);
+            this.askForRedPieceButton.anchor.setTo(0.5,0);
+            this.askForRedPieceButton.width = itemButtonWidth;
+            this.askForRedPieceButton.height = itemButtonHeight;
+            this.askForRedPieceButton.visible = false; // Hide for now
+
+            this.askForYellowPieceButton = game.add.button( (game.world.centerX - this.chatMenuBubble.width/2 + 2*(this.chatMenuBubble.width/5)), (this.itemButtonsLabel.y + this.itemButtonsLabel.height + 10 + this.askForYellowGunButton.height + 10), 'YellowP1');
+            this.askForYellowPieceButton.messageToSend = "You have a YELLOW P1 SHIP PIECE that I need.\nSend it over!";
+            this.askForYellowPieceButton.events.onInputDown.add(this.chatMenuItemClicked, this);
+            this.askForYellowPieceButton.anchor.setTo(0.5,0);
+            this.askForYellowPieceButton.width = itemButtonWidth;
+            this.askForYellowPieceButton.height = itemButtonHeight;
+            this.askForYellowPieceButton.visible = false; // Hide for now
+
+            this.askForGreenPieceButton = game.add.button( (game.world.centerX - this.chatMenuBubble.width/2 + 3*(this.chatMenuBubble.width/5)), (this.itemButtonsLabel.y + this.itemButtonsLabel.height + 10 + this.askForGreenGunButton.height + 10), 'GreenP1');
+            this.askForGreenPieceButton.messageToSend = "You have a GREEN P1 SHIP PIECE that I need.\nSend it over!";
+            this.askForGreenPieceButton.events.onInputDown.add(this.chatMenuItemClicked, this);
+            this.askForGreenPieceButton.anchor.setTo(0.5,0);
+            this.askForGreenPieceButton.width = itemButtonWidth;
+            this.askForGreenPieceButton.height = itemButtonHeight;
+            this.askForGreenPieceButton.visible = false; // Hide for now
+
+            this.askForBluePieceButton = game.add.button( (game.world.centerX - this.chatMenuBubble.width/2 + 4*(this.chatMenuBubble.width/5)), (this.itemButtonsLabel.y + this.itemButtonsLabel.height + 10 + this.askForBlueGunButton.height + 10), 'BlueP1');
+            this.askForBluePieceButton.messageToSend = "You have a BLUE P1 SHIP PIECE that I need.\nSend it over!";
+            this.askForBluePieceButton.events.onInputDown.add(this.chatMenuItemClicked, this);
+            this.askForBluePieceButton.anchor.setTo(0.5,0);
+            this.askForBluePieceButton.width = itemButtonWidth;
+            this.askForBluePieceButton.height = itemButtonHeight;
+            this.askForBluePieceButton.visible = false; // Hide for now
+
+        }
+        else { // playerSide == "right"
+
+            this.askForRedPieceButton = game.add.button( (game.world.centerX - this.chatMenuBubble.width/2 + (this.chatMenuBubble.width/5)), (this.itemButtonsLabel.y + this.itemButtonsLabel.height + 10 + this.askForRedGunButton.height + 10), 'RedP2');
+            this.askForRedPieceButton.messageToSend = "You have a RED P2 SHIP PIECE that I need.\nSend it over!";
+            this.askForRedPieceButton.events.onInputDown.add(this.chatMenuItemClicked, this);
+            this.askForRedPieceButton.anchor.setTo(0.5,0);
+            this.askForRedPieceButton.width = itemButtonWidth;
+            this.askForRedPieceButton.height = itemButtonHeight;
+            this.askForRedPieceButton.visible = false; // Hide for now
+
+            this.askForYellowPieceButton = game.add.button( (game.world.centerX - this.chatMenuBubble.width/2 + 2*(this.chatMenuBubble.width/5)), (this.itemButtonsLabel.y + this.itemButtonsLabel.height + 10 + this.askForYellowGunButton.height + 10), 'YellowP2');
+            this.askForYellowPieceButton.messageToSend = "You have a YELLOW P2 SHIP PIECE that I need.\nSend it over!";
+            this.askForYellowPieceButton.events.onInputDown.add(this.chatMenuItemClicked, this);
+            this.askForYellowPieceButton.anchor.setTo(0.5,0);
+            this.askForYellowPieceButton.width = itemButtonWidth;
+            this.askForYellowPieceButton.height = itemButtonHeight;
+            this.askForYellowPieceButton.visible = false; // Hide for now
+
+            this.askForGreenPieceButton = game.add.button( (game.world.centerX - this.chatMenuBubble.width/2 + 3*(this.chatMenuBubble.width/5)), (this.itemButtonsLabel.y + this.itemButtonsLabel.height + 10 + this.askForGreenGunButton.height + 10), 'GreenP2');
+            this.askForGreenPieceButton.messageToSend = "You have a GREEN P2 SHIP PIECE that I need.\nSend it over!";
+            this.askForGreenPieceButton.events.onInputDown.add(this.chatMenuItemClicked, this);
+            this.askForGreenPieceButton.anchor.setTo(0.5,0);
+            this.askForGreenPieceButton.width = itemButtonWidth;
+            this.askForGreenPieceButton.height = itemButtonHeight;
+            this.askForGreenPieceButton.visible = false; // Hide for now
+
+            this.askForBluePieceButton = game.add.button( (game.world.centerX - this.chatMenuBubble.width/2 + 4*(this.chatMenuBubble.width/5)), (this.itemButtonsLabel.y + this.itemButtonsLabel.height + 10 + this.askForBlueGunButton.height + 10), 'BlueP2');
+            this.askForBluePieceButton.messageToSend = "You have a BLUE P2 SHIP PIECE that I need.\nSend it over!";
+            this.askForBluePieceButton.events.onInputDown.add(this.chatMenuItemClicked, this);
+            this.askForBluePieceButton.anchor.setTo(0.5,0);
+            this.askForBluePieceButton.width = itemButtonWidth;
+            this.askForBluePieceButton.height = itemButtonHeight;
+            this.askForBluePieceButton.visible = false; // Hide for now
+
+        }
+
     },
 
     generateEnemyWave: function() {
@@ -1601,18 +1749,42 @@ BasicGame.Game.prototype = {
         }
     },
 
-// Send messages from this player to the other player and receive messages from the other player to this player
+// Send and receive chat messages between this player and the other player
 
-    chatButtonClicked: function() {
-        let msg = "Hello, other player!";
+    chatMenuButtonClicked: function() {
+
+        // Toggle the visibility of the chat menu and chat button options
+
+        this.chatMenuBubble.visible = !this.chatMenuBubble.visible;
+        this.sayHelloButton.visible = !this.sayHelloButton.visible;
+
+        this.itemButtonsLabel.visible = !this.itemButtonsLabel.visible;
+        
+        this.askForRedGunButton.visible = !this.askForRedGunButton.visible;
+        this.askForYellowGunButton.visible = !this.askForYellowGunButton.visible;
+        this.askForGreenGunButton.visible = !this.askForGreenGunButton.visible;
+        this.askForBlueGunButton.visible = !this.askForBlueGunButton.visible;
+
+        this.askForRedPieceButton.visible = !this.askForRedPieceButton.visible;
+        this.askForYellowPieceButton.visible = !this.askForYellowPieceButton.visible;
+        this.askForGreenPieceButton.visible = !this.askForGreenPieceButton.visible;
+        this.askForBluePieceButton.visible = !this.askForBluePieceButton.visible;
+
+    },
+
+    chatMenuItemClicked: function(thisButton) {
+
+        // let msg = "Hello there!";//"Hello, other player!";
 
         // Display the message above yourself
-        this.hintsText.text = msg;
+        // this.hintsText.text = msg;
+        this.hintsText.text = thisButton.messageToSend;
         this.hintsText.alpha = 1;
         // Make sure the hintsText is shown on top of everything so it's not obscured
         game.world.bringToTop(this.hintsText);
 
-        Client.sendMessageToOtherPlayer(game.state.getCurrentState().key,msg);
+        // Client.sendMessageToOtherPlayer(game.state.getCurrentState().key,msg);
+        Client.sendMessageToOtherPlayer(game.state.getCurrentState().key,thisButton.messageToSend);
 
         if (this.hintsTimer != null) {
             game.time.events.remove(this.hintsTimer);
@@ -1675,7 +1847,7 @@ BasicGame.Game.prototype = {
 
         this.player2ID = id;
 
-        let hintsTextStyle = { font: "15px Verdana", fill: "#FFFFFF", align: "center" };
+        let hintsTextStyle = { font: "22px DIN Alternate", fill: "#FFFFFF", align: "center" };
         // Text above the other player
         this.otherPlayerHintsText = game.add.text( x, y - Game.playerMap[id].height/2 - 50, 'The other player\'s hints will go here!' , hintsTextStyle);
         this.otherPlayerHintsText.anchor.setTo( 0.5, 0.5 );

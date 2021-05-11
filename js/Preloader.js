@@ -81,7 +81,12 @@ BasicGame.Preloader.prototype = {
         this.load.image( 'moonSurface', 'assets/moon_surface.jpg');
         this.load.image( 'slimeSurface', 'assets/slime.jpg');
 
-        this.load.image( 'chatButton', 'assets/ChatButton.png');
+        // this.load.image( 'chatButton', 'assets/ChatButton.png');
+        // this.load.image( 'chatButton', 'assets/ChatButton2.png');
+        this.load.image( 'chatButton', 'assets/ChatButton2_1.png');
+        // this.load.image( 'chatButton', 'assets/ChatButton3.png');
+        this.load.image( 'chatMenuBubble', 'assets/ChatMenuBubble.png');
+        this.load.image( 'sayHelloButton', 'assets/SayHelloButton.png');
 
 	},
 
