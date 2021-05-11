@@ -704,7 +704,8 @@ BasicGame.Tutorial.prototype = {
 
         // this.spawnBeginning = 0;
 
-        this.returnToMenuButton = game.add.button( game.world.centerX, -1, 'playButton', this.returnToMenuButtonClicked, this);
+        // Create the "Return to Main Menu" button
+        this.returnToMenuButton = game.add.button( game.world.centerX, 0, 'playButton', this.returnToMenuButtonClicked, this);
         this.returnToMenuButton.anchor.setTo(0.5,0.5);
         this.returnToMenuButton.width = 170;
         this.returnToMenuButton.height = 70;
@@ -1612,8 +1613,8 @@ BasicGame.Tutorial.prototype = {
         // text.anchor.setTo( 0.5, 0.0 );
 
         // Displays the final time
-        this.endText = this.game.add.text( this.game.world.centerX, this.game.world.centerY, 'Your time: '+Phaser.Math.roundTo(this.finalTime,-2), style );
-        this.endText.anchor.setTo(0.5,0.5);
+        // this.endText = this.game.add.text( this.game.world.centerX, this.game.world.centerY, 'Your time: '+Phaser.Math.roundTo(this.finalTime,-2), style );
+        // this.endText.anchor.setTo(0.5,0.5);
 
         if (this.playersWin == true) {
         	this.state.start('WinScreen');
